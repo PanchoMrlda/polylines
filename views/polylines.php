@@ -33,8 +33,7 @@
 
     function initMap() {
       var locations1 = [<?php
-                        if (count($result1['Items']) != 0) {
-                          $formattedLocations = [];
+                        if (count($payloads1) != 0) {
                           foreach ($payloads1 as $values) {
                             echo '{lat:' . $values['g']['la'] . ', lng:' . $values['g']['lo'] . '},';
                           }
@@ -43,8 +42,7 @@
                         }
                         ?>];
       var locations2 = [<?php
-                        if (count($result2['Items']) != 0) {
-                          $formattedLocations = [];
+                        if (count($payloads2) != 0) {
                           foreach ($payloads2 as $values) {
                             echo '{lat:' . $values['g']['la'] . ', lng:' . $values['g']['lo'] . '},';
                           }
@@ -305,8 +303,8 @@
         map: map
       });
 
-      // animateCircle(line1);
-      // animateCircle(line2);
+      animateCircle(line1);
+      animateCircle(line2);
     }
 
 
