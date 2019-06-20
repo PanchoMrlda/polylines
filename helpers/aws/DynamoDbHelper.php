@@ -8,15 +8,16 @@ class DynamoDbHelper
     $this->marshaler = $marshaler;
   }
 
-  public function getDataFromDynamo(String $deviceId, Int $from = null, Int $to = null)
+  public function getDataFromDynamo(String $deviceId = null, Int $from = null, Int $to = null)
   {
-    $params = $this->initParams($deviceId, $from, $to);
-    $raw_data = $this->dynamodb->query($params);
-    if (count($raw_data['Items']) != 0) {
-      $formattedData = $this->getFormattedResult($raw_data);
-      $payloads = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
-    } else {
-      $payloads = [];
+    $payloads = [];
+    if (!empty($deviceId)) {
+      $params = $this->initParams($deviceId, $from, $to);
+      $raw_data = $this->dynamodb->query($params);
+      if (count($raw_data['Items']) != 0) {
+        $formattedData = $this->getFormattedResult($raw_data);
+        $payloads = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
+      }
     }
     return $payloads;
   }
