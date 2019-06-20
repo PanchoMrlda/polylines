@@ -20,13 +20,14 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 
 $ipLocation = ((unserialize(file_get_contents("http://www.geoplugin.net/php.gp?ip=$ip"))));
 date_default_timezone_set($ipLocation['geoplugin_timezone']);
+$secretsData = json_decode(file_get_contents('secrets.json'), true);
 
 $dynamodb = new DynamoDbClient([
-  'region' => '',
+  'region' => $secretsData['aws']['region'],
   'version' => 'latest',
   'credentials' => array(
-    'key' => '',
-    'secret' => '',
+    'key' => $secretsData['aws']['key'],
+    'secret' => $secretsData['aws']['secret']
   )
 ]);
 

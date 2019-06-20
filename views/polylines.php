@@ -332,7 +332,9 @@
     }
   </script>
   <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=&libraries=visualization&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=
+    <?php echo $secretsData['google']['mapsKey'] ?>
+    &libraries=visualization&callback=initMap">
   </script>
 </body>
 
