@@ -278,3 +278,27 @@ function animateCircle(line) {
     line.set('icons', icons);
   }, 200);
 }
+
+function setDevices(device) {
+  var selectedDevice = "#" + device + "Select";
+  var selectedDeviceId1 = findGetParameter(device);
+  var options = document.querySelector("#deviceId1Select").options;
+  var targetOption = Array.prototype.find.call(options, function (option) {
+    return option.value == selectedDeviceId1;
+  });
+  var index = Array.prototype.indexOf.call(options, targetOption);
+  document.querySelector(selectedDevice).selectedIndex = index;
+}
+
+function findGetParameter(parameterName) {
+  var result = null,
+    tmp = [];
+  location.search
+    .substr(1)
+    .split("&")
+    .forEach(function (item) {
+      tmp = item.split("=");
+      if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    });
+  return result;
+}
