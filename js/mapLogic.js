@@ -205,6 +205,13 @@ function initMap() {
   });
   */
 
+  // Auto Center map
+  var bounds = new google.maps.LatLngBounds();
+  for (var i = 0; i < locations1.length; i++) {
+    bounds.extend(locations1[i]);
+  }
+  map.fitBounds(bounds);
+
   // Define the symbol, using one of the predefined paths ('CIRCLE')
   // supplied by the Google Maps JavaScript API.
   var lineSymbol1 = {
