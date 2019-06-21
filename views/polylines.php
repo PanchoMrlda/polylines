@@ -26,8 +26,31 @@
 </head>
 
 <body>
+  <section>
+    <form action="/">
+    <span>Device Name:</span>
+      <select name="deviceId1" id="deviceId1Select" onchange="this.form.submit()">
+        <option value="">-</option>
+        <?php
+        foreach ($deviceNames as $deviceName) {
+          echo "<option value='$deviceName'>$deviceName</option>";
+        }
+        ?>
+      </select>
+      <select name="deviceId2" id="deviceId2Select" onchange="this.form.submit()">
+        <option value="">-</option>
+        <?php
+        foreach ($deviceNames as $deviceName) {
+          echo "<option value='$deviceName'>$deviceName</option>";
+        }
+        ?>
+      </select>
+    </form>
+  </section>
   <div id="map"></div>
   <script>
+    setDevices("deviceId1");
+    setDevices("deviceId2");
     var locations1 = [<?php
                       if (count($payloads1) != 0) {
                         foreach ($payloads1 as $values) {
