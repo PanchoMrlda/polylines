@@ -6,7 +6,6 @@ use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
-
 // get the ip
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
   // check ip from share internet
@@ -33,9 +32,10 @@ $dynamodb = new DynamoDbClient([
 
 $marshaler = new Marshaler();
 $dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
-$deviceId1 = '190507-078349';
-$deviceId2 = '190507-078350';
-$from = (time() - 60 * 500) * 1000;
+$deviceNames = $secretsData['aws']['deviceNames'];
+$deviceId1 = $_GET['deviceId1'];
+$deviceId2 = $_GET['deviceId2'];
+$from = (time() - 60 * 60) * 1000;
 $to = (time() - 60 * 0) * 1000;
 echo "The query timestamp is: " . date('d/m/Y H:i', $from / 1000) . ' ' . date('d/m/Y H:i', $to / 1000);
 
