@@ -5,7 +5,7 @@
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
   <script type="text/javascript" src="js/mapStyles.js"></script>
-  <script async defer type="text/javascript" src="js/mapLogic.js"></script>
+  <script async type="text/javascript" src="js/mapLogic.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <title>Simple Polylines</title>
   <style>
@@ -25,7 +25,7 @@
   </style>
 </head>
 
-<body>
+<body onload="initMap()">
   <section>
     <form action="/">
     <span>Device Name:</span>
@@ -71,7 +71,7 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=
     <?php echo $secretsData['google']['mapsKey'] ?>
-    &libraries=visualization&callback=initMap">
+    &libraries=visualization">
   </script>
 </body>
 
