@@ -49,8 +49,6 @@
   </section>
   <div id="map"></div>
   <script>
-    setDevices("deviceId1");
-    setDevices("deviceId2");
     var locations1 = [<?php
                       if (count($payloads1) != 0) {
                         foreach ($payloads1 as $values) {

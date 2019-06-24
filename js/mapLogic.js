@@ -260,6 +260,8 @@ function initMap() {
 
   animateCircle(line1);
   animateCircle(line2);
+  setDevices("deviceId1");
+  setDevices("deviceId2");
 }
 
 
