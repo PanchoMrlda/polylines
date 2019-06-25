@@ -317,3 +317,11 @@ function findGetParameter(parameterName) {
     });
   return result;
 }
+
+
+// locations1.forEach(function(element) {
+//   return element;
+// });
+
+// locations1.forEach
+
