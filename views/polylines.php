@@ -7,6 +7,9 @@
   <script type="text/javascript" src="js/mapStyles.js"></script>
   <script async type="text/javascript" src="js/mapLogic.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <link href="css/c3.css" rel="stylesheet">
+  <script src="js/c3.min.js"></script>
   <title>Simple Polylines</title>
   <style>
     /* Always set the map height explicitly to define the size of the div
@@ -48,25 +51,31 @@
     </form>
   </section>
   <div id="map"></div>
+  <div id="tempChart"></div>
+  <div id="pressureChart"></div>
   <script>
-    var locations1 = [<?php
-                      if (count($payloads1) != 0) {
-                        foreach ($payloads1 as $values) {
-                          echo '{lat:' . $values['g']['la'] . ', lng:' . $values['g']['lo'] . '},';
-                        }
-                      } else {
-                        echo '{lat: 40.41695, lng: -3.70321}';
-                      }
-                      ?>];
-    var locations2 = [<?php
-                      if (count($payloads2) != 0) {
-                        foreach ($payloads2 as $values) {
-                          echo '{lat:' . $values['g']['la'] . ', lng:' . $values['g']['lo'] . '},';
-                        }
-                      } else {
-                        echo '{lat: 40.41695, lng: -3.70321}';
-                      }
-                      ?>];
+    var locations1 = <?php echo(json_encode($locations1)) ?>;
+    var locations2 = <?php echo(json_encode($locations2)) ?>;
+    var tempInt1 = <?php echo(json_encode($tempInt1)) ?>;
+    var tempExt1 = <?php echo(json_encode($tempExt1)) ?>;
+    var highPressure1 = <?php echo(json_encode($highPressure1)) ?>;
+    var lowPressure1 = <?php echo(json_encode($lowPressure1)) ?>;
+    var tempChart = c3.generate({
+      bindto: '#tempChart',
+      data: {
+        columns: [
+          tempInt1, tempExt1
+        ]        
+      }
+    });
+    var pressureChart = c3.generate({
+      bindto: '#pressureChart',
+      data: {
+        columns: [
+          highPressure1, lowPressure1
+        ]        
+      }
+    });
   </script>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=
