@@ -41,7 +41,15 @@ echo "The query timestamp is: " . date('d/m/Y H:i', $from / 1000) . ' ' . date('
 
 try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
+  $locations1 = $dynamoHelper->getLocations($payloads1);
+  $tempInt1 = $dynamoHelper->getSensorValues($payloads1, '1005n');
+  $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
+  $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
+  $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
+  $locations2 = $dynamoHelper->getLocations($payloads2);
+  $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
+  $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
 } catch (DynamoDbException $e) {
   echo "Unable to query:\n";
   echo $e->getMessage() . "\n";
