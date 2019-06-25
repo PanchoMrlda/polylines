@@ -22,6 +22,30 @@ class DynamoDbHelper
     return $payloads;
   }
 
+  public function getLocations(array $payloads)
+  {
+    $result = [];
+    if (count($payloads) != 0) {
+      foreach ($payloads as $values) {
+        $result[] = ['lat' => floatval($values['g']['la']), 'lng' => floatval($values['g']['lo'])];
+      }
+    } else {
+      $result[] = ["lat" => 40.41695, "lng" => -3.70321];
+    }
+    return $result;
+  }
+
+  public function getSensorValues(array $payloads, String $sensorName)
+  {
+    $result = [];
+    if (count($payloads) != 0) {
+      foreach ($payloads as $values) {
+        $result[] = floatval($values['r'][$sensorName]);
+      }
+    }
+    return $result;
+  }
+
   private function initParams(String $deviceId, Int $from = null, Int $to = null)
   {
     $from_timestamp = $from || (time() - 60 * 5) * 1000;
