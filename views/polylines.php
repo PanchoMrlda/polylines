@@ -54,28 +54,20 @@
   <div id="tempChart"></div>
   <div id="pressureChart"></div>
   <script>
-    var locations1 = <?php echo(json_encode($locations1)) ?>;
-    var locations2 = <?php echo(json_encode($locations2)) ?>;
-    var tempInt1 = <?php echo(json_encode($tempInt1)) ?>;
-    var tempExt1 = <?php echo(json_encode($tempExt1)) ?>;
-    var highPressure1 = <?php echo(json_encode($highPressure1)) ?>;
-    var lowPressure1 = <?php echo(json_encode($lowPressure1)) ?>;
-    var tempChart = c3.generate({
-      bindto: '#tempChart',
-      data: {
-        columns: [
-          tempInt1, tempExt1
-        ]        
-      }
-    });
-    var pressureChart = c3.generate({
-      bindto: '#pressureChart',
-      data: {
-        columns: [
-          highPressure1, lowPressure1
-        ]        
-      }
-    });
+    var dates1 = <?php echo (json_encode($dates1)) ?>;
+    dates1.unshift('times');
+    var locations1 = <?php echo (json_encode($locations1)) ?>;
+    var locations2 = <?php echo (json_encode($locations2)) ?>;
+    var tempInt1 = <?php echo (json_encode($tempInt1)) ?>;
+    tempInt1.unshift('Temp Int');
+    var tempExt1 = <?php echo (json_encode($tempExt1)) ?>;
+    tempExt1.unshift('Temp Ext');
+    var highPressure1 = <?php echo (json_encode($highPressure1)) ?>;
+    highPressure1.unshift('High Pressure');
+    var lowPressure1 = <?php echo (json_encode($lowPressure1)) ?>;
+    lowPressure1.unshift('Low Pressure');
+    generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
+    generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
   </script>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=
