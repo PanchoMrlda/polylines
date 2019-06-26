@@ -41,6 +41,7 @@ echo "The query timestamp is: " . date('d/m/Y H:i', $from / 1000) . ' ' . date('
 
 try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
+  $dates1 = $dynamoHelper->getDates($payloads1);
   $locations1 = $dynamoHelper->getLocations($payloads1);
   $tempInt1 = $dynamoHelper->getSensorValues($payloads1, '1005n');
   $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
