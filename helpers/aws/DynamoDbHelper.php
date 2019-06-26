@@ -35,6 +35,17 @@ class DynamoDbHelper
     return $result;
   }
 
+  public function getDates(array $payloads)
+  {
+    $result = [];
+    if (count($payloads) != 0) {
+      foreach ($payloads as $values) {
+        $result[] = date('Y-m-d H:i:s', intval($values['g']['t']));
+      }
+    }
+    return $result;
+  }
+
   public function getSensorValues(array $payloads, String $sensorName)
   {
     $result = [];
