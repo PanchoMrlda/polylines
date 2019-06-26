@@ -318,10 +318,22 @@ function findGetParameter(parameterName) {
   return result;
 }
 
-
-// locations1.forEach(function(element) {
-//   return element;
-// });
-
-// locations1.forEach
+function generateChart(chartId, columnValues) {
+  c3.generate({
+      bindto: chartId,
+      data: {
+      x: 'times',
+      xFormat: '%Y-%m-%d %H:%M:%S', // how the date is parsed
+      columns: columnValues
+    },
+    axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%H:%M', // how the date is displayed
+            }
+        }
+    }
+    });
+}
 
