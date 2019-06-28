@@ -26,6 +26,12 @@ function initMap() {
     }
   });
 
+  // Hide map options if screen is too small
+  var width = window.innerWidth;
+  if (width < 340) {
+    map.mapTypeControlOptions.style = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
+  }
+
   //Associate the styled maps with the MapTypeId and set it to display.
   map.mapTypes.set('silver_map', silverMapType);
   map.mapTypes.set('night_map', nightMapType);
@@ -212,7 +218,7 @@ function initMap() {
   if (locations2.length > 1) {
     Array.prototype.push.apply(totalLocations, locations2);
   }
-  
+
   for (var i = 0; i < totalLocations.length; i++) {
     bounds.extend(totalLocations[i]);
   }
@@ -285,12 +291,14 @@ function deleteRepeated(latsLngs) {
 // at fixed intervals.
 function animateCircle(line) {
   var count = 0;
-  window.setInterval(function () {
+  var interval = setInterval(function () {
     count = (count + 0.1) % 200;
-
     var icons = line.get('icons');
     icons[0].offset = (count / 2) + '%';
     line.set('icons', icons);
+    if (count >=199) {
+      clearInterval(interval);
+    }
   }, 200);
 }
 
@@ -320,20 +328,19 @@ function findGetParameter(parameterName) {
 
 function generateChart(chartId, columnValues) {
   c3.generate({
-      bindto: chartId,
-      data: {
+    bindto: chartId,
+    data: {
       x: 'times',
       xFormat: '%Y-%m-%d %H:%M:%S', // how the date is parsed
       columns: columnValues
     },
     axis: {
-        x: {
-            type: 'timeseries',
-            tick: {
-                format: '%H:%M', // how the date is displayed
-            }
+      x: {
+        type: 'timeseries',
+        tick: {
+          format: '%H:%M', // how the date is displayed
         }
+      }
     }
-    });
+  });
 }
-
