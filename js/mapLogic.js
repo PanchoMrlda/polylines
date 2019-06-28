@@ -270,6 +270,22 @@ function initMap() {
     map: map
   });
 
+  line1.addListener('mouseover', function (event) {
+    var location = {
+      lat: event.latLng.lat().toString().slice(0, 6),
+      lng: event.latLng.lng().toString().slice(0, 6)
+    };
+    var targetLocation = locations1.find(function (element) {
+      // console.log("locations", element.lat.toString(), location.lat);
+      
+      return element.lat.toString().indexOf(location.lat) > 0 &&
+        element.lng.toString().indexOf(location.lng)
+    });
+    // console.log(locations1.length);
+    console.log("targetLocation", targetLocation);
+    // console.log(this.getPath().getArray().toString());
+  });
+
   animateCircle(line1);
   animateCircle(line2);
   setDevices("deviceId1");
@@ -296,7 +312,7 @@ function animateCircle(line) {
     var icons = line.get('icons');
     icons[0].offset = (count / 2) + '%';
     line.set('icons', icons);
-    if (count >=199) {
+    if (count >= 199) {
       clearInterval(interval);
     }
   }, 200);
