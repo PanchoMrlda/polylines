@@ -74,8 +74,6 @@
     highPressure1.unshift('High Pressure');
     var lowPressure1 = <?php echo (json_encode($lowPressure1)) ?>;
     lowPressure1.unshift('Low Pressure');
-    generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
-    generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
   </script>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=

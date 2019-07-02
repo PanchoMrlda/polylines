@@ -290,6 +290,8 @@ function initMap() {
   animateCircle(line2);
   setDevices("deviceId1");
   setDevices("deviceId2");
+  generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
+  generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
 }
 
 
