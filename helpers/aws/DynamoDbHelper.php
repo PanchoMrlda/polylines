@@ -59,9 +59,6 @@ class DynamoDbHelper
 
   private function initParams(String $deviceId, Int $from = null, Int $to = null)
   {
-    $from_timestamp = $from || (time() - 60 * 5) * 1000;
-    $to_timestamp = $to || (time() - 60 * 0) * 1000;
-
     $eav = $this->marshaler->marshalJson('
       {
         ":deviceToFind": "' . $deviceId . '",
