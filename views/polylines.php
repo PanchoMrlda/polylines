@@ -35,16 +35,24 @@
       <select name="deviceId1" id="deviceId1Select" onchange="this.form.submit()">
         <option value="">-</option>
         <?php
-        foreach ($deviceNames as $deviceName) {
-          echo "<option value='$deviceName'>$deviceName</option>";
+        foreach ($deviceNames as $deviceZone => $deviceList) {
+          echo "<optgroup label='$deviceZone'>";
+          foreach ($deviceList as $deviceName) {
+            echo "<option value='$deviceName'>$deviceName</option>";
+          }
+          echo '</optgroup>';
         }
         ?>
       </select>
       <select name="deviceId2" id="deviceId2Select" onchange="this.form.submit()">
         <option value="">-</option>
         <?php
-        foreach ($deviceNames as $deviceName) {
-          echo "<option value='$deviceName'>$deviceName</option>";
+        foreach ($deviceNames as $deviceZone => $deviceList) {
+          echo "<optgroup label='$deviceZone'>";
+          foreach ($deviceList as $deviceName) {
+            echo "<option value='$deviceName'>$deviceName</option>";
+          }
+          echo '</optgroup>';
         }
         ?>
       </select>
