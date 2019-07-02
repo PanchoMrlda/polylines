@@ -18,7 +18,12 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 }
 
 $ipLocation = ((unserialize(file_get_contents("http://www.geoplugin.net/php.gp?ip=$ip"))));
-date_default_timezone_set($ipLocation['geoplugin_timezone']);
+if ($ipLocation['geoplugin_timezone']) {
+  $defaultTimezone = $ipLocation['geoplugin_timezone'];
+} else {
+  $defaultTimezone = 'Europe/Madrid';
+}
+date_default_timezone_set($defaultTimezone);
 $secretsData = json_decode(file_get_contents('secrets.json'), true);
 
 $dynamodb = new DynamoDbClient([
@@ -32,7 +37,11 @@ $dynamodb = new DynamoDbClient([
 
 $marshaler = new Marshaler();
 $dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
-$deviceNames = $secretsData['aws']['deviceNames'];
+$deviceNames = [];
+foreach ($secretsData['aws']['deviceNames'] as $array) {
+  $key = array_keys($array)[0];
+  $deviceNames[$key] = array_values($array[$key]);
+}
 $deviceId1 = $_GET['deviceId1'];
 $deviceId2 = $_GET['deviceId2'];
 $from = (time() - 60 * 60) * 1000;
