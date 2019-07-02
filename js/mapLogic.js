@@ -238,7 +238,7 @@ function initMap() {
   // Create the polyline and add the symbol to it via the 'icons' property.
   var line1 = new google.maps.Polyline({
     path: locations1,
-    strokeOpacity: 0.2,
+    strokeOpacity: 0.4,
     strokeColor: '00bfff',
     icons: [{
       icon: lineSymbol1,
@@ -261,7 +261,7 @@ function initMap() {
   // Create the polyline and add the symbol to it via the 'icons' property.
   var line2 = new google.maps.Polyline({
     path: locations2,
-    strokeOpacity: 0.2,
+    strokeOpacity: 0.4,
     strokeColor: '69be13',
     icons: [{
       icon: lineSymbol2,
