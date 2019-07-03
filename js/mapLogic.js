@@ -1,6 +1,7 @@
 // This example creates a 2-pixel-wide red polyline showing the path of
 // the first trans-Pacific flight between Oakland, CA, and Brisbane,
 // Australia which was made by Charles Kingsford Smith.
+var map;
 
 function initMap() {
   var flightPlanCoordinates = locations1;
@@ -16,7 +17,7 @@ function initMap() {
     name: 'Retro Map'
   });
 
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     zoom: 8,
     center: flightPlanCoordinates[flightPlanCoordinates.length - 1],
     mapTypeControlOptions: {
@@ -270,22 +271,6 @@ function initMap() {
     map: map
   });
 
-  line1.addListener('mouseover', function (event) {
-    var location = {
-      lat: event.latLng.lat().toString().slice(0, 6),
-      lng: event.latLng.lng().toString().slice(0, 6)
-    };
-    var targetLocation = locations1.find(function (element) {
-      // console.log("locations", element.lat.toString(), location.lat);
-      
-      return element.lat.toString().indexOf(location.lat) > 0 &&
-        element.lng.toString().indexOf(location.lng)
-    });
-    // console.log(locations1.length);
-    console.log("targetLocation", targetLocation);
-    // console.log(this.getPath().getArray().toString());
-  });
-
   animateCircle(line1);
   animateCircle(line2);
   setDevices("deviceId1");
@@ -350,7 +335,8 @@ function generateChart(chartId, columnValues) {
     data: {
       x: 'times',
       xFormat: '%Y-%m-%d %H:%M:%S', // how the date is parsed
-      columns: columnValues
+      columns: columnValues,
+      onmouseover: showBusPosition
     },
     axis: {
       x: {
@@ -361,4 +347,20 @@ function generateChart(chartId, columnValues) {
       }
     }
   });
+}
+
+function showBusPosition(element) {
+  var currentLocation = locations1[element.index];
+  var marker = new google.maps.Marker({
+    position: currentLocation,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 3
+    },
+    draggable: true,
+    map: map
+  });
+  setTimeout(() => {
+    marker.setMap(null);
+  }, 5000);
 }
