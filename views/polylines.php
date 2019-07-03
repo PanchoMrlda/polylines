@@ -31,6 +31,9 @@
 <body onload="initMap()">
   <section>
     <form action="/">
+    <span>Date:</span>
+    <input type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from" onchange="this.form.submit()">
+    <br>
     <span>Device Name:</span>
       <select name="deviceId1" id="deviceId1Select" onchange="this.form.submit()">
         <option value="">-</option>
