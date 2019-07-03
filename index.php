@@ -52,8 +52,6 @@ if (!empty($_GET['from'])) {
   $to = (time() - 60 * 0) * 1000;
 }
 
-echo "The query timestamp is: " . date('d/m/Y H:i', $from / 1000) . ' ' . date('d/m/Y H:i', $to / 1000);
-
 try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
   $dates1 = $dynamoHelper->getDates($payloads1);
