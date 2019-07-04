@@ -102,6 +102,16 @@
   fill-opacity: 0.1;
 }
 
+/*-- Region Warning --*/
+.c3-region.regionWarning {
+  fill: orange;
+}
+
+/*-- Region Danger --*/
+.c3-region.regionDanger {
+  fill: red;
+}
+
 /*-- Brush --*/
 .c3-brush .extent {
   fill-opacity: 0.1;

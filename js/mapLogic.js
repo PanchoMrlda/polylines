@@ -277,6 +277,7 @@ function initMap() {
   setDevices("deviceId2");
   generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
   generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
+  generateChart('#voltageChart', [dates1, compressor1, blower1]);
 }
 
 
@@ -345,8 +346,56 @@ function generateChart(chartId, columnValues) {
           format: '%H:%M', // how the date is displayed
         }
       }
-    }
+    },
+    grid: {
+      y: {
+        show: true
+      }
+    },
+    regions: assignRegions(chartId)
   });
+}
+
+function assignRegions(chartId) {
+  var regions;
+  var maxWarning;
+  var maxDanger;
+  var minWarning;
+  var minDanger;
+  if (chartId == '#pressureChart') {
+    maxWarning = 70;
+    maxDanger = 80;
+    minWarning = -2;
+    minDanger = -3;
+  } else if (chartId == '#voltageChart') {
+    maxWarning = 27;
+    maxDanger = 28;
+    minWarning = -100;
+    minDanger = -100;
+  } else {
+    maxWarning = 100;
+    maxDanger = 100;
+    minWarning = -100;
+    minDanger = -100;
+  }
+  regions = [{
+      axis: 'y',
+      start: maxWarning,
+      class: 'regionWarning'
+    }, {
+      axis: 'y',
+      start: maxDanger,
+      class: 'regionDanger'
+    }, {
+      axis: 'y',
+      end: minWarning,
+      class: 'regionWarning'
+    }, {
+      axis: 'y',
+      end: minDanger,
+      class: 'regionDanger'
+    }]
+  return regions;
 }
 
 function showBusPosition(element) {
