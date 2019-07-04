@@ -64,6 +64,7 @@
   <div id="map"></div>
   <div id="tempChart"></div>
   <div id="pressureChart"></div>
+  <div id="voltageChart"></div>
   <script>
     var dates1 = <?php echo (json_encode($dates1)) ?>;
     dates1.unshift('times');
@@ -77,6 +78,10 @@
     highPressure1.unshift('High Pressure');
     var lowPressure1 = <?php echo (json_encode($lowPressure1)) ?>;
     lowPressure1.unshift('Low Pressure');
+    var compressor1 = <?php echo (json_encode($compressor1)) ?>;
+    compressor1.unshift('Compressor');
+    var blower1 = <?php echo (json_encode($blower1)) ?>;
+    blower1.unshift('Blower');
   </script>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=
