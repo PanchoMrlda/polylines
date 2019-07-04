@@ -278,6 +278,8 @@ function initMap() {
   generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
   generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
   generateChart('#voltageChart', [dates1, compressor1, blower1]);
+  document.querySelector('#distance1').value = getTotalDistance(locations1);
+  document.querySelector('#distance2').value = getTotalDistance(locations2);
 }
 
 
@@ -379,22 +381,22 @@ function assignRegions(chartId) {
     minDanger = -100;
   }
   regions = [{
-      axis: 'y',
-      start: maxWarning,
-      class: 'regionWarning'
-    }, {
-      axis: 'y',
-      start: maxDanger,
-      class: 'regionDanger'
-    }, {
-      axis: 'y',
-      end: minWarning,
-      class: 'regionWarning'
-    }, {
-      axis: 'y',
-      end: minDanger,
-      class: 'regionDanger'
-    }]
+    axis: 'y',
+    start: maxWarning,
+    class: 'regionWarning'
+  }, {
+    axis: 'y',
+    start: maxDanger,
+    class: 'regionDanger'
+  }, {
+    axis: 'y',
+    end: minWarning,
+    class: 'regionWarning'
+  }, {
+    axis: 'y',
+    end: minDanger,
+    class: 'regionDanger'
+  }]
   return regions;
 }
 
@@ -412,4 +414,34 @@ function showBusPosition(element) {
   setTimeout(() => {
     marker.setMap(null);
   }, 5000);
+}
+
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180)
+}
+
+function getDistanceFromLocations(locationPoint1, locationPoint2) {
+  var lat1 = locationPoint1.lat;
+  var lon1 = locationPoint1.lng;
+  var lat2 = locationPoint2.lat;
+  var lon2 = locationPoint2.lng;
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2 - lat1); // deg2rad below
+  var dLon = deg2rad(lon2 - lon1);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function getTotalDistance(locations) {
+  distance = 0;
+  for (let index = 0; index < locations.length - 1; index++) {
+    distance += getDistanceFromLocations(locations[index + 1], locations[index]);
+  }
+  return distance.toFixed(2);
 }

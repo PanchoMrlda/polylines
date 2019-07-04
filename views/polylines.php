@@ -60,6 +60,9 @@
         ?>
       </select>
     </form>
+    <span>Travelled distance:</span>
+    <input type="text" value="" name="distance1" id="distance1" disabled>
+    <input type="text" value="" name="distance2" id="distance2" disabled>
   </section>
   <div id="map"></div>
   <div id="tempChart"></div>
