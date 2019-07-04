@@ -60,6 +60,8 @@ try {
   $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
   $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
   $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
+  $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
+  $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
   $locations2 = $dynamoHelper->getLocations($payloads2);
   $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
