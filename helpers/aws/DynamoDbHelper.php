@@ -16,7 +16,11 @@ class DynamoDbHelper
       $raw_data = $this->dynamodb->query($params);
       if (count($raw_data['Items']) != 0) {
         $formattedData = $this->getFormattedResult($raw_data);
-        $payloads = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
+        if (in_array('L', array_keys($raw_data['Items'][0]['payload']))) {
+          $payloads = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
+        } else {
+          $payloads = array_column($formattedData, 'payload');
+        }
       }
     }
     return $payloads;
@@ -26,12 +30,30 @@ class DynamoDbHelper
   {
     $result = [];
     if (count($payloads) != 0) {
-      foreach ($payloads as $values) {
-        $result[] = ['lat' => floatval($values['g']['la']), 'lng' => floatval($values['g']['lo'])];
+      foreach ($payloads as $index => $values) {
+        if (in_array('g', array_keys($values))) {
+          $result[] = [
+            'lat' => floatval($values['g']['la']),
+            'lng' => floatval($values['g']['lo'])
+          ];
+        } else {
+          if (empty(array_key_exists('la', $values['i']))) {
+            $result[] = [
+              'lat' => 0.0,
+              'lng' => 0.0
+            ];
+          } else {
+            $result[] = [
+              'lat' => floatval($values['i']['la']),
+              'lng' => floatval($values['i']['lo'])
+            ];
+          }
+        }
       }
     } else {
       $result[] = ["lat" => 40.41695, "lng" => -3.70321];
     }
+    $result = $this->cleanCoordinates($result);
     return $result;
   }
 
@@ -40,7 +62,15 @@ class DynamoDbHelper
     $result = [];
     if (count($payloads) != 0) {
       foreach ($payloads as $values) {
-        $result[] = date('Y-m-d H:i:s', intval($values['g']['t']));
+        if (in_array('g', array_keys($values))) {
+          $result[] = date('Y-m-d H:i:s', intval($values['g']['t']));
+        } else {
+          $wrongDate = date('Y-m-d H:i:s', intval($values['i']['t']));
+          $hourMinSec = substr($wrongDate, -9);
+          $correctTimestamp = strtotime($_GET['from'] . $hourMinSec);
+          $result[] = date('Y-m-d H:i:s', $correctTimestamp);
+        }
+
       }
     }
     return $result;
@@ -51,7 +81,19 @@ class DynamoDbHelper
     $result = [];
     if (count($payloads) != 0) {
       foreach ($payloads as $values) {
-        $result[] = floatval($values['r'][$sensorName]);
+        if (in_array('r', array_keys($values))) {
+          if (in_array($sensorName, array_keys($values['r']))) {
+            $result[] = floatval($values['r'][$sensorName]);
+          } else {
+            if ($sensorName == '1005n') {
+              $result[] = floatval($values['r']['ld1temp']) / 4;
+            } else if ($sensorName == '1004n') {
+              $result[] = floatval($values['r']['exttemp']) / 4;
+            }
+          }          
+        } else {
+          
+        }
       }
     }
     return $result;
@@ -91,5 +133,33 @@ class DynamoDbHelper
       array_unshift($formattedResult, $data);
     }
     return array_filter($formattedResult);
+  }
+
+  private function cleanCoordinates(array $coordinates)
+  {
+    foreach ($coordinates as $index => $coordinate) {
+      if ($coordinate['lat'] == 0) {
+        $nextIndex = $index;
+        while ($coordinates[$nextIndex]['lat'] == 0) {
+          $nextIndex = $nextIndex + 1;
+          if ($nextIndex >= count($coordinates)) {
+            $lastCoordinate = $coordinates[$lastIndex];
+            $coordinates[$index] = $lastCoordinate;
+            break 2;
+          }
+        }
+        $nextCoordinate = $coordinates[$nextIndex];
+        $coordinates[$index] = $nextCoordinate;
+      } else {
+        $lastIndex = $index;
+      }
+    }
+    $wrongIndexes = array_keys(array_filter($coordinates, function ($value) {
+      return $value['lat'] == 0;
+    }));
+    foreach ($wrongIndexes as $index) {
+      $coordinates[$index] = $lastCoordinate;
+    }
+    return $coordinates;
   }
 }
