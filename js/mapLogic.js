@@ -364,6 +364,7 @@ function assignRegions(chartId) {
   var maxDanger;
   var minWarning;
   var minDanger;
+  let compressorRegions;
   if (chartId == '#pressureChart') {
     maxWarning = 70;
     maxDanger = 80;
@@ -397,7 +398,49 @@ function assignRegions(chartId) {
     end: minDanger,
     class: 'regionDanger'
   }]
+  if (chartId == "#tempChart") {
+    compressorRegions = calculateCompressorRegions();
+    compressorRegions.map(region => regions.push(region));
+  }
   return regions;
+}
+
+function calculateCompressorRegions() {
+  let regionsToAdd = [];
+  let lastStartDate = dates1[1];
+  let lastEndDate = dates1[dates1.length - 1];
+  for (let i = 1; i < highPressure1.length; i++) {
+    if (compressorOn(highPressure1[i], lowPressure1[i])) {
+      lastEndDate = dates1[i];
+      if (i == (highPressure1.length - 1)) {
+        const region = {
+          axis: 'x',
+          start: lastStartDate,
+          end: dates1[i],
+          class: 'regionCompressor'
+        };
+        regionsToAdd.push(region);
+      }
+    } else {
+      const region = {
+        axis: 'x',
+        start: lastStartDate,
+        end: lastEndDate,
+        class: 'regionCompressor'
+      };
+      if (lastStartDate != lastEndDate &&
+        lastEndDate != dates1[dates1.length - 1]) {
+        regionsToAdd.push(region);
+      }
+      lastStartDate = dates1[i];
+      lastEndDate = dates1[i];
+    }
+  }
+  return regionsToAdd;
+}
+
+function compressorOn(highPressure, lowPressure) {
+  return Math.abs(parseFloat(highPressure) - parseFloat(lowPressure)) >= 10;
 }
 
 function showBusPosition(element) {
