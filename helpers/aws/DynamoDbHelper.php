@@ -51,7 +51,7 @@ class DynamoDbHelper
         }
       }
     } else {
-      $result[] = ["lat" => 40.41695, "lng" => -3.70321];
+      $result[] = ["lat" => 40.446800, "lng" => -3.55802];
     }
     $result = $this->cleanCoordinates($result);
     return $result;
