@@ -59,6 +59,11 @@
 <body onload="initMap()">
   <section>
     <form action="/">
+      <section class="form-last-reading-section input-group-prepend">
+        <span class="span input-group-text">Last reading:</span>
+        <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from" onchange="this.form.submit()" disabled>
+        <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from" onchange="this.form.submit()" disabled>
+      </section>
       <section class="form-date-section input-group-prepend">
         <span class="span input-group-text">Date:</span>
         <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from" onchange="this.form.submit()">
