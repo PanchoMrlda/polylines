@@ -29,7 +29,8 @@ function initMap() {
 
   // Hide map options if screen is too small
   var width = window.innerWidth;
-  if (width < 340) {
+  if ((width < 340 && window.matchMedia("(orientation: portrait)").matches) ||
+  (width < 640 && window.matchMedia("(orientation: landscape)").matches)) {
     map.mapTypeControlOptions.style = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
   }
 
