@@ -70,7 +70,6 @@ class DynamoDbHelper
           $correctTimestamp = strtotime($_GET['from'] . $hourMinSec);
           $result[] = date('Y-m-d H:i:s', $correctTimestamp);
         }
-
       }
     }
     return $result;
@@ -90,13 +89,26 @@ class DynamoDbHelper
             } else if ($sensorName == '1004n') {
               $result[] = floatval($values['r']['exttemp']) / 4;
             }
-          }          
+          }
         } else {
-          
+
         }
       }
     }
     return $result;
+  }
+
+  public function convertPressureValues(array $pressureValues)
+  {
+    return array_map(function (Float $value) {
+      $p1 = 0.000153;
+      $p2 = 0.0213;
+      $p3 = 1.528;
+      $p4 = 27.81;
+      $scale = 0.0689475729;
+      $cleanValue = $scale * (($p1*$value**3.0)+($p2*$value**2.0)+($p3*$value)+ $p4);
+      return round($cleanValue, 2);
+    }, $pressureValues);
   }
 
   private function initParams(String $deviceId, Int $from = null, Int $to = null)
