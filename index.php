@@ -54,6 +54,10 @@ if (!empty($_GET['from'])) {
 
 try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
+  if (empty(count($payloads1))) {
+    $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, time() * 1000);
+    $lastReading1 =  date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
+  }
   $dates1 = $dynamoHelper->getDates($payloads1);
   $locations1 = $dynamoHelper->getLocations($payloads1);
   $tempInt1 = $dynamoHelper->getSensorValues($payloads1, '1005n');
@@ -63,6 +67,10 @@ try {
   $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
   $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
+  if (empty(count($payloads2)) && !empty($deviceId2)) {
+    $readings2 = $dynamoHelper->getDataFromDynamo($deviceId2, 0, time() * 1000);
+    $lastReading2 =  date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
+  }
   $locations2 = $dynamoHelper->getLocations($payloads2);
   $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
   $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
