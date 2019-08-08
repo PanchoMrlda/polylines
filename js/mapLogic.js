@@ -30,7 +30,7 @@ function initMap() {
   // Hide map options if screen is too small
   var width = window.innerWidth;
   if ((width < 340 && window.matchMedia("(orientation: portrait)").matches) ||
-  (width < 640 && window.matchMedia("(orientation: landscape)").matches)) {
+    (width < 640 && window.matchMedia("(orientation: landscape)").matches)) {
     map.mapTypeControlOptions.style = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
   }
 
@@ -334,8 +334,18 @@ function findGetParameter(parameterName) {
 }
 
 function generateChart(chartId, columnValues) {
+  // Multiply width by 0.99 because desktop screens are smaller than real screen
+  let screenWidth = window.innerWidth * 0.99;
+  if (screenWidth < 340 && window.matchMedia("(orientation: portrait)").matches) {
+    screenWidth = window.innerHeight;
+  }
+
   c3.generate({
     bindto: chartId,
+    size: {
+      height: 320,
+      width: screenWidth
+    },
     data: {
       x: 'times',
       xFormat: '%Y-%m-%d %H:%M:%S', // how the date is parsed
