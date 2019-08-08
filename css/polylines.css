@@ -38,7 +38,7 @@ body {
 }
 
 /* Mobile devices */
-@media only screen and (max-device-width: 360px) {
+@media only screen and (max-device-width: 760px) {
 
   form section {
     width: 100%;
@@ -47,18 +47,15 @@ body {
   }
 
   .span {
-    width: 156px;
-    min-width: 156px;
-    margin: 0 2px;
-    display: inline-block;
-    text-align: center;
+    margin: 0 25%;
+    flex-basis: 100%;
   }
 
   .input {
-    width: 156px;
+    width: 45%;
     min-width: 156px;
-    margin: 0 2px;
-    text-align: center;
+    margin: 0 auto;
+    flex-basis: 45%;
   }
 
   .chart {
