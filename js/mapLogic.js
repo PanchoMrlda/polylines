@@ -334,6 +334,14 @@ function findGetParameter(parameterName) {
 }
 
 function generateChart(chartId, columnValues) {
+  let chartLabel;
+  if (chartId == "#tempChart") {
+    chartLabel = "ºC";
+  } else if (chartId == "#pressureChart") {
+    chartLabel = "ºC";
+  } else if (chartId == "#voltageChart") {
+    chartLabel = "V";
+  }
   // Multiply width by 0.99 because desktop screens are smaller than real screen
   let screenWidth = window.innerWidth * 0.99;
   if (screenWidth < 340 && window.matchMedia("(orientation: portrait)").matches) {
@@ -358,6 +366,13 @@ function generateChart(chartId, columnValues) {
         tick: {
           format: '%H:%M', // how the date is displayed
         }
+      },
+      y: {
+        label: {
+          text: chartLabel,
+          position: 'outer-middle',
+          width: 100
+        }
       }
     },
     grid: {
@@ -365,7 +380,15 @@ function generateChart(chartId, columnValues) {
         show: true
       }
     },
-    regions: assignRegions(chartId)
+    regions: assignRegions(chartId),
+    onrendered: function () {
+      let chartLabels = document.querySelectorAll(".c3-axis-y-label");
+      Array.prototype.map.call(chartLabels, function (label) {
+        label.setAttribute("transform", "rotate(0)");
+        label.setAttribute("y", "60");
+        label.setAttribute("x", "-40");
+      });
+    }
   });
 }
 
