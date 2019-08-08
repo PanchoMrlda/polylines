@@ -1,0 +1,73 @@
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height: 100%;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.span {
+  width: 180px;
+  min-width: 180px;
+  margin: 0 10px;
+  display: inline-block;
+  text-align: center;
+}
+
+.input {
+  width: 180px;
+  min-width: 180px;
+  margin: 0 10px;
+  text-align: center;
+}
+
+.select {
+  text-align: center;
+  text-align-last: center;
+}
+
+.select option {
+  text-align: left;
+}
+
+/* Mobile devices */
+@media only screen and (max-device-width: 360px) {
+
+  form section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .span {
+    width: 156px;
+    min-width: 156px;
+    margin: 0 2px;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .input {
+    width: 156px;
+    min-width: 156px;
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  .chart {
+    overflow: false;
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
+
+  .chart svg {
+    overflow: false;
+  }
+}
