@@ -22,16 +22,16 @@
   <section>
     <form action="/">
       <section class="form-last-reading-section input-group-prepend">
-        <span class="span input-group-text">Last reading:</span>
+        <span class="justify-content-center span input-group-text">Last reading</span>
         <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from" onchange="this.form.submit()" disabled>
         <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from" onchange="this.form.submit()" disabled>
       </section>
       <section class="form-date-section input-group-prepend">
-        <span class="span input-group-text">Date:</span>
+        <span class="justify-content-center span input-group-text">Date</span>
         <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from" onchange="this.form.submit()">
       </section>
       <section class="form-device-section input-group-prepend">
-        <span class="span input-group-text">Device Name:</span>
+        <span class="justify-content-center span input-group-text">Device Name</span>
         <select class="select input" name="deviceId1" id="deviceId1Select" onchange="this.form.submit()">
           <option value="">-</option>
           <?php
@@ -58,7 +58,7 @@
         </select>
       </section>
       <section class="form-distance-section input-group-prepend">
-        <span class="span input-group-text">Travelled distance:</span>
+        <span class="justify-content-center span input-group-text">Travelled distance</span>
         <input class="input" type="text" value="" name="distance1" id="distance1" disabled>
         <input class="input" type="text" value="" name="distance2" id="distance2" disabled>
       </section>
