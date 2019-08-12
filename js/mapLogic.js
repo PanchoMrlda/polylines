@@ -524,7 +524,6 @@ function setChartWidth() {
   } else if (screenWidth < 768 && window.matchMedia("(orientation: landscape)").matches) {
     screenWidth = 768;
   }
-  console.log(screen.orientation, screenWidth);
   return screenWidth;
 }
 
