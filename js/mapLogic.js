@@ -332,19 +332,13 @@ function findGetParameter(parameterName) {
 
 function generateChart(chartId, columnValues) {
   let chartLabel;
+  let screenWidth = setChartWidth();
   if (chartId == "#tempChart") {
     chartLabel = "ºC";
   } else if (chartId == "#pressureChart") {
     chartLabel = "ºC";
   } else if (chartId == "#voltageChart") {
     chartLabel = "V";
-  }
-  // Multiply width by 0.99 because desktop screens are smaller than real screen
-  let screenWidth = window.innerWidth * 0.99;
-  if (screenWidth < 768 && window.matchMedia("(orientation: portrait)").matches) {
-    screenWidth = window.innerHeight;
-  } else if (screenWidth < 768 && window.matchMedia("(orientation: landscape)").matches) {
-    screenWidth = 768;
   }
 
   c3.generate({
@@ -521,3 +515,25 @@ function getTotalDistance(locations) {
   }
   return distance.toFixed(2);
 }
+
+function setChartWidth() {
+  // Multiply width by 0.99 because desktop screens are smaller than real screen
+  let screenWidth = window.innerWidth * 0.99;
+  if (screenWidth < 768 && window.matchMedia("(orientation: portrait)").matches) {
+    screenWidth = window.innerHeight;
+  } else if (screenWidth < 768 && window.matchMedia("(orientation: landscape)").matches) {
+    screenWidth = 768;
+  }
+  console.log(screen.orientation, screenWidth);
+  return screenWidth;
+}
+
+/* EVENTS */
+
+window.addEventListener("orientationchange", function () {
+  setTimeout(() => {
+    generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
+    generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
+    generateChart('#voltageChart', [dates1, compressor1, blower1]);
+  }, 50);
+}, false);
