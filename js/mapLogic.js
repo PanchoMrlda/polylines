@@ -536,3 +536,21 @@ window.addEventListener("orientationchange", function () {
     generateChart('#voltageChart', [dates1, compressor1, blower1]);
   }, 50);
 }, false);
+
+function onReady(callback) {
+  var intervalId = window.setInterval(function() {
+    if (document.querySelector("body") !== undefined) {
+      window.clearInterval(intervalId);
+      callback.call(this);
+    }
+  }, 1000);
+}
+
+function setVisible(selector, visible) {
+  document.querySelector(selector).style.display = visible ? 'block' : 'none';
+}
+
+onReady(function() {
+  setVisible("body", true);
+  setVisible(".spinner-border", false);
+});
