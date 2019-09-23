@@ -54,8 +54,8 @@ if (!empty($_GET['from'])) {
 
 try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
-  if (empty(count($payloads1))  && !empty($deviceId1)) {
-    $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, time() * 1000);
+  if (empty(count($payloads1)) && !empty($deviceId1)) {
+    $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
     $lastReading1 =  date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
   }
   $dates1 = $dynamoHelper->getDates($payloads1);

@@ -22,7 +22,7 @@
   <section>
     <form action="/">
       <section class="form-last-reading-section input-group-prepend">
-        <span class="justify-content-center span input-group-text">Last reading</span>
+        <span class="justify-content-center span input-group-text">Previous reading</span>
         <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from" onchange="this.form.submit()" disabled>
         <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from" onchange="this.form.submit()" disabled>
       </section>
