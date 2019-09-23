@@ -5,21 +5,21 @@ function initMap() {
 
   /* Set map styles here */
   var silverMapType = new google.maps.StyledMapType(silverMap, {
-    name: 'Silver Map'
+    name: "Silver Map"
   });
   var nightMapType = new google.maps.StyledMapType(nightMap, {
-    name: 'Night Mode Map'
+    name: "Night Mode Map"
   });
   var retroMapType = new google.maps.StyledMapType(retroMap, {
-    name: 'Retro Map'
+    name: "Retro Map"
   });
 
-  map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById("map"), {
     zoom: 8,
     center: flightPlanCoordinates[flightPlanCoordinates.length - 1],
     mapTypeControlOptions: {
-      mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
-        'silver_map', 'night_map', 'retro_map'
+      mapTypeIds: ["roadmap", "satellite", "hybrid", "terrain",
+        "silver_map", "night_map", "retro_map"
       ]
     }
   });
@@ -32,10 +32,10 @@ function initMap() {
   }
 
   //Associate the styled maps with the MapTypeId and set it to display.
-  map.mapTypes.set('silver_map', silverMapType);
-  map.mapTypes.set('night_map', nightMapType);
-  map.mapTypes.set('retro_map', retroMapType);
-  map.setMapTypeId('retro_map');
+  map.mapTypes.set("silver_map", silverMapType);
+  map.mapTypes.set("night_map", nightMapType);
+  map.mapTypes.set("retro_map", retroMapType);
+  map.setMapTypeId("retro_map");
 
   /* SORT BY DISTANCE */
 
@@ -91,7 +91,7 @@ function initMap() {
     map: map
   });
 
-  if (typeof locations2 !== 'undefined') {
+  if (typeof locations2 !== "undefined") {
     var heatmap2 = new google.maps.visualization.HeatmapLayer({
       data: locations2.map(e => new google.maps.LatLng(e.lat, e.lng)),
       map: map
@@ -99,28 +99,28 @@ function initMap() {
   }
 
   var gradient = [
-    'rgba(0, 255, 255, 0)',
-    'rgba(0, 255, 255, 1)',
-    'rgba(0, 191, 255, 1)',
-    'rgba(0, 127, 255, 1)',
-    'rgba(0, 63, 255, 1)',
-    'rgba(0, 0, 255, 1)',
-    'rgba(0, 0, 223, 1)',
-    'rgba(0, 0, 191, 1)',
-    'rgba(0, 0, 159, 1)',
-    'rgba(0, 0, 127, 1)',
-    'rgba(63, 0, 91, 1)',
-    'rgba(127, 0, 63, 1)',
-    'rgba(191, 0, 31, 1)',
-    'rgba(255, 0, 0, 1)'
+    "rgba(0, 255, 255, 0)",
+    "rgba(0, 255, 255, 1)",
+    "rgba(0, 191, 255, 1)",
+    "rgba(0, 127, 255, 1)",
+    "rgba(0, 63, 255, 1)",
+    "rgba(0, 0, 255, 1)",
+    "rgba(0, 0, 223, 1)",
+    "rgba(0, 0, 191, 1)",
+    "rgba(0, 0, 159, 1)",
+    "rgba(0, 0, 127, 1)",
+    "rgba(63, 0, 91, 1)",
+    "rgba(127, 0, 63, 1)",
+    "rgba(191, 0, 31, 1)",
+    "rgba(255, 0, 0, 1)"
   ];
   heatmap.setMap(map);
-  heatmap.set('radius', 20);
-  heatmap.set('opacity', 0.6);
-  if (typeof heatmap2 !== 'undefined') {
-    heatmap2.set('gradient', gradient);
+  heatmap.set("radius", 20);
+  heatmap.set("opacity", 0.6);
+  if (typeof heatmap2 !== "undefined") {
+    heatmap2.set("gradient", gradient);
   } else {
-    heatmap.set('gradient', gradient);
+    heatmap.set("gradient", gradient);
   }
   */
 
@@ -129,7 +129,7 @@ function initMap() {
   var flightPath = new google.maps.Polyline({
     path: theSortedPoints,
     geodesic: true,
-    strokeColor: '#FF0000',
+    strokeColor: "#FF0000",
     strokeOpacity: 1.0,
     strokeWeight:2
   });
@@ -162,12 +162,12 @@ function initMap() {
       lat: 0.40457e2,
       lng: -0.34831e1
     },
-    travelMode: 'DRIVING'
+    travelMode: "DRIVING"
   }, function (response, status) {
-    if (status === 'OK') {
+    if (status === "OK") {
       directionsDisplay.setDirections(response);
     } else {
-      window.alert('Directions request failed due to ' + status);
+      window.alert("Directions request failed due to " + status);
     }
   });
   */
@@ -188,24 +188,24 @@ function initMap() {
     destination: lastPoint,
     waypoints: intermediates,
     optimizeWaypoints: true,
-    travelMode: 'DRIVING'
+    travelMode: "DRIVING"
   }, function(response, status) {
-    if (status === 'OK') {
+    if (status === "OK") {
       directionsDisplay.setDirections(response);
       // var route = response.routes[0];
-      //             var summaryPanel = document.getElementById('directions-panel');
-      //             summaryPanel.innerHTML = '';
+      //             var summaryPanel = document.getElementById("directions-panel");
+      //             summaryPanel.innerHTML = "";
       // For each route, display summary information.
       //             for (var i = 0; i < route.legs.length; i++) {
       //               var routeSegment = i + 1;
-      //               summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
-      //                   '</b><br>';
-      //               summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-      //               summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-      //               summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+      //               summaryPanel.innerHTML += "<b>Route Segment: " + routeSegment +
+      //                   "</b><br>";
+      //               summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+      //               summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
+      //               summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
       // }
     } else {
-      window.alert('Directions request failed due to ' + status);
+      window.alert("Directions request failed due to " + status);
     }
   });
   */
@@ -223,48 +223,48 @@ function initMap() {
   }
   map.fitBounds(bounds);
 
-  // Define the symbol, using one of the predefined paths ('CIRCLE')
+  // Define the symbol, using one of the predefined paths ("CIRCLE")
   // supplied by the Google Maps JavaScript API.
   var lineSymbol1 = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
     scale: 3,
     strokeOpacity: 1,
     fillOpacity: 1,
-    strokeColor: '00bfff',
-    fillColor: '00bfff'
+    strokeColor: "00bfff",
+    fillColor: "00bfff"
   };
 
-  // Create the polyline and add the symbol to it via the 'icons' property.
+  // Create the polyline and add the symbol to it via the "icons" property.
   var line1 = new google.maps.Polyline({
     path: locations1,
     strokeOpacity: 0.4,
-    strokeColor: '00bfff',
+    strokeColor: "00bfff",
     icons: [{
       icon: lineSymbol1,
-      offset: '100%'
+      offset: "100%"
     }],
     map: map
   });
 
-  // Define the symbol, using one of the predefined paths ('CIRCLE')
+  // Define the symbol, using one of the predefined paths ("CIRCLE")
   // supplied by the Google Maps JavaScript API.
   var lineSymbol2 = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
     scale: 3,
     strokeOpacity: 1,
     fillOpacity: 1,
-    strokeColor: '69be13',
-    fillColor: '69be13'
+    strokeColor: "69be13",
+    fillColor: "69be13"
   };
 
-  // Create the polyline and add the symbol to it via the 'icons' property.
+  // Create the polyline and add the symbol to it via the "icons" property.
   var line2 = new google.maps.Polyline({
     path: locations2,
     strokeOpacity: 0.4,
-    strokeColor: '69be13',
+    strokeColor: "69be13",
     icons: [{
       icon: lineSymbol2,
-      offset: '100%'
+      offset: "100%"
     }],
     map: map
   });
@@ -273,11 +273,11 @@ function initMap() {
   animateCircle(line2);
   setDevices("deviceId1");
   setDevices("deviceId2");
-  generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
-  generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
-  generateChart('#voltageChart', [dates1, compressor1, blower1]);
-  document.querySelector('#distance1').value = getTotalDistance(locations1);
-  document.querySelector('#distance2').value = getTotalDistance(locations2);
+  generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
+  generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
+  generateChart("#voltageChart", [dates1, compressor1, blower1]);
+  document.querySelector("#distance1").value = getTotalDistance(locations1);
+  document.querySelector("#distance2").value = getTotalDistance(locations2);
 }
 
 
@@ -297,9 +297,9 @@ function animateCircle(line) {
   var count = 0;
   var interval = setInterval(function () {
     count = (count + 0.1) % 200;
-    var icons = line.get('icons');
-    icons[0].offset = (count / 2) + '%';
-    line.set('icons', icons);
+    var icons = line.get("icons");
+    icons[0].offset = (count / 2) + "%";
+    line.set("icons", icons);
     if (count >= 199) {
       clearInterval(interval);
     }
@@ -348,22 +348,22 @@ function generateChart(chartId, columnValues) {
       width: screenWidth
     },
     data: {
-      x: 'times',
-      xFormat: '%Y-%m-%d %H:%M:%S', // how the date is parsed
+      x: "times",
+      xFormat: "%Y-%m-%d %H:%M:%S", // how the date is parsed
       columns: columnValues,
       onmouseover: showBusPosition
     },
     axis: {
       x: {
-        type: 'timeseries',
+        type: "timeseries",
         tick: {
-          format: '%H:%M', // how the date is displayed
+          format: "%H:%M", // how the date is displayed
         }
       },
       y: {
         label: {
           text: chartLabel,
-          position: 'outer-middle',
+          position: "outer-middle",
           width: 100
         }
       }
@@ -392,12 +392,12 @@ function assignRegions(chartId) {
   var minWarning;
   var minDanger;
   let compressorRegions;
-  if (chartId == '#pressureChart') {
+  if (chartId == "#pressureChart") {
     maxWarning = 70;
     maxDanger = 80;
     minWarning = -2;
     minDanger = -3;
-  } else if (chartId == '#voltageChart') {
+  } else if (chartId == "#voltageChart") {
     maxWarning = 27;
     maxDanger = 28;
     minWarning = -100;
@@ -409,21 +409,21 @@ function assignRegions(chartId) {
     minDanger = -100;
   }
   regions = [{
-    axis: 'y',
+    axis: "y",
     start: maxWarning,
-    class: 'regionWarning'
+    class: "regionWarning"
   }, {
-    axis: 'y',
+    axis: "y",
     start: maxDanger,
-    class: 'regionDanger'
+    class: "regionDanger"
   }, {
-    axis: 'y',
+    axis: "y",
     end: minWarning,
-    class: 'regionWarning'
+    class: "regionWarning"
   }, {
-    axis: 'y',
+    axis: "y",
     end: minDanger,
-    class: 'regionDanger'
+    class: "regionDanger"
   }]
   if (chartId == "#tempChart") {
     compressorRegions = calculateCompressorRegions();
@@ -441,19 +441,19 @@ function calculateCompressorRegions() {
       lastEndDate = dates1[i];
       if (i == (highPressure1.length - 1)) {
         const region = {
-          axis: 'x',
+          axis: "x",
           start: lastStartDate,
           end: dates1[i],
-          class: 'regionCompressor'
+          class: "regionCompressor"
         };
         regionsToAdd.push(region);
       }
     } else {
       const region = {
-        axis: 'x',
+        axis: "x",
         start: lastStartDate,
         end: lastEndDate,
-        class: 'regionCompressor'
+        class: "regionCompressor"
       };
       if (lastStartDate != lastEndDate &&
         lastEndDate != dates1[dates1.length - 1]) {
@@ -531,9 +531,9 @@ function setChartWidth() {
 
 window.addEventListener("orientationchange", function () {
   setTimeout(() => {
-    generateChart('#tempChart', [dates1, tempInt1, tempExt1]);
-    generateChart('#pressureChart', [dates1, lowPressure1, highPressure1]);
-    generateChart('#voltageChart', [dates1, compressor1, blower1]);
+    generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
+    generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
+    generateChart("#voltageChart", [dates1, compressor1, blower1]);
   }, 50);
 }, false);
 
@@ -547,7 +547,7 @@ function onReady(callback) {
 }
 
 function setVisible(selector, visible) {
-  document.querySelector(selector).style.display = visible ? 'block' : 'none';
+  document.querySelector(selector).style.display = visible ? "block" : "none";
 }
 
 onReady(function() {
