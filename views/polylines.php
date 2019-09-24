@@ -65,7 +65,9 @@
       </section>
     </form>
   </section>
-  <div id="map" class="chart"></div>
+  <section class="map-container">
+    <div id="map" class="chart"></div>
+  </section>
   <div id="tempChart" class="chart"></div>
   <div id="pressureChart" class="chart"></div>
   <div id="voltageChart" class="chart"></div>
