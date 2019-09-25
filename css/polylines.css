@@ -60,11 +60,8 @@ body {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-  }
-
-  .span {
-    margin: 0 25%;
-    flex-basis: 100%;
+    align-items: center;
+    justify-content: center;
   }
 
   .input {
