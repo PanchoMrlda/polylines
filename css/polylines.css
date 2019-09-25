@@ -56,6 +56,10 @@ body {
 /* Mobile devices */
 @media only screen and (max-device-width: 760px) {
 
+  .map-container {
+    height: 50vh;
+  }
+
   form section {
     width: 100%;
     display: flex;
