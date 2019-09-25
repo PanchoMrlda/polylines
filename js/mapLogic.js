@@ -1,4 +1,5 @@
 var map;
+var markers = [];
 
 function initMap() {
   var flightPlanCoordinates = locations1;
@@ -230,15 +231,15 @@ function initMap() {
     scale: 3,
     strokeOpacity: 1,
     fillOpacity: 1,
-    strokeColor: "00bfff",
-    fillColor: "00bfff"
+    strokeColor: "DeepSkyBlue",
+    fillColor: "DeepSkyBlue"
   };
 
   // Create the polyline and add the symbol to it via the "icons" property.
   var line1 = new google.maps.Polyline({
     path: locations1,
     strokeOpacity: 0.4,
-    strokeColor: "00bfff",
+    strokeColor: "DeepSkyBlue",
     icons: [{
       icon: lineSymbol1,
       offset: "100%"
@@ -253,15 +254,15 @@ function initMap() {
     scale: 3,
     strokeOpacity: 1,
     fillOpacity: 1,
-    strokeColor: "69be13",
-    fillColor: "69be13"
+    strokeColor: "LimeGreen",
+    fillColor: "LimeGreen"
   };
 
   // Create the polyline and add the symbol to it via the "icons" property.
   var line2 = new google.maps.Polyline({
     path: locations2,
     strokeOpacity: 0.4,
-    strokeColor: "69be13",
+    strokeColor: "LimeGreen",
     icons: [{
       icon: lineSymbol2,
       offset: "100%"
@@ -351,7 +352,7 @@ function generateChart(chartId, columnValues) {
       x: "times",
       xFormat: "%Y-%m-%d %H:%M:%S", // how the date is parsed
       columns: columnValues,
-      onmouseover: showBusPosition
+      onclick: showBusPosition
     },
     axis: {
       x: {
@@ -394,9 +395,9 @@ function assignRegions(chartId) {
   let compressorRegions;
   if (chartId == "#pressureChart") {
     maxWarning = 70;
-    maxDanger = 80;
-    minWarning = -2;
-    minDanger = -3;
+    maxDanger = 95;
+    minWarning = -15;
+    minDanger = -15;
   } else if (chartId == "#voltageChart") {
     maxWarning = 27;
     maxDanger = 28;
@@ -474,6 +475,7 @@ function showBusPosition(element) {
   var currentLocation = locations1[element.index];
   var marker = new google.maps.Marker({
     position: currentLocation,
+    title: "Click to hide",
     icon: {
       path: google.maps.SymbolPath.CIRCLE,
       scale: 3
@@ -481,11 +483,26 @@ function showBusPosition(element) {
     draggable: true,
     map: map
   });
-  setTimeout(() => {
+  var existingMarker = getMarker(marker);
+  marker.addListener("click", function () {
     marker.setMap(null);
-  }, 5000);
+    deleteMarker(marker);
+  });
+  if (existingMarker == undefined) {
+    markers.push(marker);
+  }
 }
 
+function getMarker(marker) {
+  var latitude = marker.position.lat();
+  var longitude = marker.position.lng();
+  return markers.find(e => e.position.lat() == latitude &&
+    e.position.lng() == longitude);
+}
+
+function deleteMarker(marker) {
+  markers.splice(markers.indexOf(marker), 1);
+}
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180)
@@ -538,7 +555,7 @@ window.addEventListener("orientationchange", function () {
 }, false);
 
 function onReady(callback) {
-  var intervalId = window.setInterval(function() {
+  var intervalId = window.setInterval(function () {
     if (document.querySelector("body") !== undefined) {
       window.clearInterval(intervalId);
       callback.call(this);
@@ -550,7 +567,7 @@ function setVisible(selector, visible) {
   document.querySelector(selector).style.display = visible ? "block" : "none";
 }
 
-onReady(function() {
+onReady(function () {
   setVisible("body", true);
   setVisible(".spinner-border", false);
 });
