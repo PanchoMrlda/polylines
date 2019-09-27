@@ -468,7 +468,7 @@ function calculateCompressorRegions() {
 }
 
 function compressorOn(highPressure, lowPressure) {
-  return Math.abs(parseFloat(highPressure) - parseFloat(lowPressure)) >= 10;
+  return Math.abs(parseFloat(highPressure) - parseFloat(lowPressure)) >= 8;
 }
 
 function showBusPosition(element) {
