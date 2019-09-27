@@ -274,9 +274,15 @@ function initMap() {
   animateCircle(line2);
   setDevices("deviceId1");
   setDevices("deviceId2");
-  generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
-  generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
-  generateChart("#voltageChart", [dates1, compressor1, blower1]);
+  var tempData1 = [dates1, tempInt1, tempExt1];
+  var tempData2 = [dates2, tempInt2, tempExt2];
+  generateChart("#tempChart", tempData1, tempData2);
+  var pressureData1 = [dates1, lowPressure1, highPressure1];
+  var pressureData2 = [dates2, lowPressure2, highPressure2];
+  generateChart("#pressureChart", pressureData1, pressureData2);
+  var voltageData1 = [dates1, compressor1, blower1];
+  var voltageData2 = [dates2, compressor2, blower2];
+  generateChart("#voltageChart", voltageData1, voltageData2);
   document.querySelector("#distance1").value = getTotalDistance(locations1);
   document.querySelector("#distance2").value = getTotalDistance(locations2);
 }
@@ -331,9 +337,44 @@ function findGetParameter(parameterName) {
   return result;
 }
 
-function generateChart(chartId, columnValues) {
+function generateChart(chartId, columnValues1, columnValues2 = []) {
   let chartLabel;
+  let chartsData = {
+    x: "times",
+    xFormat: "%Y-%m-%d %H:%M:%S",
+    columns: columnValues1,
+    onclick: showBusPosition
+  };
   let screenWidth = setChartWidth();
+  if (columnValues1[0].length == 1 && columnValues2[0].length == 1) {
+    chartsData = {
+      x: "times",
+      xFormat: "%Y-%m-%d %H:%M:%S",
+      columns: [],
+      onclick: showBusPosition
+    };
+  } else if (columnValues1[0].length != 1 && columnValues2[0].length == 1) {
+    chartsData = {
+      x: "times",
+      xFormat: "%Y-%m-%d %H:%M:%S",
+      columns: columnValues1,
+      onclick: showBusPosition
+    };
+  } else if (columnValues1[0].length == 1 && columnValues2[0].length != 1) {
+    chartsData = {
+      x: "times",
+      xFormat: "%Y-%m-%d %H:%M:%S",
+      columns: columnValues2,
+      onclick: showBusPosition
+    };
+  } else if (columnValues1[0].length != 1 && columnValues2[0].length != 1) {
+    chartsData = {
+      x: "times",
+      xFormat: "%Y-%m-%d %H:%M:%S",
+      columns: columnValues1.concat(columnValues2),
+      onclick: showBusPosition
+    };
+  }
   if (chartId == "#tempChart") {
     chartLabel = "ºC";
   } else if (chartId == "#pressureChart") {
@@ -348,11 +389,12 @@ function generateChart(chartId, columnValues) {
       height: 320,
       width: screenWidth
     },
-    data: {
-      x: "times",
-      xFormat: "%Y-%m-%d %H:%M:%S", // how the date is parsed
-      columns: columnValues,
-      onclick: showBusPosition
+    data: chartsData,
+    color: {
+      pattern: ["#1f77b4", "#ff7f0e", "#629fca", "#ffa556"]
+    },
+    line: {
+      show: false
     },
     axis: {
       x: {
