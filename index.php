@@ -53,6 +53,7 @@ if (!empty($_GET['from'])) {
 }
 
 try {
+  // Variables bus 1
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
   if (empty(count($payloads1)) && !empty($deviceId1)) {
     $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
@@ -69,14 +70,23 @@ try {
   }, $lowPressure1);
   $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
   $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
+  // Variables bus 2
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
   if (empty(count($payloads2)) && !empty($deviceId2)) {
     $readings2 = $dynamoHelper->getDataFromDynamo($deviceId2, 0, time() * 1000);
     $lastReading2 =  date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
   }
+  $dates2 = $dynamoHelper->getDates($payloads2);
   $locations2 = $dynamoHelper->getLocations($payloads2);
   $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
   $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
+  $highPressure2 = $dynamoHelper->getSensorValues($payloads2, '1003n');
+  $lowPressure2 = $dynamoHelper->getSensorValues($payloads2, '1002n');
+  $lowPressure2 = array_map(function ($lowPressureValue) {
+    return $lowPressureValue - 10;
+  }, $lowPressure2);
+  $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
+  $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
 } catch (DynamoDbException $e) {
   echo "Unable to query:\n";
   echo $e->getMessage() . "\n";
