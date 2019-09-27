@@ -72,22 +72,38 @@
   <div id="pressureChart" class="chart"></div>
   <div id="voltageChart" class="chart"></div>
   <script>
+    // Variables for bus 1
     var dates1 = <?php echo (json_encode($dates1)) ?>;
     dates1.unshift('times');
     var locations1 = <?php echo (json_encode($locations1)) ?>;
-    var locations2 = <?php echo (json_encode($locations2)) ?>;
     var tempInt1 = <?php echo (json_encode($tempInt1)) ?>;
-    tempInt1.unshift('Temp Int');
+    tempInt1.unshift('Temp Int' + ' (<?php echo $deviceId1 ?>)');
     var tempExt1 = <?php echo (json_encode($tempExt1)) ?>;
-    tempExt1.unshift('Temp Ext');
+    tempExt1.unshift('Temp Ext' + ' (<?php echo $deviceId1 ?>)');
     var highPressure1 = <?php echo (json_encode($highPressure1)) ?>;
-    highPressure1.unshift('High Pressure');
+    highPressure1.unshift('High Pressure' + ' (<?php echo $deviceId1 ?>)');
     var lowPressure1 = <?php echo (json_encode($lowPressure1)) ?>;
-    lowPressure1.unshift('Low Pressure');
+    lowPressure1.unshift('Low Pressure' + ' (<?php echo $deviceId1 ?>)');
     var compressor1 = <?php echo (json_encode($compressor1)) ?>;
-    compressor1.unshift('Compressor');
+    compressor1.unshift('Compressor' + ' (<?php echo $deviceId1 ?>)');
     var blower1 = <?php echo (json_encode($blower1)) ?>;
-    blower1.unshift('Blower');
+    blower1.unshift('Blower' + ' (<?php echo $deviceId1 ?>)');
+    // Variables bus 2
+    var dates2 = <?php echo (json_encode($dates2)) ?>;
+    dates2.unshift('times');
+    var locations2 = <?php echo (json_encode($locations2)) ?>;
+    var tempInt2 = <?php echo (json_encode($tempInt2)) ?>;
+    tempInt2.unshift('Temp Int' + ' (<?php echo $deviceId2 ?>)');
+    var tempExt2 = <?php echo (json_encode($tempExt2)) ?>;
+    tempExt2.unshift('Temp Ext'  + ' (<?php echo $deviceId2 ?>)');
+    var highPressure2 = <?php echo (json_encode($highPressure2)) ?>;
+    highPressure2.unshift('High Pressure' + ' (<?php echo $deviceId2 ?>)');
+    var lowPressure2 = <?php echo (json_encode($lowPressure2)) ?>;
+    lowPressure2.unshift('Low Pressure' + ' (<?php echo $deviceId2 ?>)');
+    var compressor2 = <?php echo (json_encode($compressor2)) ?>;
+    compressor2.unshift('Compressor' + ' (<?php echo $deviceId2 ?>)');
+    var blower2 = <?php echo (json_encode($blower2)) ?>;
+    blower2.unshift('Blower' + ' (<?php echo $deviceId2 ?>)');
   </script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=
     <?php echo $secretsData['google']['mapsKey'] ?>
