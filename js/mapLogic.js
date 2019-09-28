@@ -347,33 +347,13 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
   };
   let screenWidth = setChartWidth();
   if (columnValues1[0].length == 1 && columnValues2[0].length == 1) {
-    chartsData = {
-      x: "times",
-      xFormat: "%Y-%m-%d %H:%M:%S",
-      columns: [],
-      onclick: showBusPosition
-    };
+    chartsData.columns = [];
   } else if (columnValues1[0].length != 1 && columnValues2[0].length == 1) {
-    chartsData = {
-      x: "times",
-      xFormat: "%Y-%m-%d %H:%M:%S",
-      columns: columnValues1,
-      onclick: showBusPosition
-    };
+    chartsData.columns = columnValues1;
   } else if (columnValues1[0].length == 1 && columnValues2[0].length != 1) {
-    chartsData = {
-      x: "times",
-      xFormat: "%Y-%m-%d %H:%M:%S",
-      columns: columnValues2,
-      onclick: showBusPosition
-    };
+    chartsData.columns = columnValues2;
   } else if (columnValues1[0].length != 1 && columnValues2[0].length != 1) {
-    chartsData = {
-      x: "times",
-      xFormat: "%Y-%m-%d %H:%M:%S",
-      columns: columnValues1.concat(columnValues2),
-      onclick: showBusPosition
-    };
+    chartsData.columns = columnValues1.concat(columnValues2);
   }
   if (chartId == "#tempChart") {
     chartLabel = "ºC";
@@ -586,15 +566,13 @@ function setChartWidth() {
   return screenWidth;
 }
 
-/* EVENTS */
-
-window.addEventListener("orientationchange", function () {
+function updateChartsWidth() {
   setTimeout(() => {
     generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
     generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
     generateChart("#voltageChart", [dates1, compressor1, blower1]);
   }, 50);
-}, false);
+}
 
 function onReady(callback) {
   var intervalId = window.setInterval(function () {
@@ -608,6 +586,13 @@ function onReady(callback) {
 function setVisible(selector, visible) {
   document.querySelector(selector).style.display = visible ? "block" : "none";
 }
+
+
+/* EVENTS */
+
+window.addEventListener("orientationchange", function () {
+  updateChartsWidth();
+}, false);
 
 onReady(function () {
   setVisible("body", true);
