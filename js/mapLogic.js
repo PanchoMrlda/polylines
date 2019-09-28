@@ -1,5 +1,8 @@
 var map;
 var markers = [];
+var tempChart;
+var pressureChart;
+var voltageChart;
 
 function initMap() {
   var flightPlanCoordinates = locations1;
@@ -276,13 +279,13 @@ function initMap() {
   setDevices("deviceId2");
   var tempData1 = [dates1, tempInt1, tempExt1];
   var tempData2 = [dates2, tempInt2, tempExt2];
-  generateChart("#tempChart", tempData1, tempData2);
+  tempChart = generateChart("#tempChart", tempData1, tempData2);
   var pressureData1 = [dates1, lowPressure1, highPressure1];
   var pressureData2 = [dates2, lowPressure2, highPressure2];
-  generateChart("#pressureChart", pressureData1, pressureData2);
+  pressureChart = generateChart("#pressureChart", pressureData1, pressureData2);
   var voltageData1 = [dates1, compressor1, blower1];
   var voltageData2 = [dates2, compressor2, blower2];
-  generateChart("#voltageChart", voltageData1, voltageData2);
+  voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
   document.querySelector("#distance1").value = getTotalDistance(locations1);
   document.querySelector("#distance2").value = getTotalDistance(locations2);
 }
@@ -363,7 +366,7 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
     chartLabel = "V";
   }
 
-  c3.generate({
+  return c3.generate({
     bindto: chartId,
     size: {
       height: 320,
@@ -592,6 +595,12 @@ function setVisible(selector, visible) {
 
 window.addEventListener("orientationchange", function () {
   updateChartsWidth();
+}, false);
+
+window.addEventListener("resize", function () {
+  tempChart.resize();
+  pressureChart.resize();
+  voltageChart.resize();
 }, false);
 
 onReady(function () {
