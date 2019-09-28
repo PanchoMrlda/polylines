@@ -7,7 +7,7 @@
   <script type="text/javascript" src="js/mapStyles.js"></script>
   <script async type="text/javascript" src="js/mapLogic.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="js/d3.v5.min.js"></script>
   <link href="css/c3.css" rel="stylesheet">
   <link href="css/polylines.css" rel="stylesheet">
   <script src="js/c3.min.js"></script>
