@@ -72,6 +72,8 @@
   <div id="pressureChart" class="chart"></div>
   <div id="voltageChart" class="chart"></div>
   <script>
+    // Load profile
+    var profile = <?php echo (json_encode($_SESSION['profile'])) ?>;
     // Variables for bus 1
     var dates1 = <?php echo (json_encode($dates1)) ?>;
     dates1.unshift('times');
