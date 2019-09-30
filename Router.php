@@ -28,10 +28,6 @@ class Router
    private function formatRoute($route)
   {
     $result = rtrim($route, '/');
-    $result = substr($result, 0, strpos($result, "?"));
-    ob_start();
-    print_r("\e[35m" . print_r([$route, $result], true) . "\e[0m");
-    error_log(ob_get_clean(), 4);
     if ($result === '') {
       return '/';
     }
