@@ -36,6 +36,11 @@
         <select class="select input" name="deviceId1" id="deviceId1Select" onchange="submitForm()">
           <option value="">-</option>
           <?php
+          $deviceNames = [];
+          foreach ($_SESSION['secretsData']['aws']['deviceNames'] as $array) {
+            $key = array_keys($array)[0];
+            $deviceNames[$key] = array_values($array[$key]);
+          }
           foreach ($deviceNames as $deviceZone => $deviceList) {
             echo "<optgroup label='$deviceZone'>";
             foreach ($deviceList as $deviceName) {

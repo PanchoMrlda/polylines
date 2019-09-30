@@ -16,24 +16,18 @@ $dynamodb = new DynamoDbClient([
   )
 ]);
 
-$marshaler = new Marshaler();
-$dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
-$deviceNames = [];
-foreach ($_SESSION['secretsData']['aws']['deviceNames'] as $array) {
-  $key = array_keys($array)[0];
-  $deviceNames[$key] = array_values($array[$key]);
-}
-$deviceId1 = $_GET['deviceId1'];
-$deviceId2 = $_GET['deviceId2'];
-if (!empty($_GET['from'])) {
-  $from = strtotime($_GET['from']) * 1000;
-  $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
-} else {
-  $from = (time() - 60 * 60) * 1000;
-  $to = (time() - 60 * 0) * 1000;
-}
-
 try {
+  $marshaler = new Marshaler();
+  $dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
+  $deviceId1 = $_GET['deviceId1'];
+  $deviceId2 = $_GET['deviceId2'];
+  if (!empty($_GET['from'])) {
+    $from = strtotime($_GET['from']) * 1000;
+    $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+  } else {
+    $from = (time() - 60 * 60) * 1000;
+    $to = (time() - 60 * 0) * 1000;
+  }
   // Variables bus 1
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
   if (empty(count($payloads1)) && !empty($deviceId1)) {
