@@ -1,12 +1,12 @@
 <?php
-require 'lib/aws/aws-autoloader.php';
-require 'helpers/aws/DynamoDbHelper.php';
 
-use Aws\DynamoDb\Exception\DynamoDbException;
-use Aws\DynamoDb\Marshaler;
-use Aws\DynamoDb\DynamoDbClient;
+session_start();
+include_once 'Request.php';
+include_once 'Router.php';
 
-// get the ip
+$_SESSION['secretsData'] = json_decode(file_get_contents('secrets.json'), true);
+$_SESSION['profile']['mapTypeId'] = 'retro_map';
+// Get the ip address
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
   // check ip from share internet
   $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -16,7 +16,7 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 } else {
   $ip = $_SERVER['REMOTE_ADDR'];
 }
-
+// Get geolocation
 $ipLocation = ((unserialize(file_get_contents("http://www.geoplugin.net/php.gp?ip=$ip"))));
 if ($ipLocation['geoplugin_timezone']) {
   $defaultTimezone = $ipLocation['geoplugin_timezone'];
@@ -24,72 +24,22 @@ if ($ipLocation['geoplugin_timezone']) {
   $defaultTimezone = 'Europe/Madrid';
 }
 date_default_timezone_set($defaultTimezone);
-$secretsData = json_decode(file_get_contents('secrets.json'), true);
-
-$dynamodb = new DynamoDbClient([
-  'region' => $secretsData['aws']['region'],
-  'version' => 'latest',
-  'credentials' => array(
-    'key' => $secretsData['aws']['key'],
-    'secret' => $secretsData['aws']['secret']
-  )
-]);
-
-$marshaler = new Marshaler();
-$dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
-$deviceNames = [];
-foreach ($secretsData['aws']['deviceNames'] as $array) {
-  $key = array_keys($array)[0];
-  $deviceNames[$key] = array_values($array[$key]);
-}
-$deviceId1 = $_GET['deviceId1'];
-$deviceId2 = $_GET['deviceId2'];
-if (!empty($_GET['from'])) {
-  $from = strtotime($_GET['from']) * 1000;
-  $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
-} else {
-  $from = (time() - 60 * 60) * 1000;
-  $to = (time() - 60 * 0) * 1000;
-}
-
-try {
-  // Variables bus 1
-  $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
-  if (empty(count($payloads1)) && !empty($deviceId1)) {
-    $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
-    $lastReading1 =  date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
+// Define routes
+$router = new Router(new Request);
+$router->get('/', function ($request) {
+  include_once "controllers/dynamoDbController.php";
+  include "views/polylines.php";
+  // $params = $request->getBody();
+  // return json_encode($params);
+});
+// $router->get('/profile', function ($request) {
+//   return json_encode($_SESSION['profile']);
+// });
+$router->post('/profile', function ($request) {
+  // return json_encode($request->getBody());
+  $params = $request->getBody();
+  foreach ($params as $key => $value) {
+    $_SESSION['profile'][$key] = $value;
   }
-  $dates1 = $dynamoHelper->getDates($payloads1);
-  $locations1 = $dynamoHelper->getLocations($payloads1);
-  $tempInt1 = $dynamoHelper->getSensorValues($payloads1, '1005n');
-  $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
-  $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
-  $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
-  $lowPressure1 = array_map(function ($lowPressureValue) {
-    return $lowPressureValue - 10;
-  }, $lowPressure1);
-  $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
-  $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
-  // Variables bus 2
-  $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
-  if (empty(count($payloads2)) && !empty($deviceId2)) {
-    $readings2 = $dynamoHelper->getDataFromDynamo($deviceId2, 0, time() * 1000);
-    $lastReading2 =  date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
-  }
-  $dates2 = $dynamoHelper->getDates($payloads2);
-  $locations2 = $dynamoHelper->getLocations($payloads2);
-  $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
-  $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
-  $highPressure2 = $dynamoHelper->getSensorValues($payloads2, '1003n');
-  $lowPressure2 = $dynamoHelper->getSensorValues($payloads2, '1002n');
-  $lowPressure2 = array_map(function ($lowPressureValue) {
-    return $lowPressureValue - 10;
-  }, $lowPressure2);
-  $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
-  $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
-} catch (DynamoDbException $e) {
-  echo "Unable to query:\n";
-  echo $e->getMessage() . "\n";
-}
-
-include 'views/polylines.php';
+  return json_encode($params);
+});
