@@ -39,7 +39,8 @@ function initMap() {
   map.mapTypes.set("silver_map", silverMapType);
   map.mapTypes.set("night_map", nightMapType);
   map.mapTypes.set("retro_map", retroMapType);
-  map.setMapTypeId("retro_map");
+  // map.setMapTypeId("retro_map");
+  map.setMapTypeId(profile.mapTypeId);
 
   /* SORT BY DISTANCE */
 
@@ -273,8 +274,8 @@ function initMap() {
     map: map
   });
 
-  animateCircle(line1);
-  animateCircle(line2);
+  // animateCircle(line1);
+  // animateCircle(line2);
   setDevices("deviceId1");
   setDevices("deviceId2");
   var tempData1 = [dates1, tempInt1, tempExt1];
@@ -590,6 +591,32 @@ function setVisible(selector, visible) {
   document.querySelector(selector).style.display = visible ? "block" : "none";
 }
 
+function submitForm() {
+  var from = document.querySelector(".form-date-section .input").value;
+  var deviceId1 = document.querySelector("#deviceId1Select").value;
+  var deviceId2 = document.querySelector("#deviceId2Select").value;
+  doRequest("GET", "/?from=" + from + "&deviceId1=" + deviceId1);
+  initMap();
+}
+
+function doRequest(method, url, params = {}) {
+  var xmlHttp;
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      response = xmlHttp.response;
+      doc = new DOMParser().parseFromString(response, "text/xml");
+      if (method == "GET") {
+        // document.querySelector("html").innerHTML = response;
+      }
+    }
+  };
+  xmlHttp.open(method, url, true);
+  xmlHttp.setRequestHeader("Content-Type", "application/form-data; charset=UTF-8");
+  xmlHttp.send(Array.prototype.map.call(Object.keys(params), function (attribute) {
+    return attribute + "=" + params[attribute];
+  }));
+}
 
 /* EVENTS */
 
@@ -607,3 +634,7 @@ onReady(function () {
   setVisible("body", true);
   setVisible(".spinner-border", false);
 });
+
+// document.querySelectorAll(".gm-style-mtc").addEventListener("click", function () {
+
+// });
