@@ -62,9 +62,21 @@ try {
   }, $lowPressure2);
   $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
   $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
-} catch (DynamoDbException $e) {
-  echo "Unable to query:\n";
-  echo $e->getMessage() . "\n";
+
+  $deviceId1Data = [
+    'dates1' => $dates1,
+    'locations1' => $locations1,
+    'tempInt1' => $tempInt1,
+    'tempExt1' => $tempExt1,
+    'highPressure1' => $highPressure1,
+    'lowPressure1' => $lowPressure1,
+    'compressor1' => $compressor1,
+    'blower1' => $blower1
+  ];
+} catch (exception $e) {
+  ob_start();
+  print_r("\e[31m" . print_r([$e->getMessage()], true) . "\e[0m");
+  error_log(ob_get_clean(), 4);
 }
 
 // include 'views/polylines.php';
