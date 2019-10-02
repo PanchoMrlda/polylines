@@ -1,8 +1,49 @@
+// Global variables
 var map;
 var markers = [];
 var tempChart;
 var pressureChart;
 var voltageChart;
+
+// Profile
+var profile = {};
+
+// Variables for bus 1
+var dates1 = [];
+dates1.unshift('times');
+var locations1 = [];
+var tempInt1 = [];
+tempInt1.unshift('Temp Int Device1');
+var tempExt1 = [];
+tempExt1.unshift('Temp Ext Device1');
+var highPressure1 = [];
+highPressure1.unshift('High Pressure Device1');
+var lowPressure1 = [];
+lowPressure1.unshift('Low Pressure Device1');
+var compressor1 = [];
+compressor1.unshift('Compressor Device1');
+var blower1 = [];
+blower1.unshift('Blower Device1');
+
+// Variables bus 2
+var dates2 = [];
+dates2.unshift('times');
+var locations2 = [];
+var tempInt2 = [];
+tempInt2.unshift('Temp Int Device2');
+var tempExt2 = [];
+tempExt2.unshift('Temp Ext Device2');
+var highPressure2 = [];
+highPressure2.unshift('High Pressure Device2');
+var lowPressure2 = [];
+lowPressure2.unshift('Low Pressure Device2');
+var compressor2 = [];
+compressor2.unshift('Compressor Device2');
+var blower2 = [];
+blower2.unshift('Blower Device2');
+
+
+/* MAP FUNCTIONS */
 
 function initMap() {
   var flightPlanCoordinates = locations1;
@@ -284,11 +325,10 @@ function initMap() {
   var pressureData1 = [dates1, lowPressure1, highPressure1];
   var pressureData2 = [dates2, lowPressure2, highPressure2];
   pressureChart = generateChart("#pressureChart", pressureData1, pressureData2);
-  var voltageData1 = [dates1, compressor1, blower1];
-  var voltageData2 = [dates2, compressor2, blower2];
-  voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
-  document.querySelector("#distance1").value = getTotalDistance(locations1);
-  document.querySelector("#distance2").value = getTotalDistance(locations2);
+  // var voltageData1 = [dates1, compressor1, blower1];
+  // var voltageData2 = [dates2, compressor2, blower2];
+  // voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
+  updateDistance();
 }
 
 
@@ -574,13 +614,13 @@ function updateChartsWidth() {
   setTimeout(() => {
     generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
     generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
-    generateChart("#voltageChart", [dates1, compressor1, blower1]);
+    // generateChart("#voltageChart", [dates1, compressor1, blower1]);
   }, 50);
 }
 
-function onReady(callback) {
+function onReady(callback, selector) {
   var intervalId = window.setInterval(function () {
-    if (document.querySelector("body") !== undefined) {
+    if (document.querySelector(selector) !== undefined) {
       window.clearInterval(intervalId);
       callback.call(this);
     }
@@ -592,31 +632,101 @@ function setVisible(selector, visible) {
 }
 
 function submitForm() {
-  var from = document.querySelector(".form-date-section .input").value;
-  var deviceId1 = document.querySelector("#deviceId1Select").value;
-  var deviceId2 = document.querySelector("#deviceId2Select").value;
-  doRequest("GET", "/?from=" + from + "&deviceId1=" + deviceId1);
-  initMap();
+  var fromElem = document.querySelector(".form-date-section .input");
+  var deviceId1Elem = document.querySelector("#deviceId1Select");
+  var deviceId2Elem = document.querySelector("#deviceId2Select");
+  var requestParams = {
+    from: fromElem.value,
+    deviceId1: deviceId1Elem.value,
+    deviceId2: deviceId2Elem.value
+  }
+  var url = "/dynamo";
+  deviceId1Elem.blur();
+  deviceId2Elem.blur();
+  setVisible(".spinner-border", true);
+  doRequest("GET", url, applyDynamoDbChanges, requestParams);
 }
 
-function doRequest(method, url, params = {}) {
-  var xmlHttp;
-  xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      response = xmlHttp.response;
-      doc = new DOMParser().parseFromString(response, "text/xml");
-      if (method == "GET") {
-        // document.querySelector("html").innerHTML = response;
-      }
-    }
-  };
-  xmlHttp.open(method, url, true);
-  xmlHttp.setRequestHeader("Content-Type", "application/form-data; charset=UTF-8");
-  xmlHttp.send(Array.prototype.map.call(Object.keys(params), function (attribute) {
-    return attribute + "=" + params[attribute];
-  }));
+function doRequest (requestMethod, requestUrl, callback, params = {}) {
+  var url = new URL(location.origin + requestUrl);
+  var fetchParams = {
+    method: requestMethod
+  }
+  var urlStringParams = "";
+  if (requestMethod == "GET") {
+    urlStringParams = "?" + formatRequestParams(params);
+  }
+  url.search = new URLSearchParams(params)
+  fetch(url, fetchParams)
+	.then(function (response) {
+		return response.json();
+	})
+	.then(function (data) {
+    setVisible(".spinner-border", false);
+    callback(data);
+    window.history.replaceState({}, document.title, urlStringParams);
+	});
 }
+
+function formatRequestParams(params) {
+  return Array.prototype.map.call(Object.keys(params), function (attribute) {
+    return attribute + "=" + params[attribute];
+  }).join("&");
+}
+
+function applyDynamoDbChanges(responseParams) {
+  var fromElem = document.querySelector(".form-date-section .input");
+  var deviceId1Elem = document.querySelector("#deviceId1Select");
+  var deviceId2Elem = document.querySelector("#deviceId2Select");
+  updateDevicesVariables(responseParams);
+  fromElem.value = responseParams.from;
+  initMap();
+  deviceId1Elem.value = responseParams.deviceId1.deviceName;
+  deviceId2Elem.value = responseParams.deviceId2.deviceName;
+  updateDistance();
+}
+
+function updateDevicesVariables(responseParams) {
+  // Variables for bus 1
+  dates1 = responseParams.deviceId1.dates1;
+  dates1.unshift("times");
+  locations1 = responseParams.deviceId1.locations1;
+  tempInt1 = responseParams.deviceId1.tempInt1;
+  tempInt1.unshift("Temp Int " + responseParams.deviceId1.deviceName);
+  tempExt1 = responseParams.deviceId1.tempExt1;
+  tempExt1.unshift("Temp Ext " + responseParams.deviceId1.deviceName);
+  highPressure1 = responseParams.deviceId1.highPressure1;
+  highPressure1.unshift("High Pressure " + responseParams.deviceId1.deviceName);
+  lowPressure1 = responseParams.deviceId1.lowPressure1;
+  lowPressure1.unshift("Low Pressure " + responseParams.deviceId1.deviceName);
+  // compressor1 = responseParams.deviceId1.compressor1;
+  // compressor1.unshift("Compressor " + responseParams.deviceId1.deviceName);
+  // blower1 = responseParams.deviceId1.blower1;
+  // blower1.unshift("Blower " + responseParams.deviceId1.deviceName);
+
+  // Variables bus 2
+  dates2 = responseParams.deviceId2.dates2;
+  dates2.unshift("times");
+  locations2 = responseParams.deviceId2.locations2;
+  tempInt2 = responseParams.deviceId2.tempInt2;
+  tempInt2.unshift("Temp Int " + responseParams.deviceId2.deviceName);
+  tempExt2 = responseParams.deviceId2.tempExt2;
+  tempExt2.unshift("Temp Ext " + responseParams.deviceId2.deviceName);
+  highPressure2 = responseParams.deviceId2.highPressure2;
+  highPressure2.unshift("High Pressure " + responseParams.deviceId2.deviceName);
+  lowPressure2 = responseParams.deviceId2.lowPressure2;
+  lowPressure2.unshift("Low Pressure " + responseParams.deviceId2.deviceName);
+  // compressor2 = responseParams.deviceId2.compressor2;
+  // compressor2.unshift("Compressor " + responseParams.deviceId2.deviceName);
+  // blower2 = responseParams.deviceId2.blower2;
+  // blower2.unshift("Blower " + responseParams.deviceId2.deviceName);
+}
+
+function updateDistance() {
+  document.querySelector("#distance1").value = getTotalDistance(locations1);
+  document.querySelector("#distance2").value = getTotalDistance(locations2);
+}
+
 
 /* EVENTS */
 
@@ -627,13 +737,13 @@ window.addEventListener("orientationchange", function () {
 window.addEventListener("resize", function () {
   tempChart.resize();
   pressureChart.resize();
-  voltageChart.resize();
+  // voltageChart.resize();
 }, false);
 
 onReady(function () {
   setVisible("body", true);
   setVisible(".spinner-border", false);
-});
+}, "body");
 
 // document.querySelectorAll(".gm-style-mtc").addEventListener("click", function () {
 
