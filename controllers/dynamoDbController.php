@@ -6,7 +6,6 @@ use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
-// $secretsData = json_decode(file_get_contents('secrets.json'), true);
 $dynamodb = new DynamoDbClient([
   'region' => $_SESSION['secretsData']['aws']['region'],
   'version' => 'latest',
@@ -47,6 +46,7 @@ try {
   }
   // $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
   // $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
+
   // Variables bus 2
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
   if (empty(count($payloads2)) && !empty($deviceId2)) {
