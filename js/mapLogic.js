@@ -329,6 +329,7 @@ function initMap() {
   // var voltageData2 = [dates2, compressor2, blower2];
   // voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
   updateDistance();
+  initMapEvents();
 }
 
 
@@ -647,7 +648,7 @@ function submitForm() {
   doRequest("GET", url, applyDynamoDbChanges, requestParams);
 }
 
-function doRequest (requestMethod, requestUrl, callback, params = {}) {
+function doRequest(requestMethod, requestUrl, callback, params = {}) {
   var url = new URL(location.origin + requestUrl);
   var fetchParams = {
     method: requestMethod
@@ -655,17 +656,27 @@ function doRequest (requestMethod, requestUrl, callback, params = {}) {
   var urlStringParams = "";
   if (requestMethod == "GET") {
     urlStringParams = "?" + formatRequestParams(params);
+    url.search = new URLSearchParams(params)
+  } else {
+    fetchParams.body = formatRequestParams(params);
+    fetchParams.headers = {
+      // 'Content-Type': 'application/json'
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
   }
-  url.search = new URLSearchParams(params)
   fetch(url, fetchParams)
-	.then(function (response) {
-		return response.json();
-	})
-	.then(function (data) {
-    setVisible(".spinner-border", false);
-    callback(data);
-    window.history.replaceState({}, document.title, urlStringParams);
-	});
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      setVisible(".spinner-border", false);
+      if (callback !== undefined) {
+        callback(data);
+      }
+      if (requestMethod == "GET") {
+        window.history.replaceState({}, document.title, urlStringParams);
+      }
+    });
 }
 
 function formatRequestParams(params) {
@@ -684,6 +695,10 @@ function applyDynamoDbChanges(responseParams) {
   deviceId1Elem.value = responseParams.deviceId1.deviceName;
   deviceId2Elem.value = responseParams.deviceId2.deviceName;
   updateDistance();
+}
+
+function setProfile(responseParams) {
+  profile = responseParams;
 }
 
 function updateDevicesVariables(responseParams) {
@@ -745,6 +760,37 @@ onReady(function () {
   setVisible(".spinner-border", false);
 }, "body");
 
-// document.querySelectorAll(".gm-style-mtc").addEventListener("click", function () {
-
-// });
+function initMapEvents() {
+  setTimeout(() => {
+    document.querySelector(".gm-style-mtc:nth-child(5)").addEventListener("click", function () {
+      // document.querySelector("body").style.backgroundColor = "#ffffff";
+      doRequest("POST", "/profile", null, {
+        mapTypeId: "retro_map"
+      });
+    });
+    document.querySelector(".gm-style-mtc:nth-child(4)").addEventListener("click", function () {
+      // document.querySelector("body").style.backgroundColor = "#222f38";
+      doRequest("POST", "/profile", setProfile, {
+        mapTypeId: "night_map"
+      });
+    });
+    document.querySelector(".gm-style-mtc:nth-child(3)").addEventListener("click", function () {
+      // document.querySelector("body").style.backgroundColor = "#ffffff";
+      doRequest("POST", "/profile", setProfile, {
+        mapTypeId: "silver_map"
+      });
+    });
+    document.querySelector(".gm-style-mtc:nth-child(2)").addEventListener("click", function () {
+      // document.querySelector("body").style.backgroundColor = "#ffffff";
+      doRequest("POST", "/profile", setProfile, {
+        mapTypeId: "satellite"
+      });
+    });
+    document.querySelector(".gm-style-mtc:nth-child(1)").addEventListener("click", function () {
+      // document.querySelector("body").style.backgroundColor = "#ffffff";
+      doRequest("POST", "/profile", setProfile, {
+        mapTypeId: "roadmap"
+      });
+    });
+  }, 3000);
+}
