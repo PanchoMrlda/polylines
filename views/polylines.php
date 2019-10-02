@@ -91,10 +91,10 @@
     highPressure1.unshift('High Pressure' + ' (<?php echo $deviceId1 ?>)');
     var lowPressure1 = <?php echo (json_encode($lowPressure1)) ?>;
     lowPressure1.unshift('Low Pressure' + ' (<?php echo $deviceId1 ?>)');
-    var compressor1 = <?php echo (json_encode($compressor1)) ?>;
-    compressor1.unshift('Compressor' + ' (<?php echo $deviceId1 ?>)');
-    var blower1 = <?php echo (json_encode($blower1)) ?>;
-    blower1.unshift('Blower' + ' (<?php echo $deviceId1 ?>)');
+    // var compressor1 = <?php echo (json_encode($compressor1)) ?>;
+    // compressor1.unshift('Compressor' + ' (<?php echo $deviceId1 ?>)');
+    // var blower1 = <?php echo (json_encode($blower1)) ?>;
+    // blower1.unshift('Blower' + ' (<?php echo $deviceId1 ?>)');
     // Variables bus 2
     var dates2 = <?php echo (json_encode($dates2)) ?>;
     dates2.unshift('times');
@@ -107,10 +107,10 @@
     highPressure2.unshift('High Pressure' + ' (<?php echo $deviceId2 ?>)');
     var lowPressure2 = <?php echo (json_encode($lowPressure2)) ?>;
     lowPressure2.unshift('Low Pressure' + ' (<?php echo $deviceId2 ?>)');
-    var compressor2 = <?php echo (json_encode($compressor2)) ?>;
-    compressor2.unshift('Compressor' + ' (<?php echo $deviceId2 ?>)');
-    var blower2 = <?php echo (json_encode($blower2)) ?>;
-    blower2.unshift('Blower' + ' (<?php echo $deviceId2 ?>)');
+    // var compressor2 = <?php echo (json_encode($compressor2)) ?>;
+    // compressor2.unshift('Compressor' + ' (<?php echo $deviceId2 ?>)');
+    // var blower2 = <?php echo (json_encode($blower2)) ?>;
+    // blower2.unshift('Blower' + ' (<?php echo $deviceId2 ?>)');
   </script>
   <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_SESSION['secretsData']['google']['mapsKey'] ?>">
   </script>
