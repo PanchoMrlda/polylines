@@ -40,11 +40,13 @@ try {
   $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
   $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
   $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
-  $lowPressure1 = array_map(function ($lowPressureValue) {
-    return $lowPressureValue - 10;
-  }, $lowPressure1);
-  $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
-  $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
+  foreach ($lowPressure1 as $index => $value) {
+    if (abs($highPressure1[$index] - $lowPressure1[$index]) >= 8) {
+      $lowPressure1[$index] = $lowPressure1[$index] - 10;
+    }
+  }
+  // $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
+  // $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
   // Variables bus 2
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
   if (empty(count($payloads2)) && !empty($deviceId2)) {
@@ -57,26 +59,41 @@ try {
   $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
   $highPressure2 = $dynamoHelper->getSensorValues($payloads2, '1003n');
   $lowPressure2 = $dynamoHelper->getSensorValues($payloads2, '1002n');
-  $lowPressure2 = array_map(function ($lowPressureValue) {
-    return $lowPressureValue - 10;
-  }, $lowPressure2);
-  $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
-  $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
+  foreach ($lowPressure2 as $index => $value) {
+    if (abs($highPressure2[$index] - $lowPressure2[$index]) >= 8) {
+      $lowPressure2[$index] = $lowPressure2[$index] - 10;
+    }
+  }
+  // $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
+  // $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
 
-  $deviceId1Data = [
-    'dates1' => $dates1,
-    'locations1' => $locations1,
-    'tempInt1' => $tempInt1,
-    'tempExt1' => $tempExt1,
-    'highPressure1' => $highPressure1,
-    'lowPressure1' => $lowPressure1,
-    'compressor1' => $compressor1,
-    'blower1' => $blower1
+  $dynamoDbData = [
+    'from' => date('Y-m-d', $from / 1000),
+    'deviceId1' => [
+      'deviceName' => $deviceId1,
+      'dates1' => $dates1,
+      'locations1' => $locations1,
+      'tempInt1' => $tempInt1,
+      'tempExt1' => $tempExt1,
+      'highPressure1' => $highPressure1,
+      'lowPressure1' => $lowPressure1,
+      // 'compressor1' => $compressor1,
+      // 'blower1' => $blower1
+    ],
+    'deviceId2' => [
+      'deviceName' => $deviceId2,
+      'dates2' => $dates2,
+      'locations2' => $locations2,
+      'tempInt2' => $tempInt2,
+      'tempExt2' => $tempExt2,
+      'highPressure2' => $highPressure2,
+      'lowPressure2' => $lowPressure2,
+      // 'compressor2' => $compressor2,
+      // 'blower2' => $blower2
+    ]
   ];
 } catch (exception $e) {
   ob_start();
   print_r("\e[31m" . print_r([$e->getMessage()], true) . "\e[0m");
   error_log(ob_get_clean(), 4);
 }
-
-// include 'views/polylines.php';
