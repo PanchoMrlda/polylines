@@ -24,19 +24,24 @@ if ($ipLocation['geoplugin_timezone']) {
   $defaultTimezone = 'Europe/Madrid';
 }
 date_default_timezone_set($defaultTimezone);
-// Define routes
 $router = new Router(new Request);
-$router->get('/', function ($request) {
+
+// Define GET routes
+$router->get('/dynamo', function () {
+  include_once "controllers/dynamoDbController.php";
+  return json_encode($dynamoDbData);
+  return 'pancho';
+});
+$router->get('/profile', function () {
+  return json_encode($_SESSION['profile']);
+});
+$router->get('/', function () {
   include_once "controllers/dynamoDbController.php";
   include "views/polylines.php";
-  // $params = $request->getBody();
-  // return json_encode($params);
 });
-// $router->get('/profile', function ($request) {
-//   return json_encode($_SESSION['profile']);
-// });
+
+// Define POST routes
 $router->post('/profile', function ($request) {
-  // return json_encode($request->getBody());
   $params = $request->getBody();
   foreach ($params as $key => $value) {
     $_SESSION['profile'][$key] = $value;
