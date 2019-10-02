@@ -7,7 +7,7 @@ class Router
     "POST"
   );
 
-  function __construct(IRequest $request)
+  function __construct(Request $request)
   {
     $this->request = $request;
   }
@@ -28,6 +28,9 @@ class Router
    private function formatRoute($route)
   {
     $result = rtrim($route, '/');
+    if (strpos($route, '?') !== false) {
+      $result = substr($result, 0, strpos($result, "?"));
+    }
     if ($result === '') {
       return '/';
     }
