@@ -1,9 +1,6 @@
 <?php
-use function GuzzleHttp\json_encode;
 
-include_once 'IRequest.php';
-
-class Request implements IRequest
+class Request
 {
   function __construct()
   {
@@ -32,22 +29,14 @@ class Request implements IRequest
   public function getBody()
   {
     if ($this->requestMethod == "GET") {
-      // return;
-      $body = array();
-      foreach ($_GET as $key => $value) {
-        // $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-        $body[$key] = $value;
-      }
-      return $_GET;
+      return;
     }
     if ($this->requestMethod == "POST") {
       $body = array();
       foreach ($_POST as $key => $value) {
         $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-        // $body[$key] = $value;
       }
       return $body;
     }
   }
 }
-// doRequest('post', 'profile', {'mapTypeId': ''})
