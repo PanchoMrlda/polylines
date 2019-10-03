@@ -24,8 +24,8 @@
     <form action="/">
       <section class="form-last-reading-section input-group-prepend">
         <span class="justify-content-center span input-group-text">Previous reading</span>
-        <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from" disabled="disabled" />
-        <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from" disabled="disabled" />
+        <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from1" disabled="disabled" />
+        <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from2" disabled="disabled" />
       </section>
       <section class="form-date-section input-group-prepend">
         <span class="justify-content-center span input-group-text">Date</span>
