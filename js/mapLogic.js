@@ -718,6 +718,12 @@ function updateDevicesVariables(responseParams) {
   // compressor1.unshift("Compressor " + responseParams.deviceId1.deviceName);
   // blower1 = responseParams.deviceId1.blower1;
   // blower1.unshift("Blower " + responseParams.deviceId1.deviceName);
+  lastReading1 = responseParams.deviceId1.lastReading;
+  if (dates1.length == 1) {
+    document.querySelector("[name=from1]").value = lastReading1;
+  } else {
+    document.querySelector("[name=from1]").value = "";
+  }
 
   // Variables bus 2
   dates2 = responseParams.deviceId2.dates2;
@@ -735,6 +741,12 @@ function updateDevicesVariables(responseParams) {
   // compressor2.unshift("Compressor " + responseParams.deviceId2.deviceName);
   // blower2 = responseParams.deviceId2.blower2;
   // blower2.unshift("Blower " + responseParams.deviceId2.deviceName);
+  lastReading2 = responseParams.deviceId2.lastReading;
+  if (dates2.length == 1) {
+    document.querySelector("[name=from2]").value = lastReading2;
+  } else {
+    document.querySelector("[name=from2]").value = "";
+  }
 }
 
 function updateDistance() {
