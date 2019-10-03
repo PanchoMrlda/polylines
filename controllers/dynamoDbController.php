@@ -79,6 +79,7 @@ try {
       'lowPressure1' => $lowPressure1,
       // 'compressor1' => $compressor1,
       // 'blower1' => $blower1
+      'lastReading' => $lastReading1,
     ],
     'deviceId2' => [
       'deviceName' => $deviceId2,
@@ -90,6 +91,7 @@ try {
       'lowPressure2' => $lowPressure2,
       // 'compressor2' => $compressor2,
       // 'blower2' => $blower2
+      'lastReading' => $lastReading2
     ]
   ];
 } catch (exception $e) {
