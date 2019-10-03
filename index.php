@@ -5,7 +5,9 @@ include_once 'Request.php';
 include_once 'Router.php';
 
 $_SESSION['secretsData'] = json_decode(file_get_contents('secrets.json'), true);
-$_SESSION['profile']['mapTypeId'] = 'retro_map';
+if (empty($_SESSION['profile']['mapTypeId'])) {
+  $_SESSION['profile']['mapTypeId'] = 'retro_map';
+}
 // Get the ip address
 if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
   // check ip from share internet
