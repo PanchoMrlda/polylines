@@ -50,13 +50,13 @@ function initMap() {
 
   /* Set map styles here */
   var silverMapType = new google.maps.StyledMapType(silverMap, {
-    name: "Silver Map"
+    name: "Silver"
   });
   var nightMapType = new google.maps.StyledMapType(nightMap, {
-    name: "Night Mode Map"
+    name: "Night Mode"
   });
   var retroMapType = new google.maps.StyledMapType(retroMap, {
-    name: "Retro Map"
+    name: "Retro"
   });
 
   map = new google.maps.Map(document.getElementById("map"), {
