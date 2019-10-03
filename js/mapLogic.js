@@ -761,32 +761,43 @@ onReady(function () {
 }, "body");
 
 function initMapEvents() {
+  var x = window.matchMedia("(max-width: 700px)");
+  var selector;
+  var mapElements;
+
   setTimeout(() => {
-    document.querySelector(".gm-style-mtc:nth-child(5)").addEventListener("click", function () {
+    if (x.matches) {
+      selector = "#map > div > div > div.gmnoprint.gm-style-mtc > div:nth-child(2)";
+      mapElements = document.querySelector(selector).children;
+    } else {
+      mapElements = document.querySelectorAll(".gm-style-mtc");
+    }
+    mapElements[4].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
-      doRequest("POST", "/profile", null, {
+      map.setOptions({styles: styles['hide']});
+      doRequest("POST", "/profile", setProfile, {
         mapTypeId: "retro_map"
       });
     });
-    document.querySelector(".gm-style-mtc:nth-child(4)").addEventListener("click", function () {
+    mapElements[3].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#222f38";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "night_map"
       });
     });
-    document.querySelector(".gm-style-mtc:nth-child(3)").addEventListener("click", function () {
+    mapElements[2].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "silver_map"
       });
     });
-    document.querySelector(".gm-style-mtc:nth-child(2)").addEventListener("click", function () {
+    mapElements[1].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "satellite"
       });
     });
-    document.querySelector(".gm-style-mtc:nth-child(1)").addEventListener("click", function () {
+    mapElements[0].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "roadmap"
