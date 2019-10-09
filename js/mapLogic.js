@@ -496,6 +496,11 @@ function assignRegions(chartId) {
   if (chartId == "#tempChart") {
     compressorRegions = calculateCompressorRegions();
     compressorRegions.map(region => regions.push(region));
+  } else if (chartId == "#pressureChart") {
+    highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies);
+    highPressureWarningRegions.map(region => regions.push(region));
+    highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts);
+    highPressureWarningRegions.map(region => regions.push(region));
   }
   return regions;
 }
@@ -532,6 +537,72 @@ function calculateCompressorRegions() {
     }
   }
   return regionsToAdd;
+}
+
+function calculateAlertRegions(regionClass, timeLimit, callback) {
+  let regionsToAdd = [];
+  let lastStartDate = dates1[1];
+  let lastEndDate = dates1[dates1.length - 1];
+  for (let index = 1; index < highPressure1.length; index++) {
+    if (callback(index)) {
+      lastEndDate = dates1[index];
+      if (index == (highPressure1.length - 1)) {
+        const region = {
+          axis: "x",
+          start: lastStartDate,
+          end: dates1[index],
+          class: regionClass
+        };
+        if (new Date(region.end) - new Date(region.start) >= (timeLimit * 60000)) {
+          regionsToAdd.push(region);
+        }
+      }
+    } else {
+      const region = {
+        axis: "x",
+        start: lastStartDate,
+        end: lastEndDate,
+        class: regionClass
+      };
+      if (lastStartDate != lastEndDate &&
+        lastEndDate != dates1[dates1.length - 1]) {
+        if (new Date(region.end) - new Date(region.start) >= (timeLimit * 60000)) {
+          regionsToAdd.push(region);
+        }
+      }
+      lastStartDate = dates1[index];
+      lastEndDate = dates1[index];
+    }
+  }
+  return regionsToAdd;
+}
+
+function highPressureAnomalies(index) {
+  var alert;
+  var highPressureValues = highPressure1.slice(index - 10, index + 1);
+  var tempExtValues = tempExt1.slice(index - 10, index + 1);
+  if (compressorOn(highPressure1[index], lowPressure1[index])) {
+    alert = highPressureValues.every((elem, valueIndex) => {
+      return tempExtValues[valueIndex] > 25 && elem < 35;
+    })
+  } else {
+    alert = false;
+  }
+  return alert;
+}
+
+function highPressureAlerts(index) {
+  var alert;
+  var highPressureValues = highPressure1.slice(index - 10, index + 1);
+  var tempExtValues = tempExt1.slice(index - 10, index + 1);
+  if (compressorOn(highPressure1[index], lowPressure1[index])) {
+    alert = highPressureValues.every((elem, valueIndex) => {
+      return tempExtValues[valueIndex] < 35 && elem >= 70;
+    })
+  } else {
+    alert = false;
+  }
+  return alert;
 }
 
 function compressorOn(highPressure, lowPressure) {
@@ -786,7 +857,9 @@ function initMapEvents() {
     }
     mapElements[4].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
-      map.setOptions({styles: styles['hide']});
+      map.setOptions({
+        styles: styles['hide']
+      });
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "retro_map"
       });
