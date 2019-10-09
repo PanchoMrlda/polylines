@@ -112,6 +112,18 @@
   fill-opacity: 0.1;
 }
 
+/*-- Region High Pressure Warning --*/
+.c3-region.regionHighPressureWarning {
+  fill: orange;
+  fill-opacity: 0.1;
+}
+
+/*-- Region High Pressure Danger --*/
+.c3-region.regionHighPressureDanger {
+  fill: red;
+  fill-opacity: 0.1;
+}
+
 /*-- Region Warning --*/
 .c3-region.regionWarning {
   fill: orange;
