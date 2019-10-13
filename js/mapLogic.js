@@ -902,5 +902,5 @@ function initMapEvents() {
         mapTypeId: "roadmap"
       });
     });
-  }, 3000);
+  }, 2000);
 }
