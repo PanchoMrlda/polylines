@@ -507,10 +507,9 @@ function assignRegions(chartId) {
     end: minDanger,
     class: "regionDanger"
   }]
-  if (chartId == "#tempChart") {
+  if (chartId == "#pressureChart") {
     compressorRegions = calculateCompressorRegions();
     compressorRegions.map(region => regions.push(region));
-  } else if (chartId == "#pressureChart") {
     highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies);
     highPressureWarningRegions.map(region => regions.push(region));
     highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts);
