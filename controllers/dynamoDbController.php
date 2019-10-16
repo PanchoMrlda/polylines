@@ -39,11 +39,6 @@ try {
   $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
   $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
   $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
-  foreach ($lowPressure1 as $index => $value) {
-    if (abs($highPressure1[$index] - $lowPressure1[$index]) >= 8) {
-      $lowPressure1[$index] = $lowPressure1[$index] - 10;
-    }
-  }
   // $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
   // $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
 
@@ -59,11 +54,6 @@ try {
   $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
   $highPressure2 = $dynamoHelper->getSensorValues($payloads2, '1003n');
   $lowPressure2 = $dynamoHelper->getSensorValues($payloads2, '1002n');
-  foreach ($lowPressure2 as $index => $value) {
-    if (abs($highPressure2[$index] - $lowPressure2[$index]) >= 8) {
-      $lowPressure2[$index] = $lowPressure2[$index] - 10;
-    }
-  }
   // $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
   // $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
 
