@@ -678,8 +678,8 @@ function getDistanceFromLocations(locationPoint1, locationPoint2) {
 
 function getTotalDistance(locations) {
   distance = 0;
-  for (let index = 0; index < locations.length - 1; index++) {
-    distance += getDistanceFromLocations(locations[index + 1], locations[index]);
+  for (let index = 1; index < locations.length - 1; index++) {
+    distance += getDistanceFromLocations(locations[index - 1], locations[index]);
   }
   return distance.toFixed(2);
 }
