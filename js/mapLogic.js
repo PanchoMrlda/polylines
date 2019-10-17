@@ -591,27 +591,21 @@ function calculateAlertRegions(regionClass, timeLimit, callback) {
 }
 
 function highPressureAnomalies(index) {
-  var alert;
-  var highPressureValues = highPressure1.slice(index - 10, index + 1);
-  var tempExtValues = tempExt1.slice(index - 10, index + 1);
-  if (compressorOn(highPressure1[index], lowPressure1[index])) {
-    alert = highPressureValues.every((elem, valueIndex) => {
-      return tempExtValues[valueIndex] > 25 && elem < 35;
-    })
+  var anomaly;
+  if (compressorOn(highPressure1[index], lowPressure1[index]) &&
+    tempExt1[index] > 25 && highPressure1[index] < 35) {
+    anomaly = true;
   } else {
-    alert = false;
+    anomaly = false;
   }
-  return alert;
+  return anomaly;
 }
 
 function highPressureAlerts(index) {
   var alert;
-  var highPressureValues = highPressure1.slice(index - 10, index + 1);
-  var tempExtValues = tempExt1.slice(index - 10, index + 1);
-  if (compressorOn(highPressure1[index], lowPressure1[index])) {
-    alert = highPressureValues.every((elem, valueIndex) => {
-      return tempExtValues[valueIndex] < 35 && elem >= 70;
-    })
+  if (compressorOn(highPressure1[index], lowPressure1[index]) &&
+    tempExt1[index] < 35 && highPressure1[index] >= 70) {
+    alert = true;
   } else {
     alert = false;
   }
