@@ -475,10 +475,10 @@ function assignRegions(chartId) {
   var minDanger;
   let compressorRegions;
   if (chartId == "#pressureChart") {
-    maxWarning = 70;
-    maxDanger = 95;
-    minWarning = -15;
-    minDanger = -15;
+    maxWarning = 85;
+    maxDanger = 85;
+    minWarning = -20;
+    minDanger = -20;
   } else if (chartId == "#voltageChart") {
     maxWarning = 27;
     maxDanger = 28;
