@@ -714,16 +714,35 @@ function submitForm() {
   var fromElem = document.querySelector(".form-date-section .input");
   var deviceId1Elem = document.querySelector("#deviceId1Select");
   var deviceId2Elem = document.querySelector("#deviceId2Select");
+  var lastHourElem = document.querySelector("[name=lastHour]");
+  var enrichedElem = document.querySelector("[name=enriched]");
   var requestParams = {
     from: fromElem.value,
     deviceId1: deviceId1Elem.value,
     deviceId2: deviceId2Elem.value
+  }
+  if (enrichedElem.checked) {
+    requestParams.enriched = "true"
+  }
+  if (lastHourElem.checked) {
+    var d = new Date();
+    var h = addZero(d.getHours() - 1);
+    var m = addZero(d.getMinutes());
+    var s = addZero(d.getSeconds());
+    requestParams.from += " " + h + ":" + m + ":" + s;
   }
   var url = "/dynamo";
   deviceId1Elem.blur();
   deviceId2Elem.blur();
   setVisible(".spinner-border", true);
   doRequest("GET", url, applyDynamoDbChanges, requestParams);
+}
+
+function addZero(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+  return i;
 }
 
 function doRequest(requestMethod, requestUrl, callback, params = {}) {
