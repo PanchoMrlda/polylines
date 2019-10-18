@@ -2,3 +2,4 @@ devices.txt
 queries.sql
 secrets.json
 *.DS_Store
+phpcs.xml
