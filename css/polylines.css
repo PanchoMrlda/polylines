@@ -29,11 +29,23 @@ body {
   text-align: center;
 }
 
-.input {
+.input,
+.input-checkbox {
   width: 180px;
   min-width: 180px;
   margin: 0 10px;
   text-align: center;
+}
+
+.input-checkbox {
+  margin: auto 0;
+}
+
+.checkbox {
+  width: 30px;
+  min-width: 30px;
+  margin: 0 6px;
+  vertical-align: middle;
 }
 
 .select {
@@ -68,11 +80,22 @@ body {
     justify-content: center;
   }
 
-  .input {
+  .span {
+    flex-basis: 55%;
+  }
+
+  .input,
+  .input-checkbox {
     width: 45%;
     min-width: 156px;
     margin: 0 auto;
     flex-basis: 45%;
+  }
+
+  .checkbox {
+    width: 15px;
+    min-width: 15px;
+    margin: 0 10px;
   }
 
   .chart {
