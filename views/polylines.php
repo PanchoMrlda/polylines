@@ -30,6 +30,17 @@
       <section class="form-date-section input-group-prepend">
         <span class="justify-content-center span input-group-text">Date</span>
         <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from" onchange="submitForm()" />
+        <span class="justify-content-center input-checkbox">
+          <input class=" input checkbox" type="checkbox" value="true" name="lastHour" onchange="submitForm()" />
+          Last Hour
+        </span>
+      </section>
+      <section class="form-last-reading-section input-group-prepend">
+        <span class="justify-content-center span input-group-text">Data</span>
+        <span class="justify-content-center input-checkbox">
+          <input class="input checkbox" type="checkbox" value="true" name="enriched" onchange="submitForm()" />
+          Enriched
+        </span>
       </section>
       <section class="form-device-section input-group-prepend">
         <span class="justify-content-center span input-group-text">Device Name</span>
