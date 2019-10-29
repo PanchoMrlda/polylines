@@ -333,8 +333,8 @@ function initMap() {
     }
     return element;
   });
-  lowPressure1Converted.unshift('Low Pressure Device1');
-  lowPressure2Converted.unshift('Low Pressure Device2');
+  lowPressure1Converted.unshift(lowPressure1[0]);
+  lowPressure2Converted.unshift(lowPressure2[0]);
   tempChart = generateChart("#tempChart", tempData1, tempData2);
   var pressureData1 = [dates1, lowPressure1Converted, highPressure1];
   var pressureData2 = [dates2, lowPressure2Converted, highPressure2];
