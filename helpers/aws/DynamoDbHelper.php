@@ -100,8 +100,6 @@ class DynamoDbHelper
               $result[] = floatval($values['r']['exttemp']) / 4;
             }
           }
-        } else {
-
         }
       }
     }
@@ -116,7 +114,7 @@ class DynamoDbHelper
       $p3 = 1.528;
       $p4 = 27.81;
       $scale = 0.0689475729;
-      $cleanValue = $scale * (($p1*$value**3.0)+($p2*$value**2.0)+($p3*$value)+ $p4);
+      $cleanValue = $scale * (($p1 * $value ** 3.0) + ($p2 * $value ** 2.0) + ($p3 * $value) + $p4);
       return round($cleanValue, 2);
     }, $pressureValues);
   }
