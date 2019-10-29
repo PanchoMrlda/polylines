@@ -22,7 +22,11 @@ try {
   $deviceId2 = $_GET['deviceId2'];
   if (!empty($_GET['from'])) {
     $from = strtotime($_GET['from']) * 1000;
-    $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+    if (!empty($_GET['to'])) {
+      $to = strtotime($_GET['to']) * 1000;
+    } else {
+      $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+    }
   } else {
     $from = (time() - 60 * 60) * 1000;
     $to = (time() - 60 * 0) * 1000;
