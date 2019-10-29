@@ -672,7 +672,7 @@ function getDistanceFromLocations(locationPoint1, locationPoint2) {
 
 function getTotalDistance(locations) {
   distance = 0;
-  for (let index = 1; index < locations.length - 1; index++) {
+  for (let index = 1; index < locations.length; index++) {
     distance += getDistanceFromLocations(locations[index - 1], locations[index]);
   }
   return distance.toFixed(2);
