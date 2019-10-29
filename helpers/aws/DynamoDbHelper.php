@@ -121,8 +121,14 @@ class DynamoDbHelper
       }
     ');
 
+    if ($_GET['enriched'] == true) {
+      $tableName = 'DevicesDataEnrichedTable';
+    } else {
+      $tableName = 'DevicesDataTable';
+    }
+
     $params = [
-      'TableName' => 'DevicesDataTable',
+      'TableName' => $tableName,
       'KeyConditionExpression' => "deviceId = :deviceToFind AND receivedTimeStamp BETWEEN :fromTimeStamp AND :toTimeStamp",
       'ExpressionAttributeValues' => $eav,
       'ConsistentRead' => false,
