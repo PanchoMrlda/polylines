@@ -10,16 +10,26 @@ class DynamoDbHelper
 
   public function getDataFromDynamo(String $deviceId = null, Int $from = null, Int $to = null)
   {
+    $dataComplete = false;
     $payloads = [];
     if (!empty($deviceId)) {
-      $params = $this->initParams($deviceId, $from, $to);
-      $raw_data = $this->dynamodb->query($params);
-      if (count($raw_data['Items']) != 0) {
-        $formattedData = $this->getFormattedResult($raw_data);
-        if (in_array('L', array_keys($raw_data['Items'][0]['payload']))) {
-          $payloads = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
+      while (!$dataComplete) {
+        $params = $this->initParams($deviceId, $from, $to);
+        $raw_data = $this->dynamodb->query($params);
+        if (count($raw_data['LastEvaluatedKey']) > 0) {
+          $from = $raw_data['LastEvaluatedKey']['receivedTimeStamp']['N'];
         } else {
-          $payloads = array_column($formattedData, 'payload');
+          $dataComplete = true;
+        }
+        if (count($raw_data['Items']) != 0) {
+          $formattedData = $this->getFormattedResult($raw_data);
+          if (in_array('L', array_keys($raw_data['Items'][0]['payload']))) {
+            $extractedData = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
+            $payloads = array_merge($payloads, $extractedData);
+          } else {
+            $extractedData = array_column($formattedData, 'payload');
+            $payloads = array_merge($payloads, $extractedData);
+          }
         }
       }
     }
