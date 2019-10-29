@@ -554,37 +554,31 @@ function calculateCompressorRegions() {
 
 function calculateAlertRegions(regionClass, timeLimit, callback) {
   let regionsToAdd = [];
-  let lastStartDate = dates1[1];
-  let lastEndDate = dates1[dates1.length - 1];
+  let lastStartDate;
+  let lastEndDate;
   for (let index = 1; index < highPressure1.length; index++) {
     if (callback(index)) {
-      lastEndDate = dates1[index];
-      if (index == (highPressure1.length - 1)) {
-        const region = {
-          axis: "x",
-          start: lastStartDate,
-          end: dates1[index],
-          class: regionClass
-        };
-        if (new Date(region.end) - new Date(region.start) >= (timeLimit * 60000)) {
-          regionsToAdd.push(region);
-        }
+      if (lastStartDate == undefined) {
+        lastStartDate = dates1[index];
+      } else {
+        lastEndDate = dates1[index];
       }
-    } else {
+    } else if ((index == highPressure1.length - 1) || !callback(index)) {
+      if (index == highPressure1.length - 1) {
+
+        lastEndDate = dates1[dates1.length - 1];
+      }
       const region = {
         axis: "x",
         start: lastStartDate,
         end: lastEndDate,
         class: regionClass
       };
-      if (lastStartDate != lastEndDate &&
-        lastEndDate != dates1[dates1.length - 1]) {
-        if (new Date(region.end) - new Date(region.start) >= (timeLimit * 60000)) {
-          regionsToAdd.push(region);
-        }
+      if (new Date(region.end) - new Date(region.start) >= (timeLimit * 60000)) {
+        regionsToAdd.push(region);
       }
-      lastStartDate = dates1[index];
-      lastEndDate = dates1[index];
+      lastStartDate = undefined;
+      lastEndDate = undefined;
     }
   }
   return regionsToAdd;

@@ -3,3 +3,4 @@ queries.sql
 secrets.json
 *.DS_Store
 .vscode/settings.json
+phpcs.xml
