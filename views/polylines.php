@@ -47,17 +47,21 @@
         <select class="select input" name="deviceId1" id="deviceId1Select" onchange="submitForm()">
           <option value="">-</option>
           <?php
-          $deviceNames = [];
-          foreach ($_SESSION['secretsData']['aws']['deviceNames'] as $array) {
-            $key = array_keys($array)[0];
-            $deviceNames[$key] = array_values($array[$key]);
-          }
-          foreach ($deviceNames as $deviceZone => $deviceList) {
-            echo "<optgroup label='$deviceZone'>";
-            foreach ($deviceList as $deviceName) {
-              echo "<option value='$deviceName'>$deviceName</option>";
+          $deviceData = json_decode(file_get_contents('secrets.json'), true)['aws']['deviceNames'];
+          foreach ($deviceData as $array) {
+            foreach ($array as $companyName => $devicesArray) {
+              echo "<optgroup label='$companyName'>";
+              foreach ($devicesArray as $devicesInfo) {
+                foreach ($devicesInfo as $vehicleId => $deviceNames) {
+                  echo "<optgroup label='" . '&nbsp;&nbsp;&nbsp;&nbsp;' . "$vehicleId'>";
+                  foreach ($deviceNames as $deviceName) {
+                    echo "<option value='$deviceName'>&nbsp;&nbsp;&nbsp;&nbsp;$deviceName</option>";
+                  }
+                  echo '</optgroup>';
+                }
+              }
+              echo '</optgroup>';
             }
-            echo '</optgroup>';
           }
           ?>
         </select>
