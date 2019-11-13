@@ -598,7 +598,7 @@ function highPressureAnomalies(index) {
 function highPressureAlerts(index) {
   var alert;
   if (compressorOn(highPressure1[index], lowPressure1[index]) &&
-    tempExt1[index] < 35 && highPressure1[index] >= 70) {
+    tempExt1[index] < 35 && highPressure1[index] >= 85) {
     alert = true;
   } else {
     alert = false;
