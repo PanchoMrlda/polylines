@@ -1,5 +1,7 @@
 <?php
 
+require 'lib/qr/phpqrcode.php';
+session_name('polyliner');
 session_start();
 include_once 'Request.php';
 include_once 'Router.php';
@@ -29,6 +31,15 @@ date_default_timezone_set($defaultTimezone);
 $router = new Router(new Request);
 
 // Define GET routes
+$router->get('/handwriting', function () {
+  include "views/handwriting.php";
+});
+$router->get('/devices/config', function () {
+  include "views/devicesConfig.php";
+});
+$router->get('/qr', function () {
+  echo QRcode::png('http://192.168.1.47:8000/?from=2019-04-03&deviceId1=DTEST_GIRA02');
+});
 $router->get('/dynamo', function () {
   include_once "controllers/dynamoDbController.php";
   return json_encode($dynamoDbData);
