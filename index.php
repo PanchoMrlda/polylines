@@ -32,7 +32,6 @@ $router = new Router(new Request);
 $router->get('/dynamo', function () {
   include_once "controllers/dynamoDbController.php";
   return json_encode($dynamoDbData);
-  return 'pancho';
 });
 $router->get('/profile', function () {
   return json_encode($_SESSION['profile']);
