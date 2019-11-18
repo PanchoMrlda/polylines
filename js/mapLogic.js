@@ -691,19 +691,6 @@ function updateChartsWidth() {
   }, 50);
 }
 
-function onReady(callback, selector) {
-  var intervalId = window.setInterval(function () {
-    if (document.querySelector(selector) !== undefined) {
-      window.clearInterval(intervalId);
-      callback.call(this);
-    }
-  }, 1000);
-}
-
-function setVisible(selector, visible) {
-  document.querySelector(selector).style.display = visible ? "block" : "none";
-}
-
 function submitForm() {
   var fromElem = document.querySelector(".form-date-section .input");
   var deviceId1Elem = document.querySelector("#deviceId1Select");
@@ -737,43 +724,6 @@ function addZero(i) {
     i = "0" + i;
   }
   return i;
-}
-
-function doRequest(requestMethod, requestUrl, callback, params = {}) {
-  var url = new URL(location.origin + requestUrl);
-  var fetchParams = {
-    method: requestMethod
-  }
-  var urlStringParams = "";
-  if (requestMethod == "GET") {
-    urlStringParams = "?" + formatRequestParams(params);
-    url.search = new URLSearchParams(params)
-  } else {
-    fetchParams.body = formatRequestParams(params);
-    fetchParams.headers = {
-      // 'Content-Type': 'application/json'
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
-  }
-  fetch(url, fetchParams)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      setVisible(".spinner-border", false);
-      if (callback !== undefined) {
-        callback(data);
-      }
-      if (requestMethod == "GET") {
-        window.history.replaceState({}, document.title, urlStringParams);
-      }
-    });
-}
-
-function formatRequestParams(params) {
-  return Array.prototype.map.call(Object.keys(params), function (attribute) {
-    return attribute + "=" + params[attribute];
-  }).join("&");
 }
 
 function applyDynamoDbChanges(responseParams) {
@@ -857,11 +807,6 @@ window.addEventListener("resize", function () {
   pressureChart.resize();
   // voltageChart.resize();
 }, false);
-
-onReady(function () {
-  setVisible("body", true);
-  setVisible(".spinner-border", false);
-}, "body");
 
 function initMapEvents() {
   var x = window.matchMedia("(max-width: 700px)");
