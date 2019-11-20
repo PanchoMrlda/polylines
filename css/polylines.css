@@ -24,6 +24,16 @@ body {
 nav {
   width: 100vw;
   max-width: 100vw;
+  color: #e0e0e0!important;
+}
+
+thead tr th:hover {
+  cursor: pointer;
+}
+
+.nodes-section,
+.defroster-section {
+  visibility: collapse;
 }
 
 .span {
