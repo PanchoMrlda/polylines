@@ -3,14 +3,14 @@
 $hvc = fopen('config.hvc', 'w+');
 foreach ($params as $section => $sectionParams) {
   unset($sectionParams['name']);
-  // $sectionFilteredParams = array_diff();
   if (!empty(array_filter(array_values($sectionParams)))) {
-    fwrite($hvc, "\n####################\n");
-    fwrite($hvc, "\n[" . strtoupper($sectionParams['sectiontype']) . "]\n");
+    $type = str_replace(' ', '_', strtoupper($sectionParams['sectiontype']));
     unset($sectionParams['sectiontype']);
+    fwrite($hvc, "\n####################\n");
+    fwrite($hvc, "\n[$type]\n");
     fwrite($hvc, "name=$section\n");
     foreach ($sectionParams as $attribute => $value) {
-      if (!empty($value)) {
+      if ($value != null) {
         fwrite($hvc, "$attribute=$value\n");
       }
     }
