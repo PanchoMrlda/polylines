@@ -1,3 +1,25 @@
+<?php
+$deviceData = json_decode(file_get_contents('secrets.json'), true)['aws']['deviceNames'];
+function printDevices($deviceData)
+{
+  foreach ($deviceData as $array) {
+    foreach ($array as $companyName => $devicesArray) {
+      echo "<optgroup label='$companyName'>";
+      foreach ($devicesArray as $devicesInfo) {
+        foreach ($devicesInfo as $vehicleId => $deviceNames) {
+          echo "<optgroup label='" . '&nbsp;&nbsp;&nbsp;&nbsp;' . "$vehicleId'>";
+          foreach ($deviceNames as $deviceName) {
+            echo "<option value='$deviceName'>&nbsp;&nbsp;&nbsp;&nbsp;$deviceName</option>";
+          }
+          echo '</optgroup>';
+        }
+      }
+      echo '</optgroup>';
+    }
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -49,34 +71,13 @@
         <select class="select input" name="deviceId1" id="deviceId1Select" onchange="submitForm()">
           <option value="">-</option>
           <?php
-          $deviceData = json_decode(file_get_contents('secrets.json'), true)['aws']['deviceNames'];
-          foreach ($deviceData as $array) {
-            foreach ($array as $companyName => $devicesArray) {
-              echo "<optgroup label='$companyName'>";
-              foreach ($devicesArray as $devicesInfo) {
-                foreach ($devicesInfo as $vehicleId => $deviceNames) {
-                  echo "<optgroup label='" . '&nbsp;&nbsp;&nbsp;&nbsp;' . "$vehicleId'>";
-                  foreach ($deviceNames as $deviceName) {
-                    echo "<option value='$deviceName'>&nbsp;&nbsp;&nbsp;&nbsp;$deviceName</option>";
-                  }
-                  echo '</optgroup>';
-                }
-              }
-              echo '</optgroup>';
-            }
-          }
+          printDevices($deviceData);
           ?>
         </select>
         <select class="select input" name="deviceId2" id="deviceId2Select" onchange="submitForm()">
           <option value="">-</option>
           <?php
-          foreach ($deviceNames as $deviceZone => $deviceList) {
-            echo "<optgroup label='$deviceZone'>";
-            foreach ($deviceList as $deviceName) {
-              echo "<option value='$deviceName'>$deviceName</option>";
-            }
-            echo '</optgroup>';
-          }
+          printDevices($deviceData);
           ?>
         </select>
       </section>
