@@ -66,4 +66,10 @@ $router->post('/config', function () {
   $jsonParams = file_get_contents('php://input');
   $params = json_decode($jsonParams, true);
   include_once "controllers/devicesController.php";
+  header('Content-Type: application/octet-stream');
+  header('Content-Disposition: attachment; filename=' . basename('config.hvc'));
+  header('Expires: 0');
+  header('Cache-Control: must-revalidate');
+  header('Pragma: public');
+  header('Content-Length: ' . filesize('config.hvc'));
 });
