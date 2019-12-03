@@ -17,9 +17,20 @@
 
 <body>
   <?php include 'views/layouts/nav.php'; ?>
+  <section class="form-section-names input-group-prepend">
+  <button type="button" class="btn btn-primary" name="createSection">Create Section</button>
+    <select class="select input" name="sectionType" id="sectionTypeSelect" s>
+      <option value="">-</option>
+      <option value="ConnectionParams">Connection Params</option>
+      <option value="Actuator">Actuator</option>
+    </select>
+    <input class="text-center" type="text" name="sectionName" placeholder="Section Name" />
+    <input class="text-center" type="text" name="sectionDesc" placeholder="Section Description" />
+    
+  </section>
   <section class="table-responsive">
     <table class="table table-striped table-sm">
-      <thead class="thead-dark">
+      <!-- <thead class="thead-dark">
         <tr>
           <th scope="col" section="nodes-section">Nodes</th>
           <th scope="col" section="defroster-section">Defroster</th>
@@ -30,9 +41,9 @@
           <th scope="col">Unidad techo</th>
           <th scope="col">Convectores</th>
         </tr>
-      </thead>
+      </thead> -->
       <tbody>
-        <tr class="nodes-section">
+        <!-- <tr class="nodes-section">
           <th scope="row">Nodo</th>
           <td><input class="text-center" type="text" value="Controller Node" disabled="disabled" onchange="updateSection(this)" /></td>
           <td class="text-center"><input class="text-center" type="text" placeholder="Node Id" name="nodeId" onchange="updateSection(this)" /></td>
@@ -174,7 +185,7 @@
           <td><input class="text-center" type="text" placeholder="Section Type" name="sectionType" onchange="updateSection(this)" /></td>
           <td class="text-center"><input class="text-center" type="text" placeholder="Node Id" name="nodeId" onchange="updateSection(this)" /></td>
           <td><input class="text-center" type="hidden" name="CDBlTeSo1C" /></td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </section>
