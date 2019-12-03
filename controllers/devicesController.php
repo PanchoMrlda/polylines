@@ -8,7 +8,9 @@ foreach ($params as $section => $sectionParams) {
     unset($sectionParams['sectiontype']);
     fwrite($hvc, "\n####################\n");
     fwrite($hvc, "\n[$type]\n");
-    fwrite($hvc, "name=$section\n");
+    if (!empty($section)) {
+      fwrite($hvc, "name=$section\n");
+    }
     foreach ($sectionParams as $attribute => $value) {
       if ($value != null) {
         fwrite($hvc, "$attribute=$value\n");
