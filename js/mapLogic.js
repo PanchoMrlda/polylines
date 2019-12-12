@@ -696,14 +696,10 @@ function submitForm() {
   var deviceId1Elem = document.querySelector("#deviceId1Select");
   var deviceId2Elem = document.querySelector("#deviceId2Select");
   var lastHourElem = document.querySelector("[name=lastHour]");
-  var enrichedElem = document.querySelector("[name=enriched]");
   var requestParams = {
     from: fromElem.value,
     deviceId1: deviceId1Elem.value,
     deviceId2: deviceId2Elem.value
-  }
-  if (enrichedElem.checked) {
-    requestParams.enriched = "true"
   }
   if (lastHourElem.checked) {
     var d = new Date();
