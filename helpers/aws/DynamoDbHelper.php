@@ -15,15 +15,15 @@ class DynamoDbHelper
     if (!empty($deviceId)) {
       while (!$dataComplete) {
         $params = $this->initParams($deviceId, $from, $to);
-        $raw_data = $this->dynamodb->query($params);
-        if (count($raw_data['LastEvaluatedKey']) > 0) {
-          $from = $raw_data['LastEvaluatedKey']['receivedTimeStamp']['N'];
+        $rawData = $this->dynamodb->query($params);
+        if (count($rawData['LastEvaluatedKey']) > 0) {
+          $from = $rawData['LastEvaluatedKey']['readingTimestamp']['N'];
         } else {
           $dataComplete = true;
         }
-        if (count($raw_data['Items']) != 0) {
-          $formattedData = $this->getFormattedResult($raw_data);
-          if (in_array('L', array_keys($raw_data['Items'][0]['payload']))) {
+        if (count($rawData['Items']) != 0) {
+          $formattedData = $this->getFormattedResult($rawData);
+          if (in_array('L', array_keys($rawData['Items'][0]['payload']))) {
             $extractedData = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
             $payloads = array_merge($payloads, $extractedData);
           } else {
@@ -129,15 +129,9 @@ class DynamoDbHelper
       }
     ');
 
-    if ($_GET['enriched'] == true) {
-      $tableName = 'DevicesDataEnrichedTable';
-    } else {
-      $tableName = 'DevicesDataTable';
-    }
-
     $params = [
-      'TableName' => $tableName,
-      'KeyConditionExpression' => "deviceId = :deviceToFind AND receivedTimeStamp BETWEEN :fromTimeStamp AND :toTimeStamp",
+      'TableName' => 'DevicesRichDataTable',
+      'KeyConditionExpression' => "deviceId = :deviceToFind AND readingTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp",
       'ExpressionAttributeValues' => $eav,
       'ConsistentRead' => false,
       'ScanIndexForward' => false
@@ -149,11 +143,10 @@ class DynamoDbHelper
   private function getFormattedResult(Aws\Result $dynamoJson)
   {
     $formattedResult = [[]];
-    $locations = [];
     foreach ($dynamoJson['Items'] as $message) {
       $data = array(
         'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
-        'receivedTimeStamp' => $this->marshaler->unmarshalValue($message['receivedTimeStamp']),
+        'readingTimestamp' => $this->marshaler->unmarshalValue($message['readingTimestamp']),
         'payload' => $this->marshaler->unmarshalValue($message['payload'])
       );
       array_unshift($formattedResult, $data);
