@@ -2,7 +2,6 @@
 require 'lib/aws/aws-autoloader.php';
 require 'helpers/aws/DynamoDbHelper.php';
 
-use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
@@ -35,7 +34,9 @@ try {
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
   if (empty(count($payloads1)) && !empty($deviceId1)) {
     $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
-    $lastReading1 =  date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
+    $lastReading1 = date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
+  } else {
+    $lastReading1 = null;
   }
   $dates1 = $dynamoHelper->getDates($payloads1);
   $locations1 = $dynamoHelper->getLocations($payloads1);
@@ -50,7 +51,9 @@ try {
   $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
   if (empty(count($payloads2)) && !empty($deviceId2)) {
     $readings2 = $dynamoHelper->getDataFromDynamo($deviceId2, 0, time() * 1000);
-    $lastReading2 =  date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
+    $lastReading2 = date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
+  } else {
+    $lastReading2 = null;
   }
   $dates2 = $dynamoHelper->getDates($payloads2);
   $locations2 = $dynamoHelper->getLocations($payloads2);
@@ -73,7 +76,7 @@ try {
       'lowPressure1' => $lowPressure1,
       // 'compressor1' => $compressor1,
       // 'blower1' => $blower1
-      'lastReading' => $lastReading1,
+      'lastReading' => $lastReading1
     ],
     'deviceId2' => [
       'deviceName' => $deviceId2,
