@@ -692,7 +692,7 @@ function updateChartsWidth() {
 }
 
 function submitForm() {
-  var fromElem = document.querySelector(".form-date-section .input");
+  var fromElem = document.querySelector(".form-date-section [name=from]");
   var deviceId1Elem = document.querySelector("#deviceId1Select");
   var deviceId2Elem = document.querySelector("#deviceId2Select");
   var lastHourElem = document.querySelector("[name=lastHour]");
