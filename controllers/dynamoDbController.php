@@ -32,11 +32,16 @@ try {
   }
   // Variables bus 1
   $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
+  $lastReading1 = null;
   if (empty(count($payloads1)) && !empty($deviceId1)) {
-    $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
-    $lastReading1 = date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
-  } else {
-    $lastReading1 = null;
+    // Search in the old DynamoDb table if there is no data
+    $dynamoHelper->devicesTable = 'DevicesDataTable';
+    $dynamoHelper->devicesSearchKey = 'receivedTimeStamp';
+    $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
+    if (empty(count($payloads1))) {
+      $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
+      $lastReading1 = date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
+    }
   }
   $dates1 = $dynamoHelper->getDates($payloads1);
   $locations1 = $dynamoHelper->getLocations($payloads1);
