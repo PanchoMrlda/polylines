@@ -857,5 +857,5 @@ function initMapEvents() {
         mapTypeId: "roadmap"
       });
     });
-  }, 2000);
+  }, 3000);
 }
