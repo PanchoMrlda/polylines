@@ -417,7 +417,11 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
   if (chartId == "#tempChart") {
     chartLabel = "ºC";
   } else if (chartId == "#pressureChart") {
-    chartLabel = "ºC";
+    if (document.querySelector("[name=pressureInBars]").checked) {
+      chartLabel = "bar";
+    } else {
+      chartLabel = "ºC";
+    }
   } else if (chartId == "#voltageChart") {
     chartLabel = "V";
   }
@@ -696,6 +700,7 @@ function submitForm() {
   var deviceId1Elem = document.querySelector("#deviceId1Select");
   var deviceId2Elem = document.querySelector("#deviceId2Select");
   var lastHourElem = document.querySelector("[name=lastHour]");
+  var pressureInBars = document.querySelector("[name=pressureInBars]");
   var requestParams = {
     from: fromElem.value,
     deviceId1: deviceId1Elem.value,
@@ -707,6 +712,9 @@ function submitForm() {
     var m = addZero(d.getMinutes());
     var s = addZero(d.getSeconds());
     requestParams.from += " " + h + ":" + m + ":" + s;
+  }
+  if (pressureInBars.checked) {
+    requestParams.pressureInBars = true
   }
   var url = "/dynamo";
   deviceId1Elem.blur();
