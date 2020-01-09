@@ -321,23 +321,23 @@ function initMap() {
   setDevices("deviceId2");
   var tempData1 = [dates1, tempInt1, tempExt1];
   var tempData2 = [dates2, tempInt2, tempExt2];
-  var lowPressure1Converted = lowPressure1.slice(1).map((element, index) => {
-    if (compressorOn(highPressure1[index], lowPressure1[index])) {
-      element -= 10;
-    }
-    return element;
-  });
-  var lowPressure2Converted = lowPressure2.slice(1).map((element, index) => {
-    if (compressorOn(highPressure2[index], lowPressure2[index])) {
-      element -= 10;
-    }
-    return element;
-  });
-  lowPressure1Converted.unshift(lowPressure1[0]);
-  lowPressure2Converted.unshift(lowPressure2[0]);
+  // var lowPressure1Converted = lowPressure1.slice(1).map((element, index) => {
+  //   if (compressorOn(highPressure1[index], lowPressure1[index])) {
+  //     element -= 10;
+  //   }
+  //   return element;
+  // });
+  // var lowPressure2Converted = lowPressure2.slice(1).map((element, index) => {
+  //   if (compressorOn(highPressure2[index], lowPressure2[index])) {
+  //     element -= 10;
+  //   }
+  //   return element;
+  // });
+  // lowPressure1Converted.unshift(lowPressure1[0]);
+  // lowPressure2Converted.unshift(lowPressure2[0]);
   tempChart = generateChart("#tempChart", tempData1, tempData2);
-  var pressureData1 = [dates1, lowPressure1Converted, highPressure1];
-  var pressureData2 = [dates2, lowPressure2Converted, highPressure2];
+  var pressureData1 = [dates1, lowPressure1, highPressure1];
+  var pressureData2 = [dates2, lowPressure2, highPressure2];
   pressureChart = generateChart("#pressureChart", pressureData1, pressureData2);
   // var voltageData1 = [dates1, compressor1, blower1];
   // var voltageData2 = [dates2, compressor2, blower2];
