@@ -6,6 +6,8 @@ class DynamoDbHelper
   {
     $this->dynamodb = $dynamodb;
     $this->marshaler = $marshaler;
+    $this->devicesTable = 'DevicesRichDataTable';
+    $this->devicesSearchKey = 'readingTimestamp';
   }
 
   public function getDataFromDynamo(String $deviceId = null, Int $from = null, Int $to = null)
@@ -17,7 +19,7 @@ class DynamoDbHelper
         $params = $this->initParams($deviceId, $from, $to);
         $rawData = $this->dynamodb->query($params);
         if (count($rawData['LastEvaluatedKey']) > 0) {
-          $from = $rawData['LastEvaluatedKey']['readingTimestamp']['N'];
+          $from = $rawData['LastEvaluatedKey'][$this->devicesSearchKey]['N'];
         } else {
           $dataComplete = true;
         }
@@ -130,8 +132,8 @@ class DynamoDbHelper
     ');
 
     $params = [
-      'TableName' => 'DevicesRichDataTable',
-      'KeyConditionExpression' => "deviceId = :deviceToFind AND readingTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp",
+      'TableName' => $this->devicesTable,
+      'KeyConditionExpression' => "deviceId = :deviceToFind AND $this->devicesSearchKey BETWEEN :fromTimeStamp AND :toTimeStamp",
       'ExpressionAttributeValues' => $eav,
       'ConsistentRead' => false,
       'ScanIndexForward' => false
@@ -146,7 +148,7 @@ class DynamoDbHelper
     foreach ($dynamoJson['Items'] as $message) {
       $data = array(
         'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
-        'readingTimestamp' => $this->marshaler->unmarshalValue($message['readingTimestamp']),
+        $this->devicesSearchKey => $this->marshaler->unmarshalValue($message[$this->devicesSearchKey]),
         'payload' => $this->marshaler->unmarshalValue($message['payload'])
       );
       array_unshift($formattedResult, $data);
