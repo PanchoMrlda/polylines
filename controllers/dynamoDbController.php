@@ -49,7 +49,7 @@ try {
   $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
   $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
   $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
-  if ($_GET['pressureInBars']) {
+  if (!empty($_GET['pressureInBars'])) {
     $highPressure1 = $dynamoHelper->convertPressureValues($highPressure1);
     $lowPressure1 = $dynamoHelper->convertPressureValues($lowPressure1);
   }
