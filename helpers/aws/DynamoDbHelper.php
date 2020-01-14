@@ -93,14 +93,11 @@ class DynamoDbHelper
     if (count($payloads) != 0) {
       foreach ($payloads as $values) {
         if (in_array('r', array_keys($values))) {
-          if (in_array($sensorName, array_keys($values['r']))) {
-            $result[] = floatval($values['r'][$sensorName]);
-          } else {
-            if ($sensorName == '1005n') {
-              $result[] = floatval($values['r']['ld1temp']) / 4;
-            } else if ($sensorName == '1004n') {
-              $result[] = floatval($values['r']['exttemp']) / 4;
-            }
+          $possibleNames = [$sensorName, $this->convertSensorNames($sensorName)];
+          $resultNames = array_intersect($possibleNames, array_keys($values['r']));
+          $sensorRealName = array_pop($resultNames);
+          if (!empty($sensorRealName)) {
+            $result[] = floatval($values['r'][$sensorRealName]);
           }
         }
       }
@@ -158,6 +155,7 @@ class DynamoDbHelper
 
   private function cleanCoordinates(array $coordinates)
   {
+    $lastIndex = 0;
     foreach ($coordinates as $index => $coordinate) {
       if ($coordinate['lat'] == 0) {
         $nextIndex = $index;
@@ -182,5 +180,16 @@ class DynamoDbHelper
       $coordinates[$index] = $lastCoordinate;
     }
     return $coordinates;
+  }
+
+  private function convertSensorNames(String $sensorName)
+  {
+    $params = [
+      '1005n' => '2104201',
+      '1004n' => '5004201',
+      '1003n' => '4093801',
+      '1002n' => '4093901'
+    ];
+    return $params[$sensorName];
   }
 }
