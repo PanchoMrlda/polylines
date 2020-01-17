@@ -831,31 +831,31 @@ function initMapEvents() {
       });
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "retro_map"
-      });
+      }, "application/json");
     });
     mapElements[3].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#222f38";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "night_map"
-      });
+      }, "application/json");
     });
     mapElements[2].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "silver_map"
-      });
+      }, "application/json");
     });
     mapElements[1].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "satellite"
-      });
+      }, "application/json");
     });
     mapElements[0].addEventListener("click", function () {
       // document.querySelector("body").style.backgroundColor = "#ffffff";
       doRequest("POST", "/profile", setProfile, {
         mapTypeId: "roadmap"
-      });
+      }, "application/json");
     });
   }, 3000);
 }
