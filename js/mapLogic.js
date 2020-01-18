@@ -799,6 +799,18 @@ function updateDistance() {
   document.querySelector("#distance2").value = getTotalDistance(locations2);
 }
 
+function setMapStyles(bodyColor, elementsColor) {
+  document.querySelector("body").style.backgroundColor = bodyColor;
+  Array.prototype.map.call(document.querySelectorAll("option"), e => {
+    e.style.backgroundColor = elementsColor;
+  });
+  Array.prototype.map.call(document.querySelectorAll("select"), e => {
+    e.style.backgroundColor = elementsColor;
+  });
+  Array.prototype.map.call(document.querySelectorAll("input"), e => {
+    e.style.backgroundColor = elementsColor;
+  });
+}
 
 /* EVENTS */
 
@@ -820,7 +832,7 @@ function initMapEvents() {
     if (mapElements.length !== 0) {
       clearInterval(checkExist);
       mapElements[4].addEventListener("click", function () {
-        document.querySelector("body").style.backgroundColor = "#e5e3df";
+        setMapStyles("#e5e3df", "#fffffe");
         map.setOptions({
           styles: styles['hide']
         });
@@ -829,25 +841,25 @@ function initMapEvents() {
         }, "application/json");
       });
       mapElements[3].addEventListener("click", function () {
-        document.querySelector("body").style.backgroundColor = "#222f38";
+        setMapStyles("#222f38", "#a9a9a9");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "night_map"
         }, "application/json");
       });
       mapElements[2].addEventListener("click", function () {
-        document.querySelector("body").style.backgroundColor = "#ffffff";
+        setMapStyles("#ffffff", "#fffffe");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "silver_map"
         }, "application/json");
       });
       mapElements[1].addEventListener("click", function () {
-        document.querySelector("body").style.backgroundColor = "#ffffff";
+        setMapStyles("#ffffff", "#fffffe");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "satellite"
         }, "application/json");
       });
       mapElements[0].addEventListener("click", function () {
-        document.querySelector("body").style.backgroundColor = "#ffffff";
+        setMapStyles("#ffffff", "#fffffe");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "roadmap"
         }, "application/json");
