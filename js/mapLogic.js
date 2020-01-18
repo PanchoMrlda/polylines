@@ -813,49 +813,45 @@ window.addEventListener("resize", function () {
 }, false);
 
 function initMapEvents() {
-  var x = window.matchMedia("(max-width: 700px)");
-  var selector;
-  var mapElements;
-
-  setTimeout(() => {
-    if (x.matches) {
-      selector = "#map > div > div > div.gmnoprint.gm-style-mtc > div:nth-child(2)";
-      mapElements = document.querySelector(selector).children;
-    } else {
-      mapElements = document.querySelectorAll(".gm-style-mtc");
-    }
-    mapElements[4].addEventListener("click", function () {
-      // document.querySelector("body").style.backgroundColor = "#ffffff";
-      map.setOptions({
-        styles: styles['hide']
+  var checkExist = setInterval(function () {
+    var mapNames = ["Retro", "Night Mode", "Silver", "Satellite", "Map"];
+    var targetDivs = document.querySelectorAll("div");
+    var mapElements = Array.prototype.filter.call(targetDivs, e => mapNames.includes(e.innerHTML));
+    if (mapElements.length !== 0) {
+      clearInterval(checkExist);
+      mapElements[4].addEventListener("click", function () {
+        document.querySelector("body").style.backgroundColor = "#e5e3df";
+        map.setOptions({
+          styles: styles['hide']
+        });
+        doRequest("POST", "/profile", setProfile, {
+          mapTypeId: "retro_map"
+        }, "application/json");
       });
-      doRequest("POST", "/profile", setProfile, {
-        mapTypeId: "retro_map"
-      }, "application/json");
-    });
-    mapElements[3].addEventListener("click", function () {
-      // document.querySelector("body").style.backgroundColor = "#222f38";
-      doRequest("POST", "/profile", setProfile, {
-        mapTypeId: "night_map"
-      }, "application/json");
-    });
-    mapElements[2].addEventListener("click", function () {
-      // document.querySelector("body").style.backgroundColor = "#ffffff";
-      doRequest("POST", "/profile", setProfile, {
-        mapTypeId: "silver_map"
-      }, "application/json");
-    });
-    mapElements[1].addEventListener("click", function () {
-      // document.querySelector("body").style.backgroundColor = "#ffffff";
-      doRequest("POST", "/profile", setProfile, {
-        mapTypeId: "satellite"
-      }, "application/json");
-    });
-    mapElements[0].addEventListener("click", function () {
-      // document.querySelector("body").style.backgroundColor = "#ffffff";
-      doRequest("POST", "/profile", setProfile, {
-        mapTypeId: "roadmap"
-      }, "application/json");
-    });
-  }, 3000);
+      mapElements[3].addEventListener("click", function () {
+        document.querySelector("body").style.backgroundColor = "#222f38";
+        doRequest("POST", "/profile", setProfile, {
+          mapTypeId: "night_map"
+        }, "application/json");
+      });
+      mapElements[2].addEventListener("click", function () {
+        document.querySelector("body").style.backgroundColor = "#ffffff";
+        doRequest("POST", "/profile", setProfile, {
+          mapTypeId: "silver_map"
+        }, "application/json");
+      });
+      mapElements[1].addEventListener("click", function () {
+        document.querySelector("body").style.backgroundColor = "#ffffff";
+        doRequest("POST", "/profile", setProfile, {
+          mapTypeId: "satellite"
+        }, "application/json");
+      });
+      mapElements[0].addEventListener("click", function () {
+        document.querySelector("body").style.backgroundColor = "#ffffff";
+        doRequest("POST", "/profile", setProfile, {
+          mapTypeId: "roadmap"
+        }, "application/json");
+      });
+    }
+  }, 100); // check every 100ms
 }
