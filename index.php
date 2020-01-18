@@ -53,8 +53,9 @@ $router->get('/', function () {
 });
 
 // Define POST routes
-$router->post('/profile', function ($request) {
-  $params = $request->getBody();
+$router->post('/profile', function () {
+  $jsonParams = file_get_contents('php://input');
+  $params = json_decode($jsonParams, true);
   foreach ($params as $key => $value) {
     $_SESSION['profile'][$key] = $value;
   }
