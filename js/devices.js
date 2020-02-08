@@ -106,15 +106,11 @@ function updateSection(element) {
   targetElement.attributes.setNamedItem(customAttr);
 }
 
-function resetForm(element) {
-  element.form.reset();
-  var inputs = document.querySelectorAll("[type=hidden]");
-  inputs.forEach(input => {
-    Array.prototype.slice.call(input.attributes).forEach(attribute => {
-      if (attribute.name != "class" && attribute.name != "type") {
-        input.setAttribute(attribute.name, "");
-      }
-    });
+function resetForm() {
+  Array.prototype.map.call(document.querySelectorAll("[type=text]"), input => {
+    if (input.getAttribute("disabled") != "") {
+      input.value = "";
+    }
   });
 }
 
