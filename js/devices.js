@@ -132,6 +132,15 @@ function createSection(sectionType, classInstance) {
   var sectionType = sectionType || document.querySelector("[name=sectionType]").value;
   var sectionDesc = document.querySelector("[name=sectionDesc]").value;
   var tableSectionDesc = document.createElement("th");
+  var eraserRow = document.createElement("td");
+  eraserRow.setAttribute("style", "max-width:48px;");
+  var eraserIcon = document.createElement("i");
+  eraserIcon.setAttribute("class", "material-icons");
+  eraserIcon.innerHTML = "remove_circle_outline";
+  eraserIcon.setAttribute("style", "max-width:48px;font-size:18px");
+  eraserIcon.setAttribute("onclick", "removeTableRow(this)");
+  eraserRow.appendChild(eraserIcon);
+  tableRow.appendChild(eraserRow);
   if (sectionType != LOG_ENTRY) {
     tableSectionDesc.innerHTML = sectionDesc;
   }
@@ -185,6 +194,11 @@ function createSection(sectionType, classInstance) {
       createSection(LOG_ENTRY, logEntry);
     });
   }
+}
+
+function removeTableRow(element) {
+  console.log(element.parentElement.parentElement);
+  element.parentElement.parentElement.remove();
 }
 
 /**
