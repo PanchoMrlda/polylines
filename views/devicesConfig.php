@@ -18,8 +18,8 @@
 <body>
   <?php include 'views/layouts/nav.php'; ?>
   <section class="form-section-names input-group-prepend">
-  <button type="button" class="btn btn-primary" name="createSection">Create Section</button>
-    <select class="select input" name="sectionType" id="sectionTypeSelect" s>
+    <button type="button" class="btn btn-primary" name="createSection">Create Section</button>
+    <select class="select input" name="sectionType" id="sectionTypeSelect">
       <option value="">-</option>
       <option value="Controller Node">Controller Node</option>
       <option value="Connection Params">Connection Params</option>
