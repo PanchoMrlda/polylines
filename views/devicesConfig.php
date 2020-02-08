@@ -21,12 +21,14 @@
   <button type="button" class="btn btn-primary" name="createSection">Create Section</button>
     <select class="select input" name="sectionType" id="sectionTypeSelect" s>
       <option value="">-</option>
-      <option value="ConnectionParams">Connection Params</option>
+      <option value="Controller Node">Controller Node</option>
+      <option value="Connection Params">Connection Params</option>
       <option value="Actuator">Actuator</option>
+      <option value="Blower">Blower</option>
+      <option value="Voltage Mon">Voltage Mon</option>
     </select>
     <input class="text-center" type="text" name="sectionName" placeholder="Section Name" />
     <input class="text-center" type="text" name="sectionDesc" placeholder="Section Description" />
-    
   </section>
   <section class="table-responsive">
     <table class="table table-striped table-sm">
