@@ -211,6 +211,16 @@ sectionSelect.addEventListener("click", function () {
   createSection();
 });
 
+$(".row_drag").sortable({
+  delay: 100,
+  stop: function() {
+    var selectedRow = new Array();
+    $('.row_drag>tr').each(function() {
+      selectedRow.push($(this).attr("id"));
+    });
+  }
+});
+
 function testingSuite() {
   // Create sections Connection Params
   document.querySelector("[name=sectionType]").value = "ConnectionParams";
