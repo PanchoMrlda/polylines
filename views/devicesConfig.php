@@ -34,6 +34,9 @@
     <table class="table table-striped table-sm">
       <tbody class="row_drag">
         <tr>
+          <td style="max-width:24px;">
+            <i class="material-icons" style="font-size:18px" onclick="removeTableRow(this)">remove_circle_outline</i>
+          </td>
           <th>Comments</th>
           <td colspan="4">
             <input class="text-center" name="name" placeholder="General Comments" type="text" style="min-width:100%;" onchange="updateSection(this)" data-toggle="tooltip" data-placement="bottom" title="Comentarios a modo de explicación del uso dado al fichero. Por ejemplo, para qué mando se ha creado (Newton, Einstein), para qué vehículo (furgón, autocar, doble piso, etc)">
