@@ -78,17 +78,18 @@ function setConfig() {
   var inputs = document.querySelectorAll("[type=hidden]");
   inputs.forEach(input => {
     var section = {};
+    section.comments = input.parentElement.parentElement.firstElementChild.innerText;
     Array.prototype.slice.call(input.attributes).forEach(attribute => {
       if (attribute.name != "class" && attribute.name != "type") {
         section[attribute.name] = attribute.value;
       }
     });
     requestParams[input.name] = section;
-    if (input.getAttribute("sectiontype") == "controller node") {
+    if (input.getAttribute("sectiontype") == "Controller Node") {
       var globalParams = {
         sectiontype: "global params",
-        name: "Params_nodo" + input.getAttribute("nodeid"),
-        nodeid: input.getAttribute("nodeid"),
+        name: "Params_nodo" + input.getAttribute("node_id"),
+        nodeid: input.getAttribute("node_id"),
         pwmvoltage: 5,
         pwmfrequencyhz: 250
       };
@@ -104,6 +105,16 @@ function updateSection(element) {
   var customAttr = document.createAttribute(element.name);
   customAttr.value = element.value;
   targetElement.attributes.setNamedItem(customAttr);
+  if (targetElement.getAttribute("sectiontype") == LOG_ENTRY) {
+    var deviceName = element.parentElement.parentElement.children[2].lastElementChild.value;
+    var deviceNameAttr = document.createAttribute("deviceName");
+    deviceNameAttr.value = deviceName;
+    targetElement.attributes.setNamedItem(deviceNameAttr);
+    var paramName = element.parentElement.parentElement.children[4].lastElementChild.value;
+    var paramNameAttr = document.createAttribute("paramName");
+    paramNameAttr.value = paramName;
+    targetElement.attributes.setNamedItem(paramNameAttr);
+  }
 }
 
 function resetForm() {
@@ -114,23 +125,40 @@ function resetForm() {
   });
 }
 
-function createSection() {
+function createSection(sectionType, classInstance) {
   var parentElement = document.querySelector(".table tbody");
   var tableRow = document.createElement("tr");
-  var sectionName = document.querySelector("[name=sectionName]").value;
-  var sectionType = document.querySelector("[name=sectionType]").value;
+  var sectionName = document.querySelector("[name=sectionName]").value || CONNECTION_PARAMS;
+  var sectionType = sectionType || document.querySelector("[name=sectionType]").value;
   var sectionDesc = document.querySelector("[name=sectionDesc]").value;
   var tableSectionDesc = document.createElement("th");
-  tableSectionDesc.innerHTML = sectionDesc;
+  if (sectionType != LOG_ENTRY) {
+    tableSectionDesc.innerHTML = sectionDesc;
+  }
   tableRow.appendChild(tableSectionDesc);
-  var classInstance = eval(`new ${sectionType}()`);
-  Object.entries(classInstance).forEach(element => {
+  var classInstance = classInstance || eval(`new ${sectionType.replace(/ +/g, "")}("${sectionName}")`);
+  if (Object.getPrototypeOf(classInstance.constructor).name == "Section") {
+    var entries = Object.entries(classInstance).slice(2);
+  } else {
+    var entries = Object.entries(classInstance);
+  }
+  entries.forEach(element => {
     var tableData = document.createElement("td");
     var child = document.createElement("input");
     child.className = "text-center";
     if (element[0] == "name") {
       child.name = element[0];
-      child.value = sectionName;
+      if (sectionType != LOG_ENTRY) {
+        child.value = sectionName;
+        child.disabled = "disabled";
+      }
+    } else if (element[0] == "deviceName") {
+      child.name = element[0];
+      child.value = classInstance.deviceName;
+      child.disabled = "disabled";
+    } else if (element[0] == "paramName") {
+      child.name = element[0];
+      child.value = classInstance.paramName;
       child.disabled = "disabled";
     } else {
       child.name = element[0];
@@ -145,13 +173,18 @@ function createSection() {
   var section = document.createElement("input");
   section.className = "text-center";
   section.type = "hidden";
-  if (sectionName != "") {
+  if (sectionName != "" && sectionType != LOG_ENTRY) {
     section.name = sectionName;
   }
   section.setAttribute("sectionType", sectionType);
   tableSectionName.appendChild(section);
   tableRow.appendChild(tableSectionName);
   parentElement.appendChild(tableRow);
+  if (classInstance.logEntries != undefined) {
+    classInstance.logEntries.forEach((logEntry) => {
+      createSection(LOG_ENTRY, logEntry);
+    });
+  }
 }
 
 /**
