@@ -36,7 +36,7 @@
       </tbody>
     </table>
   </section>
-  <button type="button" class="btn btn-primary" onclick="setConfig()">Set Config</button>
+  <button type="button" class="btn btn-primary" name="setConfig" onclick="setConfig()">Set Config</button>
   <button type="button" class="btn btn-secondary" onclick="resetForm(this)">Reset Values</button>
   <script async="async" type="text/javascript" src="/js/devices.js"></script>
 </body>
