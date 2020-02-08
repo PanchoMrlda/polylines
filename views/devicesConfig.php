@@ -33,6 +33,15 @@
   <section class="table-responsive">
     <table class="table table-striped table-sm">
       <tbody>
+        <tr>
+          <th>Comments</th>
+          <td colspan="4">
+            <input class="text-center" name="name" placeholder="General Comments" type="text" style="min-width:100%;" onchange="updateSection(this)" data-toggle="tooltip" data-placement="bottom" title="Comentarios a modo de explicación del uso dado al fichero. Por ejemplo, para qué mando se ha creado (Newton, Einstein), para qué vehículo (furgón, autocar, doble piso, etc)">
+          </td>
+          <td>
+            <input class="text-center" type="hidden" name="" sectiontype="General Comments">
+          </td>
+        </tr>
       </tbody>
     </table>
   </section>
