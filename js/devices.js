@@ -197,7 +197,6 @@ function createSection(sectionType, classInstance) {
 }
 
 function removeTableRow(element) {
-  console.log(element.parentElement.parentElement);
   element.parentElement.parentElement.remove();
 }
 
