@@ -32,7 +32,7 @@
   </section>
   <section class="table-responsive">
     <table class="table table-striped table-sm">
-      <tbody>
+      <tbody class="row_drag">
         <tr>
           <th>Comments</th>
           <td colspan="4">
