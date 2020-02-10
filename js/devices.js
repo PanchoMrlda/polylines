@@ -31,7 +31,7 @@ function updateSection(element) {
   customAttr.value = element.value;
   targetElement.attributes.setNamedItem(customAttr);
   if (targetElement.getAttribute("sectiontype") == LOG_ENTRY) {
-    var deviceName = element.parentElement.parentElement.children[2].lastElementChild.value;
+    var deviceName = element.parentElement.parentElement.children[3].lastElementChild.value;
     var deviceNameAttr = document.createAttribute("deviceName");
     deviceNameAttr.value = deviceName;
     targetElement.attributes.setNamedItem(deviceNameAttr);
