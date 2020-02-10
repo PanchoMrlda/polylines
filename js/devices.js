@@ -78,7 +78,7 @@ function setConfig() {
   var inputs = document.querySelectorAll("[type=hidden]");
   inputs.forEach(input => {
     var section = {};
-    section.comments = input.parentElement.parentElement.firstElementChild.innerText;
+    section.comments = input.parentElement.parentElement.children[1].innerText;
     Array.prototype.slice.call(input.attributes).forEach(attribute => {
       if (attribute.name != "class" && attribute.name != "type") {
         section[attribute.name] = attribute.value;
