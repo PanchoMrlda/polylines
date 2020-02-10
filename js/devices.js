@@ -121,6 +121,63 @@ function createSection(sectionType, classInstance) {
   }
 }
 
+function setTooltip() {
+  var sectionName = $("[name='sectionType']").val();
+  var tooltipTitle;
+  switch (sectionName) {
+    case CONTROLLER_NODE:
+      tooltipTitle = CONTROLLER_NODE_TOOLTIP;
+      break;
+    case CONNECTION_PARAMS:
+      tooltipTitle = CONNECTION_PARAMS_TOOLTIP;
+      break;
+    case ACTUATOR:
+      tooltipTitle = ACTUATOR_TOOLTIP;
+      break;
+    case BLOWER:
+      tooltipTitle = BLOWER_TOOLTIP;
+      break;
+    case DIGITAL_INPUT:
+      tooltipTitle = DIGITAL_INPUT_TOOLTIP;
+      break;
+    case DIGITAL_OUTPUT:
+      tooltipTitle = DIGITAL_OUTPUT_TOOLTIP;
+      break;
+    case NTC:
+      tooltipTitle = NTC_TOOLTIP;
+      break;
+    case VOLTAGE_MON:
+      tooltipTitle = VOLTAGE_MON_TOOLTIP;
+      break;
+    case HCS:
+      tooltipTitle = HCS_TOOLTIP;
+      break;
+    case CLIMATE_ZONE:
+      tooltipTitle = CLIMATE_ZONE_TOOLTIP;
+      break;
+    case HVAC_PARAMS:
+      tooltipTitle = HVAC_PARAMS_TOOLTIP;
+      break;
+    case LOG_ENTRY:
+      tooltipTitle = LOG_ENTRY_TOOLTIP;
+      break;
+    case FLOW_TABLE:
+      tooltipTitle = FLOW_TABLE_TOOLTIP;
+      break;
+    case SPEED_TABLE:
+      tooltipTitle = SPEED_TABLE_TOOLTIP;
+      break;
+    default:
+      tooltipTitle = "";
+      break;
+  }
+  if (tooltipTitle.length > 0) {
+    $("[data-toggle='tooltip']").first().attr("title", tooltipTitle).tooltip("fixTitle").tooltip("enable");
+  } else {
+    $("[data-toggle='tooltip']").first().attr("title", tooltipTitle).tooltip("fixTitle").tooltip("disable");
+  }
+}
+
 function removeTableRow(element) {
   element.parentElement.parentElement.remove();
 }
@@ -147,6 +204,12 @@ Array.prototype.map.call(headers, function (header) {
 var sectionSelect = document.querySelector("[name=createSection]");
 sectionSelect.addEventListener("click", function () {
   createSection();
+});
+
+$("[data-toggle='tooltip']").tooltip({
+  trigger: "hover",
+  placement: "bottom",
+  html: true
 });
 
 $(".row_drag").sortable({
