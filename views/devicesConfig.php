@@ -19,15 +19,23 @@
   <?php include 'views/layouts/nav.php'; ?>
   <section class="form-section-names input-group-prepend">
     <button type="button" class="btn btn-primary" name="createSection">Create Section</button>
-    <select class="select input" name="sectionType" id="sectionTypeSelect">
+    <select class="select input" name="sectionType" id="sectionTypeSelect" onchange="setTooltip()">
       <option value="">-</option>
       <option value="Controller Node">Controller Node</option>
       <option value="Connection Params">Connection Params</option>
       <option value="Actuator">Actuator</option>
       <option value="Blower">Blower</option>
+      <option value="Digital Input">Digital Input</option>
+      <option value="Digital Output">Digital Output</option>
+      <option value="Ntc">NTC</option>
       <option value="Voltage Mon">Voltage Mon</option>
+      <option value="Hcs">HCS</option>
+      <option value="Climate Zone">Climate Zone</option>
+      <option value="Hvac Params">Hvac Params</option>
+      <option value="Flow Table">Flow Table</option>
+      <option value="Speed Table">Speed Table</option>
     </select>
-    <input class="text-center" type="text" name="sectionName" placeholder="Section Name" />
+    <input class="text-center" type="text" name="sectionName" placeholder="Section Name" data-toggle="tooltip" />
     <input class="text-center" type="text" name="sectionDesc" placeholder="Section Description" />
   </section>
   <section class="table-responsive">
