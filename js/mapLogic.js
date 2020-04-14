@@ -1,61 +1,61 @@
 // Global variables
-var map;
-var markers = [];
-var tempChart;
-var pressureChart;
-var voltageChart;
+let map;
+let markers = [];
+let tempChart;
+let pressureChart;
+let voltageChart;
 
 // Profile
-var profile = {};
+profile = {};
 
 // Variables for bus 1
-var dates1 = [];
+dates1 = [];
 dates1.unshift('times');
-var locations1 = [];
-var tempInt1 = [];
+locations1 = [];
+tempInt1 = [];
 tempInt1.unshift('Temp Int Device1');
-var tempExt1 = [];
+tempExt1 = [];
 tempExt1.unshift('Temp Ext Device1');
-var highPressure1 = [];
+highPressure1 = [];
 highPressure1.unshift('High Pressure Device1');
-var lowPressure1 = [];
+lowPressure1 = [];
 lowPressure1.unshift('Low Pressure Device1');
-var compressor1 = [];
+compressor1 = [];
 compressor1.unshift('Compressor Device1');
-var blower1 = [];
+blower1 = [];
 blower1.unshift('Blower Device1');
 
 // Variables bus 2
-var dates2 = [];
+dates2 = [];
 dates2.unshift('times');
-var locations2 = [];
-var tempInt2 = [];
+locations2 = [];
+tempInt2 = [];
 tempInt2.unshift('Temp Int Device2');
-var tempExt2 = [];
+tempExt2 = [];
 tempExt2.unshift('Temp Ext Device2');
-var highPressure2 = [];
+highPressure2 = [];
 highPressure2.unshift('High Pressure Device2');
-var lowPressure2 = [];
+lowPressure2 = [];
 lowPressure2.unshift('Low Pressure Device2');
-var compressor2 = [];
+compressor2 = [];
 compressor2.unshift('Compressor Device2');
-var blower2 = [];
+blower2 = [];
 blower2.unshift('Blower Device2');
 
 
 /* MAP FUNCTIONS */
 
 function initMap() {
-  var flightPlanCoordinates = locations1;
+  let flightPlanCoordinates = locations1;
 
   /* Set map styles here */
-  var silverMapType = new google.maps.StyledMapType(silverMap, {
+  let silverMapType = new google.maps.StyledMapType(silverMap, {
     name: "Silver"
   });
-  var nightMapType = new google.maps.StyledMapType(nightMap, {
+  let nightMapType = new google.maps.StyledMapType(nightMap, {
     name: "Night Mode"
   });
-  var retroMapType = new google.maps.StyledMapType(retroMap, {
+  let retroMapType = new google.maps.StyledMapType(retroMap, {
     name: "Retro"
   });
 
@@ -69,12 +69,12 @@ function initMap() {
     }
   });
 
-  // Hide map options if screen is too small
-  var width = window.innerWidth;
-  if ((width < 768 && window.matchMedia("(orientation: portrait)").matches) ||
-    (width < 768 && window.matchMedia("(orientation: landscape)").matches)) {
+  // // Hide map options if screen is too small
+  // let width = window.innerWidth;
+  // if ((width < 768 && window.matchMedia("(orientation: portrait)").matches) ||
+  //   (width < 768 && window.matchMedia("(orientation: landscape)").matches)) {
     map.mapTypeControlOptions.style = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
-  }
+  // }
 
   //Associate the styled maps with the MapTypeId and set it to display.
   map.mapTypes.set("silver_map", silverMapType);
@@ -85,7 +85,7 @@ function initMap() {
 
   /* SORT BY DISTANCE */
 
-  function distance(p1, p2) {
+  /*function distance(p1, p2) {
     x_square = Math.pow((p1.lat - p2.lat), 2);
     y_square = Math.pow((p1.lng - p2.lng), 2);
 
@@ -93,11 +93,11 @@ function initMap() {
   }
 
   function minDistance(initPoint, list) {
-    var maxDist = Number.MAX_VALUE;
-    var maxIndex = -1;
+    let maxDist = Number.MAX_VALUE;
+    let maxIndex = -1;
     for (let index = 0; index < list.length; index++) {
-      let e = list[index]
-      var d_new = distance(initPoint, e);
+      let e = list[index];
+      let d_new = distance(initPoint, e);
 
       if (d_new < maxDist) {
         maxDist = d_new;
@@ -108,43 +108,43 @@ function initMap() {
       distancePoint: list[maxIndex],
       distanceIndex: maxIndex
     };
-  }
+  }*/
 
-  function sortByDistance(mylist) {
-    var list = [];
+  /*function sortByDistance(mylist) {
+    let list = [];
     mylist.forEach(e => list.push(e));
 
-    var finalResult = [list[0]];
+    let finalResult = [list[0]];
     list.splice(0, 1);
 
     while (list.length > 0) {
-      var fP = finalResult[finalResult.length - 1];
-      var minDResult = minDistance(fP, list);
+      let fP = finalResult[finalResult.length - 1];
+      let minDResult = minDistance(fP, list);
       finalResult.push(minDResult.distancePoint);
       list.splice(minDResult.distanceIndex, 1);
     }
 
     return finalResult;
-  }
+  }*/
 
 
-  // var theSortedPoints = sortByDistance(flightPlanCoordinates);
-  var theSortedPoints = flightPlanCoordinates;
+  // let theSortedPoints = sortByDistance(flightPlanCoordinates);
+  // let theSortedPoints = flightPlanCoordinates;
 
   /* Heatmap
-  var heatmap = new google.maps.visualization.HeatmapLayer({
+  let heatmap = new google.maps.visualization.HeatmapLayer({
     data: theSortedPoints.map(e => new google.maps.LatLng(e.lat, e.lng)),
     map: map
   });
 
   if (typeof locations2 !== "undefined") {
-    var heatmap2 = new google.maps.visualization.HeatmapLayer({
+    let heatmap2 = new google.maps.visualization.HeatmapLayer({
       data: locations2.map(e => new google.maps.LatLng(e.lat, e.lng)),
       map: map
     });
   }
 
-  var gradient = [
+  let gradient = [
     "rgba(0, 255, 255, 0)",
     "rgba(0, 255, 255, 1)",
     "rgba(0, 191, 255, 1)",
@@ -172,7 +172,7 @@ function initMap() {
 
   /* Paint lines
 
-  var flightPath = new google.maps.Polyline({
+  let flightPath = new google.maps.Polyline({
     path: theSortedPoints,
     geodesic: true,
     strokeColor: "#FF0000",
@@ -194,8 +194,8 @@ function initMap() {
   /*Paint path with polygons */
 
   /*Directions two points
-  var directionsService = new google.maps.DirectionsService;
-  var directionsDisplay = new google.maps.DirectionsRenderer;
+  let directionsService = new google.maps.DirectionsService;
+  let directionsDisplay = new google.maps.DirectionsRenderer;
 
   directionsDisplay.setMap(map);
 
@@ -220,12 +220,12 @@ function initMap() {
 
   /* Multiple directions
  
-  var directionsService = new google.maps.DirectionsService;
-  var directionsDisplay = new google.maps.DirectionsRenderer;
-  var subList = theSortedPoints.slice(1, 20); //flightPlanCoordinates.length
-  var firstPoint = subList[0];
-  var lastPoint = subList[subList.length - 1];
-  var intermediates = subList.map( e => { return { location: e, stopover:false}  });
+  let directionsService = new google.maps.DirectionsService;
+  let directionsDisplay = new google.maps.DirectionsRenderer;
+  let subList = theSortedPoints.slice(1, 20); //flightPlanCoordinates.length
+  let firstPoint = subList[0];
+  let lastPoint = subList[subList.length - 1];
+  let intermediates = subList.map( e => { return { location: e, stopover:false}  });
   
   directionsDisplay.setMap(map);
   console.log(intermediates);
@@ -238,12 +238,12 @@ function initMap() {
   }, function(response, status) {
     if (status === "OK") {
       directionsDisplay.setDirections(response);
-      // var route = response.routes[0];
-      //             var summaryPanel = document.getElementById("directions-panel");
+      // let route = response.routes[0];
+      //             let summaryPanel = document.getElementById("directions-panel");
       //             summaryPanel.innerHTML = "";
       // For each route, display summary information.
-      //             for (var i = 0; i < route.legs.length; i++) {
-      //               var routeSegment = i + 1;
+      //             for (let i = 0; i < route.legs.length; i++) {
+      //               let routeSegment = i + 1;
       //               summaryPanel.innerHTML += "<b>Route Segment: " + routeSegment +
       //                   "</b><br>";
       //               summaryPanel.innerHTML += route.legs[i].start_address + " to ";
@@ -257,21 +257,21 @@ function initMap() {
   */
 
   // Auto Center map
-  var bounds = new google.maps.LatLngBounds();
-  var totalLocations = [];
+  let bounds = new google.maps.LatLngBounds();
+  let totalLocations = [];
   Array.prototype.push.apply(totalLocations, locations1);
   if (locations2.length > 1) {
     Array.prototype.push.apply(totalLocations, locations2);
   }
 
-  for (var i = 0; i < totalLocations.length; i++) {
+  for (let i = 0; i < totalLocations.length; i++) {
     bounds.extend(totalLocations[i]);
   }
   map.fitBounds(bounds);
 
   // Define the symbol, using one of the predefined paths ("CIRCLE")
   // supplied by the Google Maps JavaScript API.
-  var lineSymbol1 = {
+  let lineSymbol1 = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
     scale: 3,
     strokeOpacity: 1,
@@ -281,7 +281,7 @@ function initMap() {
   };
 
   // Create the polyline and add the symbol to it via the "icons" property.
-  var line1 = new google.maps.Polyline({
+  let line1 = new google.maps.Polyline({
     path: locations1,
     strokeOpacity: 0.4,
     strokeColor: "DeepSkyBlue",
@@ -294,7 +294,7 @@ function initMap() {
 
   // Define the symbol, using one of the predefined paths ("CIRCLE")
   // supplied by the Google Maps JavaScript API.
-  var lineSymbol2 = {
+  let lineSymbol2 = {
     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
     scale: 3,
     strokeOpacity: 1,
@@ -304,7 +304,7 @@ function initMap() {
   };
 
   // Create the polyline and add the symbol to it via the "icons" property.
-  var line2 = new google.maps.Polyline({
+  let line2 = new google.maps.Polyline({
     path: locations2,
     strokeOpacity: 0.4,
     strokeColor: "LimeGreen",
@@ -319,15 +319,15 @@ function initMap() {
   // animateCircle(line2);
   setDevices("deviceId1");
   setDevices("deviceId2");
-  var tempData1 = [dates1, tempInt1, tempExt1];
-  var tempData2 = [dates2, tempInt2, tempExt2];
-  // var lowPressure1Converted = lowPressure1.slice(1).map((element, index) => {
+  let tempData1 = [dates1, tempInt1, tempExt1];
+  let tempData2 = [dates2, tempInt2, tempExt2];
+  // let lowPressure1Converted = lowPressure1.slice(1).map((element, index) => {
   //   if (compressorOn(highPressure1[index], lowPressure1[index])) {
   //     element -= 10;
   //   }
   //   return element;
   // });
-  // var lowPressure2Converted = lowPressure2.slice(1).map((element, index) => {
+  // let lowPressure2Converted = lowPressure2.slice(1).map((element, index) => {
   //   if (compressorOn(highPressure2[index], lowPressure2[index])) {
   //     element -= 10;
   //   }
@@ -336,11 +336,11 @@ function initMap() {
   // lowPressure1Converted.unshift(lowPressure1[0]);
   // lowPressure2Converted.unshift(lowPressure2[0]);
   tempChart = generateChart("#tempChart", tempData1, tempData2);
-  var pressureData1 = [dates1, lowPressure1, highPressure1];
-  var pressureData2 = [dates2, lowPressure2, highPressure2];
+  let pressureData1 = [dates1, lowPressure1, highPressure1];
+  let pressureData2 = [dates2, lowPressure2, highPressure2];
   pressureChart = generateChart("#pressureChart", pressureData1, pressureData2);
-  // var voltageData1 = [dates1, compressor1, blower1];
-  // var voltageData2 = [dates2, compressor2, blower2];
+  // let voltageData1 = [dates1, compressor1, blower1];
+  // let voltageData2 = [dates2, compressor2, blower2];
   // voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
   updateDistance();
   initMapEvents();
@@ -351,8 +351,8 @@ function initMap() {
 
 function deleteRepeated(latsLngs) {
 
-  var result = {};
-  latsLngs.forEach(e => result[JSON.stringify(e)] = e)
+  let result = {};
+  latsLngs.forEach(e => result[JSON.stringify(e)] = e);
 
   return Object.keys(result).map(s => JSON.parse(s))
 }
@@ -360,10 +360,10 @@ function deleteRepeated(latsLngs) {
 // Use the DOM setInterval() function to change the offset of the symbol
 // at fixed intervals.
 function animateCircle(line) {
-  var count = 0;
-  var interval = setInterval(function () {
+  let count = 0;
+  let interval = setInterval(function () {
     count = (count + 0.1) % 200;
-    var icons = line.get("icons");
+    let icons = line.get("icons");
     icons[0].offset = (count / 2) + "%";
     line.set("icons", icons);
     if (count >= 199) {
@@ -373,18 +373,18 @@ function animateCircle(line) {
 }
 
 function setDevices(device) {
-  var selectedDevice = "#" + device + "Select";
-  var selectedDeviceId1 = findGetParameter(device);
-  var options = document.querySelector("#deviceId1Select").options;
-  var targetOption = Array.prototype.find.call(options, function (option) {
-    return option.value == selectedDeviceId1;
+  let selectedDevice = "#" + device + "Select";
+  let selectedDeviceId1 = findGetParameter(device);
+  // let options = document.querySelector("#deviceId1Select").options;
+  let options = document.querySelector("#devicesList1").options;
+  let targetOption = Array.prototype.find.call(options, function (option) {
+    return option.value === selectedDeviceId1;
   });
-  var index = Array.prototype.indexOf.call(options, targetOption);
-  document.querySelector(selectedDevice).selectedIndex = index;
+  document.querySelector(selectedDevice).selectedIndex = Array.prototype.indexOf.call(options, targetOption);
 }
 
 function findGetParameter(parameterName) {
-  var result = null,
+  let result = null,
     tmp = [];
   location.search
     .substr(1)
@@ -398,6 +398,7 @@ function findGetParameter(parameterName) {
 
 function generateChart(chartId, columnValues1, columnValues2 = []) {
   let chartLabel;
+  let chartDateFormat = (columnValues1[0].length > 1440) ? "%Y-%m-%d %H:%M" : "%H:%M";
   let chartsData = {
     x: "times",
     xFormat: "%Y-%m-%d %H:%M:%S",
@@ -405,24 +406,24 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
     onclick: showBusPosition
   };
   let screenWidth = setChartWidth();
-  if (columnValues1[0].length == 1 && columnValues2[0].length == 1) {
+  if (columnValues1[0].length === 1 && columnValues2[0].length === 1) {
     chartsData.columns = [];
-  } else if (columnValues1[0].length != 1 && columnValues2[0].length == 1) {
+  } else if (columnValues1[0].length !== 1 && columnValues2[0].length === 1) {
     chartsData.columns = columnValues1;
-  } else if (columnValues1[0].length == 1 && columnValues2[0].length != 1) {
+  } else if (columnValues1[0].length === 1 && columnValues2[0].length !== 1) {
     chartsData.columns = columnValues2;
-  } else if (columnValues1[0].length != 1 && columnValues2[0].length != 1) {
+  } else if (columnValues1[0].length !== 1 && columnValues2[0].length !== 1) {
     chartsData.columns = columnValues1.concat(columnValues2);
   }
-  if (chartId == "#tempChart") {
+  if (chartId === "#tempChart") {
     chartLabel = "ºC";
-  } else if (chartId == "#pressureChart") {
+  } else if (chartId === "#pressureChart") {
     if (document.querySelector("[name=pressureInBars]").checked) {
       chartLabel = "bar";
     } else {
       chartLabel = "ºC";
     }
-  } else if (chartId == "#voltageChart") {
+  } else if (chartId === "#voltageChart") {
     chartLabel = "V";
   }
 
@@ -443,7 +444,7 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
       x: {
         type: "timeseries",
         tick: {
-          format: "%H:%M", // how the date is displayed
+          format: chartDateFormat, // how the date is displayed
         }
       },
       y: {
@@ -472,18 +473,18 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
 }
 
 function assignRegions(chartId) {
-  var regions;
-  var maxWarning;
-  var maxDanger;
-  var minWarning;
-  var minDanger;
+  let regions;
+  let maxWarning;
+  let maxDanger;
+  let minWarning;
+  let minDanger;
   let compressorRegions;
-  if (chartId == "#pressureChart") {
+  if (chartId === "#pressureChart") {
     maxWarning = 85;
     maxDanger = 85;
     minWarning = -20;
     minDanger = -20;
-  } else if (chartId == "#voltageChart") {
+  } else if (chartId === "#voltageChart") {
     maxWarning = 27;
     maxDanger = 28;
     minWarning = -100;
@@ -510,8 +511,8 @@ function assignRegions(chartId) {
     axis: "y",
     end: minDanger,
     class: "regionDanger"
-  }]
-  if (chartId == "#pressureChart") {
+  }];
+  if (chartId === "#pressureChart") {
     compressorRegions = calculateCompressorRegions();
     compressorRegions.map(region => regions.push(region));
     highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies);
@@ -529,7 +530,7 @@ function calculateCompressorRegions() {
   for (let i = 1; i < highPressure1.length; i++) {
     if (compressorOn(highPressure1[i], lowPressure1[i])) {
       lastEndDate = dates1[i];
-      if (i == (highPressure1.length - 1)) {
+      if (i === (highPressure1.length - 1)) {
         const region = {
           axis: "x",
           start: lastStartDate,
@@ -545,8 +546,8 @@ function calculateCompressorRegions() {
         end: lastEndDate,
         class: "regionCompressor"
       };
-      if (lastStartDate != lastEndDate &&
-        lastEndDate != dates1[dates1.length - 1]) {
+      if (lastStartDate !== lastEndDate &&
+        lastEndDate !== dates1[dates1.length - 1]) {
         regionsToAdd.push(region);
       }
       lastStartDate = dates1[i];
@@ -562,13 +563,13 @@ function calculateAlertRegions(regionClass, timeLimit, callback) {
   let lastEndDate;
   for (let index = 1; index < highPressure1.length; index++) {
     if (callback(index)) {
-      if (lastStartDate == undefined) {
+      if (lastStartDate === undefined) {
         lastStartDate = dates1[index];
       } else {
         lastEndDate = dates1[index];
       }
-    } else if ((index == highPressure1.length - 1) || !callback(index)) {
-      if (index == highPressure1.length - 1) {
+    } else if ((index === highPressure1.length - 1) || !callback(index)) {
+      if (index === highPressure1.length - 1) {
 
         lastEndDate = dates1[dates1.length - 1];
       }
@@ -589,24 +590,16 @@ function calculateAlertRegions(regionClass, timeLimit, callback) {
 }
 
 function highPressureAnomalies(index) {
-  var anomaly;
-  if (compressorOn(highPressure1[index], lowPressure1[index]) &&
-    tempExt1[index] > 25 && highPressure1[index] < 35) {
-    anomaly = true;
-  } else {
-    anomaly = false;
-  }
+  let anomaly;
+  anomaly = compressorOn(highPressure1[index], lowPressure1[index]) &&
+      tempExt1[index] > 25 && highPressure1[index] < 35;
   return anomaly;
 }
 
 function highPressureAlerts(index) {
-  var alert;
-  if (compressorOn(highPressure1[index], lowPressure1[index]) &&
-    tempExt1[index] < 35 && highPressure1[index] >= 85) {
-    alert = true;
-  } else {
-    alert = false;
-  }
+  let alert;
+  alert = compressorOn(highPressure1[index], lowPressure1[index]) &&
+      tempExt1[index] < 35 && highPressure1[index] >= 85;
   return alert;
 }
 
@@ -615,8 +608,8 @@ function compressorOn(highPressure, lowPressure) {
 }
 
 function showBusPosition(element) {
-  var currentLocation = locations1[element.index];
-  var marker = new google.maps.Marker({
+  let currentLocation = locations1[element.index];
+  let marker = new google.maps.Marker({
     position: currentLocation,
     title: "Click to hide",
     icon: {
@@ -626,21 +619,21 @@ function showBusPosition(element) {
     draggable: true,
     map: map
   });
-  var existingMarker = getMarker(marker);
+  let existingMarker = getMarker(marker);
   marker.addListener("click", function () {
     marker.setMap(null);
     deleteMarker(marker);
   });
-  if (existingMarker == undefined) {
+  if (existingMarker === undefined) {
     markers.push(marker);
   }
 }
 
 function getMarker(marker) {
-  var latitude = marker.position.lat();
-  var longitude = marker.position.lng();
-  return markers.find(e => e.position.lat() == latitude &&
-    e.position.lng() == longitude);
+  let latitude = marker.position.lat();
+  let longitude = marker.position.lng();
+  return markers.find(e => e.position.lat() === latitude &&
+    e.position.lng() === longitude);
 }
 
 function deleteMarker(marker) {
@@ -652,24 +645,24 @@ function deg2rad(deg) {
 }
 
 function getDistanceFromLocations(locationPoint1, locationPoint2) {
-  var lat1 = locationPoint1.lat;
-  var lon1 = locationPoint1.lng;
-  var lat2 = locationPoint2.lat;
-  var lon2 = locationPoint2.lng;
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2 - lat1); // deg2rad below
-  var dLon = deg2rad(lon2 - lon1);
-  var a =
+  let lat1 = locationPoint1.lat;
+  let lon1 = locationPoint1.lng;
+  let lat2 = locationPoint2.lat;
+  let lon2 = locationPoint2.lng;
+  let R = 6371; // Radius of the earth in km
+  let dLat = deg2rad(lat2 - lat1); // deg2rad below
+  let dLon = deg2rad(lon2 - lon1);
+  let a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = R * c; // Distance in km
-  return d;
+  let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  // Distance in km
+  return R * c;
 }
 
 function getTotalDistance(locations) {
-  distance = 0;
+  let distance = 0;
   for (let index = 1; index < locations.length; index++) {
     distance += getDistanceFromLocations(locations[index - 1], locations[index]);
   }
@@ -696,27 +689,27 @@ function updateChartsWidth() {
 }
 
 function submitForm() {
-  var fromElem = document.querySelector(".form-date-section [name=from]");
-  var deviceId1Elem = document.querySelector("#deviceId1Select");
-  var deviceId2Elem = document.querySelector("#deviceId2Select");
-  var lastHourElem = document.querySelector("[name=lastHour]");
-  var pressureInBars = document.querySelector("[name=pressureInBars]");
-  var requestParams = {
+  let fromElem = document.querySelector(".form-date-section [name=from]");
+  let deviceId1Elem = document.querySelector("#deviceId1Select");
+  let deviceId2Elem = document.querySelector("#deviceId2Select");
+  let lastHourElem = document.querySelector("[name=lastHour]");
+  let pressureInBars = document.querySelector("[name=pressureInBars]");
+  let requestParams = {
     from: fromElem.value,
     deviceId1: deviceId1Elem.value,
     deviceId2: deviceId2Elem.value
-  }
+  };
   if (lastHourElem.checked) {
-    var d = new Date();
-    var h = addZero(d.getHours() - 1);
-    var m = addZero(d.getMinutes());
-    var s = addZero(d.getSeconds());
+    let d = new Date();
+    let h = addZero(d.getHours() - 1);
+    let m = addZero(d.getMinutes());
+    let s = addZero(d.getSeconds());
     requestParams.from += " " + h + ":" + m + ":" + s;
   }
   if (pressureInBars.checked) {
     requestParams.pressureInBars = true
   }
-  var url = "/dynamo";
+  let url = "/dynamo";
   deviceId1Elem.blur();
   deviceId2Elem.blur();
   setVisible(".spinner-border", true);
@@ -731,9 +724,9 @@ function addZero(i) {
 }
 
 function applyDynamoDbChanges(responseParams) {
-  var fromElem = document.querySelector(".form-date-section .input");
-  var deviceId1Elem = document.querySelector("#deviceId1Select");
-  var deviceId2Elem = document.querySelector("#deviceId2Select");
+  let fromElem = document.querySelector(".form-date-section .input");
+  let deviceId1Elem = document.querySelector("#deviceId1Select");
+  let deviceId2Elem = document.querySelector("#deviceId2Select");
   updateDevicesVariables(responseParams);
   fromElem.value = responseParams.from;
   initMap();
@@ -763,8 +756,8 @@ function updateDevicesVariables(responseParams) {
   // compressor1.unshift("Compressor " + responseParams.deviceId1.deviceName);
   // blower1 = responseParams.deviceId1.blower1;
   // blower1.unshift("Blower " + responseParams.deviceId1.deviceName);
-  lastReading1 = responseParams.deviceId1.lastReading;
-  if (dates1.length == 1) {
+  let lastReading1 = responseParams.deviceId1.lastReading;
+  if (dates1.length === 1) {
     document.querySelector("[name=from1]").value = lastReading1;
   } else {
     document.querySelector("[name=from1]").value = "";
@@ -786,8 +779,8 @@ function updateDevicesVariables(responseParams) {
   // compressor2.unshift("Compressor " + responseParams.deviceId2.deviceName);
   // blower2 = responseParams.deviceId2.blower2;
   // blower2.unshift("Blower " + responseParams.deviceId2.deviceName);
-  lastReading2 = responseParams.deviceId2.lastReading;
-  if (dates2.length == 1) {
+  let lastReading2 = responseParams.deviceId2.lastReading;
+  if (dates2.length === 1) {
     document.querySelector("[name=from2]").value = lastReading2;
   } else {
     document.querySelector("[name=from2]").value = "";
@@ -825,10 +818,11 @@ window.addEventListener("resize", function () {
 }, false);
 
 function initMapEvents() {
-  var checkExist = setInterval(function () {
-    var mapNames = ["Retro", "Night Mode", "Silver", "Satellite", "Map"];
-    var targetDivs = document.querySelectorAll("div");
-    var mapElements = Array.prototype.filter.call(targetDivs, e => mapNames.includes(e.innerHTML));
+  let checkExist = setInterval(function () {
+    // let mapNames = ["Retro", "Night Mode", "Silver", "Satellite", "Map"];
+    let targetDivs = document.querySelectorAll("div");
+    // let mapElements = Array.prototype.filter.call(targetDivs, e => mapNames.includes(e.innerHTML));
+    let mapElements = Array.prototype.filter.call(targetDivs, e => e.innerHTML === "Retro")[0].parentElement.parentElement.children;
     if (mapElements.length !== 0) {
       clearInterval(checkExist);
       mapElements[4].addEventListener("click", function () {
@@ -847,19 +841,19 @@ function initMapEvents() {
         }, "application/json");
       });
       mapElements[2].addEventListener("click", function () {
-        setMapStyles("#ffffff", "#fffffe");
+        setMapStyles("#ffffff", "#ebebe4");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "silver_map"
         }, "application/json");
       });
       mapElements[1].addEventListener("click", function () {
-        setMapStyles("#ffffff", "#fffffe");
+        setMapStyles("#ffffff", "#ebebe4");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "satellite"
         }, "application/json");
       });
       mapElements[0].addEventListener("click", function () {
-        setMapStyles("#ffffff", "#fffffe");
+        setMapStyles("#ffffff", "#ebebe4");
         doRequest("POST", "/profile", setProfile, {
           mapTypeId: "roadmap"
         }, "application/json");
