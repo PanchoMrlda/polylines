@@ -1,6 +1,25 @@
-<nav class="nav nav-pills nav-fill nav-justified d-flex justify-content-around flex-nowrap blue-gradient lighten-3 py-2 font-weight-bold">
-  <a class="text-sm-center nav-link" href="/">Map</a>
-  <a class="text-sm-center nav-link" href="/devices/config">Devices Config</a>
-  <a class="text-sm-center nav-link disabled" href="/handwriting">Handwriting</a>
-  <a class="text-sm-center nav-link disabled" href="#">Disabled</a>
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Map</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/devices/config">Devices Config</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mx-auto order-0">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <a class="navbar-brand mx-auto" href="/">Noshanrobaoelbule</a>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link disabled" href="/handwriting">Handwriting</a>
+            </li>
+        </ul>
+    </div>
 </nav>
