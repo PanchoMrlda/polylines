@@ -22,19 +22,19 @@ function printDevices($deviceData)
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
-    <script type="text/javascript" src="js/mapStyles.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script async="async" type="text/javascript" src="js/mapLogic.js"></script>
+    <script type="text/javascript" src="/js/mapStyles.js"></script>
+    <script type="text/javascript" src="/js/utils.js"></script>
+    <script async="async" type="text/javascript" src="/js/mapLogic.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-    <script src="js/d3.v5.min.js"></script>
-    <link href="css/c3.css" rel="stylesheet"/>
-    <link href="css/polylines.css" rel="stylesheet"/>
-    <script src="js/c3.min.js"></script>
+    <script src="/js/d3.v5.min.js"></script>
+    <link href="/css/c3.css" rel="stylesheet"/>
+    <link href="/css/polylines.css" rel="stylesheet"/>
+    <script src="/js/c3.min.js"></script>
     <title>Simple Polylines - Map</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -56,28 +56,42 @@ function printDevices($deviceData)
     <section class="p-2 flex-fill form-container">
         <form class="map-form" action="/">
             <section class="form-last-reading-section input-group-prepend">
-                <span class="justify-content-center span input-group-text">Previous reading</span>
-                <input class="input" type="text" value="<?php echo $lastReading1; ?>" name="from1" disabled="disabled"/>
-                <input class="input" type="text" value="<?php echo $lastReading2; ?>" name="from2" disabled="disabled"/>
+                <label class="justify-content-center span input-group-text">Previous reading</label>
+                <label>
+                    <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId1']['lastReading']; ?>"
+                           name="from1" disabled="disabled"/>
+                </label>
+                <label>
+                    <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId2']['lastReading']; ?>"
+                           name="from2" disabled="disabled"/>
+                </label>
             </section>
             <section class="form-date-section input-group-prepend">
-                <span class="justify-content-center span input-group-text">Date</span>
-                <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from"
-                       onchange="submitForm()"/>
+                <label class="justify-content-center span input-group-text">Date</label>
+                <label>
+                    <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from"
+                           onchange="submitForm()"/>
+                </label>
+
                 <span class="justify-content-center input-checkbox">
-          <input class=" input checkbox" type="checkbox" name="lastHour" onchange="submitForm()"/>
-          Last Hour
+            <label>
+                <input class=" input checkbox" type="checkbox" name="lastHour" onchange="submitForm()"/>
+            </label>
+            Last Hour
         </span>
             </section>
             <section class="form-date-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">Data</span>
                 <span class="justify-content-center input-checkbox">
-          <input class=" input checkbox" type="checkbox" name="pressureInBars" onchange="submitForm()"/>
+            <label>
+                <input class=" input checkbox" type="checkbox" name="pressureInBars" onchange="submitForm()"/>
+            </label>
           Pressure in bars
         </span>
             </section>
             <section class="form-device-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">Device Name</span>
+                <label for="deviceId1Select"></label>
                 <input class="select input" list="devicesList1" id="deviceId1Select" name="deviceId1"
                        onchange="submitForm()">
                 <datalist id="devicesList1">
@@ -85,6 +99,7 @@ function printDevices($deviceData)
                     printDevices($deviceData);
                     ?>
                 </datalist>
+                <label for="deviceId2Select"></label>
                 <input class="select input" list="devicesList2" id="deviceId2Select" name="deviceId2"
                        onchange="submitForm()">
                 <datalist id="devicesList2">
@@ -96,6 +111,7 @@ function printDevices($deviceData)
             <section class="form-distance-section input-group-prepend">
                 <label class="justify-content-center span input-group-text" for="distance1">Travelled distance</label>
                 <input class="input" type="text" value="" name="distance1" id="distance1" disabled="disabled"/>
+                <label for="distance2"></label>
                 <input class="input" type="text" value="" name="distance2" id="distance2" disabled="disabled"/>
             </section>
         </form>
@@ -107,42 +123,6 @@ function printDevices($deviceData)
 <div id="tempChart" class="chart"></div>
 <div id="pressureChart" class="chart"></div>
 <div id="voltageChart" class="chart"></div>
-<script>
-    // Load profile
-    let profile = <?php echo(json_encode($_SESSION['profile'])) ?>;
-    // Variables for bus 1
-    let dates1 = <?php echo(json_encode($dates1)) ?>;
-    dates1.unshift('times');
-    let locations1 = <?php echo(json_encode($locations1)) ?>;
-    let tempInt1 = <?php echo(json_encode($tempInt1)) ?>;
-    tempInt1.unshift('Temp Int' + ' (<?php echo $deviceId1 ?>)');
-    let tempExt1 = <?php echo(json_encode($tempExt1)) ?>;
-    tempExt1.unshift('Temp Ext' + ' (<?php echo $deviceId1 ?>)');
-    let highPressure1 = <?php echo(json_encode($highPressure1)) ?>;
-    highPressure1.unshift('High Pressure' + ' (<?php echo $deviceId1 ?>)');
-    let lowPressure1 = <?php echo(json_encode($lowPressure1)) ?>;
-    lowPressure1.unshift('Low Pressure' + ' (<?php echo $deviceId1 ?>)');
-    // let compressor1 = <?php // echo (json_encode($compressor1)) ?>;
-    // compressor1.unshift('Compressor' + ' (<?php echo $deviceId1 ?>)');
-    // let blower1 = <?php // echo (json_encode($blower1)) ?>;
-    // blower1.unshift('Blower' + ' (<?php echo $deviceId1 ?>)');
-    // Variables bus 2
-    let dates2 = <?php echo(json_encode($dates2)) ?>;
-    dates2.unshift('times');
-    let locations2 = <?php echo(json_encode($locations2)) ?>;
-    let tempInt2 = <?php echo(json_encode($tempInt2)) ?>;
-    tempInt2.unshift('Temp Int' + ' (<?php echo $deviceId2 ?>)');
-    let tempExt2 = <?php echo(json_encode($tempExt2)) ?>;
-    tempExt2.unshift('Temp Ext' + ' (<?php echo $deviceId2 ?>)');
-    let highPressure2 = <?php echo(json_encode($highPressure2)) ?>;
-    highPressure2.unshift('High Pressure' + ' (<?php echo $deviceId2 ?>)');
-    let lowPressure2 = <?php echo(json_encode($lowPressure2)) ?>;
-    lowPressure2.unshift('Low Pressure' + ' (<?php echo $deviceId2 ?>)');
-    // let compressor2 = <?php // echo (json_encode($compressor2)) ?>;
-    // compressor2.unshift('Compressor' + ' (<?php echo $deviceId2 ?>)');
-    // let blower2 = <?php // echo (json_encode($blower2)) ?>;
-    // blower2.unshift('Blower' + ' (<?php echo $deviceId2 ?>)');
-</script>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_SESSION['secretsData']['google']['mapsKey'] ?>">
 </script>
