@@ -5,103 +5,84 @@ require 'helpers/aws/DynamoDbHelper.php';
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
+function getDeviceRelatedData(Array $payloads, DynamoDbHelper $helper, Int $from, Int $to, String $deviceId = '')
+{
+    $lastReading = null;
+    if (empty(count($payloads)) && !empty($deviceId)) {
+        // Search in the old DynamoDb table if there is no data
+        $helper->devicesTable = 'DevicesDataTable';
+        $helper->devicesSearchKey = 'receivedTimeStamp';
+        $payloads = $helper->getDataFromDynamo($deviceId, $from, $to);
+        if (empty(count($payloads))) {
+            $readings = $helper->getDataFromDynamo($deviceId, 0, $to);
+            $lastReading = date('Y-m-d H:i:s', $readings[count($readings) - 1]['g']['t']);
+        }
+    }
+    $dates = $helper->getDates($payloads);
+    $locations = $helper->getLocations($payloads);
+    $tempInt = $helper->getSensorValues($payloads, '1005n');
+    $tempExt = $helper->getSensorValues($payloads, '1004n');
+    $highPressure = $helper->getSensorValues($payloads, '1003n');
+    $lowPressure = $helper->getSensorValues($payloads, '1002n');
+    if (!empty($_GET['pressureInBars'])) {
+        $highPressure = $helper->convertPressureValues($highPressure);
+        $lowPressure = $helper->convertPressureValues($lowPressure);
+    }
+    // $compressor = $helper->getSensorValues($payloads, '0004u');
+    // $blower = $helper->getSensorValues($payloads, '000u');
+    return [
+        'deviceName' => $deviceId,
+        'dates' => $dates,
+        'locations' => $locations,
+        'tempInt' => $tempInt,
+        'tempExt' => $tempExt,
+        'highPressure' => $highPressure,
+        'lowPressure' => $lowPressure,
+        // 'compressor' => $compressor,
+        // 'blower' => $blower
+        'lastReading' => $lastReading
+    ];
+}
+
 $dynamodb = new DynamoDbClient([
-  'region' => $_SESSION['secretsData']['aws']['region'],
-  'version' => 'latest',
-  'credentials' => array(
-    'key' => $_SESSION['secretsData']['aws']['key'],
-    'secret' => $_SESSION['secretsData']['aws']['secret']
-  )
+    'region' => $_SESSION['secretsData']['aws']['region'],
+    'version' => 'latest',
+    'credentials' => array(
+        'key' => $_SESSION['secretsData']['aws']['key'],
+        'secret' => $_SESSION['secretsData']['aws']['secret']
+    )
 ]);
 
 try {
-  $marshaler = new Marshaler();
-  $dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
-  $deviceId1 = $_GET['deviceId1'];
-  $deviceId2 = $_GET['deviceId2'];
-  if (!empty($_GET['from'])) {
-    $from = strtotime($_GET['from']) * 1000;
-    if (!empty($_GET['to'])) {
-      $to = strtotime($_GET['to']) * 1000;
+    $marshaler = new Marshaler();
+    $dynamoHelper = new DynamoDbHelper($dynamodb, $marshaler);
+    $deviceId1 = empty($_GET) ? '' : $_GET['deviceId1'];
+    $deviceId2 = empty($_GET) ? '' : $_GET['deviceId2'];
+    $from = null;
+    if (!empty($_GET['from'])) {
+        $from = strtotime($_GET['from']) * 1000;
+        if (!empty($_GET['to'])) {
+            $to = strtotime($_GET['to']) * 1000;
+        } else {
+            $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+        }
     } else {
-      $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+        $from = (time() - 60 * 60) * 1000;
+        $to = (time() - 60 * 0) * 1000;
     }
-  } else {
-    $from = (time() - 60 * 60) * 1000;
-    $to = (time() - 60 * 0) * 1000;
-  }
-  // Variables bus 1
-  $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
-  $lastReading1 = null;
-  if (empty(count($payloads1)) && !empty($deviceId1)) {
-    // Search in the old DynamoDb table if there is no data
-    $dynamoHelper->devicesTable = 'DevicesDataTable';
-    $dynamoHelper->devicesSearchKey = 'receivedTimeStamp';
+    // Variables bus 1
     $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
-    if (empty(count($payloads1))) {
-      $readings1 = $dynamoHelper->getDataFromDynamo($deviceId1, 0, $to);
-      $lastReading1 = date('Y-m-d H:i:s', $readings1[count($readings1) - 1]['g']['t']);
-    }
-  }
-  $dates1 = $dynamoHelper->getDates($payloads1);
-  $locations1 = $dynamoHelper->getLocations($payloads1);
-  $tempInt1 = $dynamoHelper->getSensorValues($payloads1, '1005n');
-  $tempExt1 = $dynamoHelper->getSensorValues($payloads1, '1004n');
-  $highPressure1 = $dynamoHelper->getSensorValues($payloads1, '1003n');
-  $lowPressure1 = $dynamoHelper->getSensorValues($payloads1, '1002n');
-  if (!empty($_GET['pressureInBars'])) {
-    $highPressure1 = $dynamoHelper->convertPressureValues($highPressure1);
-    $lowPressure1 = $dynamoHelper->convertPressureValues($lowPressure1);
-  }
-  // $compressor1 = $dynamoHelper->getSensorValues($payloads1, '0004u');
-  // $blower1 = $dynamoHelper->getSensorValues($payloads1, '0001u');
-
-  // Variables bus 2
-  $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
-  if (empty(count($payloads2)) && !empty($deviceId2)) {
-    $readings2 = $dynamoHelper->getDataFromDynamo($deviceId2, 0, time() * 1000);
-    $lastReading2 = date('Y-m-d H:i:s', $readings2[count($readings2) - 1]['g']['t']);
-  } else {
-    $lastReading2 = null;
-  }
-  $dates2 = $dynamoHelper->getDates($payloads2);
-  $locations2 = $dynamoHelper->getLocations($payloads2);
-  $tempInt2 = $dynamoHelper->getSensorValues($payloads2, '1005n');
-  $tempExt2 = $dynamoHelper->getSensorValues($payloads2, '1004n');
-  $highPressure2 = $dynamoHelper->getSensorValues($payloads2, '1003n');
-  $lowPressure2 = $dynamoHelper->getSensorValues($payloads2, '1002n');
-  // $compressor2 = $dynamoHelper->getSensorValues($payloads2, '0004u');
-  // $blower2 = $dynamoHelper->getSensorValues($payloads2, '0001u');
-
-  $dynamoDbData = [
-    'from' => date('Y-m-d', $from / 1000),
-    'deviceId1' => [
-      'deviceName' => $deviceId1,
-      'dates1' => $dates1,
-      'locations1' => $locations1,
-      'tempInt1' => $tempInt1,
-      'tempExt1' => $tempExt1,
-      'highPressure1' => $highPressure1,
-      'lowPressure1' => $lowPressure1,
-      // 'compressor1' => $compressor1,
-      // 'blower1' => $blower1
-      'lastReading' => $lastReading1
-    ],
-    'deviceId2' => [
-      'deviceName' => $deviceId2,
-      'dates2' => $dates2,
-      'locations2' => $locations2,
-      'tempInt2' => $tempInt2,
-      'tempExt2' => $tempExt2,
-      'highPressure2' => $highPressure2,
-      'lowPressure2' => $lowPressure2,
-      // 'compressor2' => $compressor2,
-      // 'blower2' => $blower2
-      'lastReading' => $lastReading2
-    ]
-  ];
+    $deviceId1Data = getDeviceRelatedData($payloads1, $dynamoHelper, $from, $to, $deviceId1);
+    // Variables bus 2
+    $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
+    $deviceId2Data = getDeviceRelatedData($payloads2, $dynamoHelper, $from, $to, $deviceId2);
+    $dynamoDbData = [
+        'from' => date('Y-m-d', $from / 1000),
+        'deviceId1' => $deviceId1Data,
+        'deviceId2' => $deviceId2Data
+    ];
 } catch (exception $e) {
-  ob_start();
-  print_r("\e[31m" . print_r([$e->getMessage()], true) . "\e[0m");
-  error_log(ob_get_clean(), 4);
+    ob_start();
+    print_r("\e[31m" . print_r([$e->getMessage()], true) . "\e[0m");
+    error_log(ob_get_clean(), 4);
 }
