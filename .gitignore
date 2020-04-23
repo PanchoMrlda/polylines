@@ -5,3 +5,4 @@ secrets.json
 .vscode/settings.json
 phpcs.xml
 config.*
+.idea
