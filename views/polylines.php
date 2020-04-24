@@ -57,11 +57,11 @@ function printDevices($deviceData)
         <form class="map-form" action="/">
             <section class="form-last-reading-section input-group-prepend">
                 <label class="justify-content-center span input-group-text">Previous reading</label>
-                <label>
+                <label class="input">
                     <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId1']['lastReading']; ?>"
                            name="from1" disabled="disabled"/>
                 </label>
-                <label>
+                <label class="input">
                     <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId2']['lastReading']; ?>"
                            name="from2" disabled="disabled"/>
                 </label>
