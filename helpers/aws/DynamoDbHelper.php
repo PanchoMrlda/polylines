@@ -23,7 +23,7 @@ class DynamoDbHelper
                 } else {
                     $dataComplete = true;
                 }
-                if (count($rawData['Items']) != 0) {
+                if (count($rawData['Items']) !== 0) {
                     $formattedData = $this->getFormattedResult($rawData);
                     if (in_array('L', array_keys($rawData['Items'][0]['payload']))) {
                         $extractedData = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
