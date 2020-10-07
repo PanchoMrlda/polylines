@@ -2,7 +2,7 @@
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">Map</a>
+                <a class="nav-link" href="/">Dashboard</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/devices/config">Devices Config</a>
