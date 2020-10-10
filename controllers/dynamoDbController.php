@@ -5,7 +5,7 @@ require 'helpers/aws/DynamoDbHelper.php';
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
-function getDeviceRelatedData(Array $payloads, DynamoDbHelper $helper, Int $from, Int $to, String $deviceId = '')
+function getDeviceRelatedData(Array $payloads, DynamoDbHelper $helper, Int $from, Int $to, String $deviceId = "")
 {
     $lastReading = null;
     if (empty(count($payloads)) && !empty($deviceId)) {
@@ -59,12 +59,15 @@ try {
     $deviceId1 = empty($_GET) ? '' : $_GET['deviceId1'];
     $deviceId2 = empty($_GET) ? '' : $_GET['deviceId2'];
     $from = null;
+    $numHours = empty($_GET['numHours']) ? 23 : intval($_GET['numHours']) - 1;
     if (!empty($_GET['from'])) {
         $from = strtotime($_GET['from']) * 1000;
+//        Use this to select one complete week
+//        $from = strtotime('this week', strtotime($_GET['from'])) * 1000;
         if (!empty($_GET['to'])) {
             $to = strtotime($_GET['to']) * 1000;
         } else {
-            $to = (strtotime($_GET['from']) + 60 * 1439) * 1000;
+            $to = (strtotime($_GET['from']) + 60 * ((60 * $numHours) + 59)) * 1000;
         }
     } else {
         $from = (time() - 60 * 60) * 1000;
