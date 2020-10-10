@@ -1,5 +1,8 @@
 <?php
 $deviceData = json_decode(file_get_contents('secrets.json'), true)['aws']['deviceNames'];
+$lastReading1 = $dynamoDbData['deviceId1']['lastReading'];
+$lastReading2 = $dynamoDbData['deviceId2']['lastReading'];
+$date = date('Y-m-d', $from / 1000);
 function printDevices($deviceData)
 {
     foreach ($deviceData as $array) {
@@ -55,57 +58,51 @@ function printDevices($deviceData)
 <section class="options-container">
     <section class="p-2 flex-fill form-container">
         <form class="map-form" action="/">
-            <section class="form-last-reading-section input-group-prepend">
-                <label class="justify-content-center span input-group-text">Previous reading</label>
-                <label class="input">
-                    <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId1']['lastReading']; ?>"
-                           name="from1" disabled="disabled"/>
-                </label>
-                <label class="input">
-                    <input class="input" type="text" value="<?php echo $dynamoDbData['deviceId2']['lastReading']; ?>"
-                           name="from2" disabled="disabled"/>
-                </label>
+            <section class="form-distance-section input-group-prepend">
+                <label class="justify-content-center span input-group-text" for="from1">Previous reading</label>
+                <input class="input" type="text" value="<?php echo $lastReading1; ?>" id="from1" disabled="disabled"/>
+                <label for="from2"></label>
+                <input class="input" type="text" value="<?php echo $lastReading2; ?>" id="from2" disabled="disabled"/>
             </section>
             <section class="form-date-section input-group-prepend">
-                <label class="justify-content-center span input-group-text">Date</label>
-                <label>
-                    <input class="input" type="date" value="<?php echo date('Y-m-d', $from / 1000); ?>" name="from"
-                           onchange="submitForm()"/>
-                </label>
-
+                <label class="justify-content-center span input-group-text" for="from">Date</label>
+                <input class="input" type="date" value="<?php echo $date; ?>" name="from" id="from"
+                       onchange="submitForm()"/>
                 <span class="justify-content-center input-checkbox">
-            <label>
-                <input class=" input checkbox" type="checkbox" name="lastHour" onchange="submitForm()"/>
-            </label>
-            Last Hour
-        </span>
+                    <label for="numHours"></label>
+                    <input class=" input checkbox-wide" type="number" name="numHours" id="numHours" max="24" min="1"
+                           onchange="submitForm()"/>
+                    Hours
+                </span>
             </section>
             <section class="form-date-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">Data</span>
                 <span class="justify-content-center input-checkbox">
-            <label>
-                <input class=" input checkbox" type="checkbox" name="pressureInBars" onchange="submitForm()"/>
-            </label>
-          Pressure in bars
-        </span>
+                    <label for="pressureInBars"></label>
+                    <input class=" input checkbox" type="checkbox" name="pressureInBars" id="pressureInBars"
+                           onchange="submitForm()"/>
+                    Pressure in bars
+                </span>
+                <span class="justify-content-center input-checkbox">
+                    <label for="lastHour"></label>
+                    <input class=" input checkbox" type="checkbox" name="lastHour" id="lastHour"
+                           onchange="submitForm()"/>
+                    Last Hour
+                </span>
             </section>
             <section class="form-device-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">Device Name</span>
                 <label for="deviceId1Select"></label>
                 <input class="select input" list="devicesList1" id="deviceId1Select" name="deviceId1"
-                       onchange="submitForm()">
+                       onchange="submitForm()" value="<?php echo $_GET['deviceId1'] ?>">
                 <datalist id="devicesList1">
-                    <?php
-                    printDevices($deviceData);
-                    ?>
+                    <?php printDevices($deviceData); ?>
                 </datalist>
                 <label for="deviceId2Select"></label>
                 <input class="select input" list="devicesList2" id="deviceId2Select" name="deviceId2"
                        onchange="submitForm()">
                 <datalist id="devicesList2">
-                    <?php
-                    printDevices($deviceData);
-                    ?>
+                    <?php printDevices($deviceData); ?>
                 </datalist>
             </section>
             <section class="form-distance-section input-group-prepend">
