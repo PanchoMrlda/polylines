@@ -10,7 +10,7 @@ class DynamoDbHelper
         $this->devicesSearchKey = 'readingTimestamp';
     }
 
-    public function getDataFromDynamo(String $deviceId = null, Int $from = null, Int $to = null)
+    public function getDataFromDynamo(string $deviceId = null, int $from = null, int $to = null)
     {
         $dataComplete = false;
         $payloads = [];
@@ -49,7 +49,8 @@ class DynamoDbHelper
                         'lng' => floatval($values['g']['lo'])
                     ];
                 } else {
-                    if (empty(array_key_exists('la', $values['i']))) {
+                    $payloadLocations = $values['i'] ?? [];
+                    if (empty(array_key_exists('la', $payloadLocations))) {
                         $result[] = [
                             'lat' => 0.0,
                             'lng' => 0.0
@@ -75,9 +76,17 @@ class DynamoDbHelper
         if (count($payloads) != 0) {
             foreach ($payloads as $values) {
                 if (in_array('g', array_keys($values))) {
-                    $result[] = date('Y-m-d H:i:s', intval($values['g']['t']));
+                    $dateLength = strlen($values['g']['t']);
+                    if ($dateLength !== 10) {
+                        $substrLength = ($dateLength - 10) * (-1);
+                        $correctTimestamp = intval(substr($values['g']['t'], 0, $substrLength));
+                    } else {
+                        $correctTimestamp = intval($values['g']['t']);
+                    }
+                    $result[] = date('Y-m-d H:i:s', $correctTimestamp);
                 } else {
-                    $wrongDate = date('Y-m-d H:i:s', intval($values['i']['t']));
+                    $timestamp = $values['i']['t'] ?? null;
+                    $wrongDate = date('Y-m-d H:i:s', intval($timestamp));
                     $hourMinSec = substr($wrongDate, -9);
                     $correctTimestamp = strtotime($_GET['from'] . $hourMinSec);
                     $result[] = date('Y-m-d H:i:s', $correctTimestamp);
@@ -87,7 +96,7 @@ class DynamoDbHelper
         return $result;
     }
 
-    public function getSensorValues(array $payloads, String $sensorName)
+    public function getSensorValues(array $payloads, string $sensorName)
     {
         $result = [];
         if (count($payloads) != 0) {
@@ -107,7 +116,7 @@ class DynamoDbHelper
 
     public function convertPressureValues(array $pressureValues)
     {
-        return array_map(function (Float $value) {
+        return array_map(function (float $value) {
             $p1 = 0.000153;
             $p2 = 0.0213;
             $p3 = 1.528;
@@ -118,7 +127,7 @@ class DynamoDbHelper
         }, $pressureValues);
     }
 
-    private function initParams(String $deviceId, Int $from = null, Int $to = null)
+    private function initParams(string $deviceId, int $from = null, int $to = null)
     {
         $eav = $this->marshaler->marshalJson('
       {
@@ -182,7 +191,7 @@ class DynamoDbHelper
         return $coordinates;
     }
 
-    private function convertSensorNames(String $sensorName)
+    private function convertSensorNames(string $sensorName)
     {
         $params = [
             '1005n' => '2104201',
