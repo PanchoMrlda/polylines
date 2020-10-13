@@ -67,10 +67,6 @@ $router->post('/profile', function () {
     return json_encode($params);
 });
 $router->post('/config', function () {
-    // Handling data in JSON format on the server-side using PHP
-    header('Content-type: application/json');
-    $jsonParams = file_get_contents('php://input');
-    $params = json_decode($jsonParams, true);
     include_once "controllers/devicesController.php";
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename=' . basename('config.hvc'));
