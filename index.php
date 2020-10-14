@@ -39,10 +39,25 @@ $router->get('/devices/config', function () {
     include "views/devicesConfig.php";
 });
 $router->get('/qr', function () {
-    $localIpAddress = exec("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'");
-    echo QRcode::png("http://$localIpAddress:8000/?from=2019-04-03&deviceId1=DTEST_GIRA02");
-//    $serverUrl = $_SERVER['HTTP_HOST'];
-//  echo QRcode::png("http://$serverUrl/?from=2019-04-03&deviceId1=DTEST_GIRA02");
+    $serverUrl = $_SERVER['HTTP_HOST'];
+    $text = "http://$serverUrl/?from=2019-04-03&deviceId1=DTEST_GIRA02";
+
+    // $path variable store the location where to
+    // store image and $file creates directory name
+    // of the QR code file by using 'uniqid'
+    // uniqid creates unique id based on microtime
+    $path = 'img/';
+    $file = $path . uniqid() . ".png";
+
+    // $ecc stores error correction capability('L')
+    $ecc = 'L';
+    $pixelSize = 10;
+    $frameSize = 10;
+
+    // Generates QR Code and Stores it in directory given
+    QRcode::png($text, $file, $ecc, $pixelSize, $frameSize);
+    // Displaying the stored QR code from directory
+    echo "<div style=\"text-align: center;\"><img src='" . $file . "' alt='qr-image'></div>";
 });
 $router->get('/dynamo', function () {
     $dynamoDbData = null;
