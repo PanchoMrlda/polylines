@@ -20,6 +20,9 @@
             <li class="nav-item">
                 <a class="nav-link disabled" href="/handwriting">Handwriting</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/raspberry-pi">Raspberry Pi</a>
+            </li>
         </ul>
     </div>
 </nav>
