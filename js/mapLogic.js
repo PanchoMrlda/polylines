@@ -4,6 +4,7 @@ let markers = [];
 let tempChart;
 let pressureChart;
 let voltageChart;
+let refreshed = false;
 
 // Profile
 let profile = {};
@@ -47,6 +48,10 @@ blower2.unshift('Blower Device2');
 /* MAP FUNCTIONS */
 
 function initMap() {
+    if (document.querySelector("#deviceId1Select").value !== "" && !refreshed) {
+        submitForm();
+        refreshed = true;
+    }
     let flightPlanCoordinates = locations1;
 
     /* Set map styles here */
@@ -694,10 +699,12 @@ function submitForm() {
     let deviceId2Elem = document.querySelector("#deviceId2Select");
     let lastHourElem = document.querySelector("[name=lastHour]");
     let pressureInBars = document.querySelector("[name=pressureInBars]");
+    let numHoursElem = document.querySelector("[name=numHours]");
     let requestParams = {
         from: fromElem.value,
         deviceId1: deviceId1Elem.value,
-        deviceId2: deviceId2Elem.value
+        deviceId2: deviceId2Elem.value,
+        numHours: numHoursElem.value
     };
     if (lastHourElem.checked) {
         let d = new Date();
@@ -818,6 +825,14 @@ window.addEventListener("resize", function () {
     setFlexClasses();
     // voltageChart.resize();
 }, false);
+
+document.querySelector("[name=numHours]").addEventListener("keyup", function (e) {
+    let element = document.querySelector("[name=numHours]");
+    if (element.value > 24 && e.keyCode !== 46 && e.keyCode !== 8) {
+        e.preventDefault();
+        element.value = 24;
+    }
+});
 
 function initMapEvents() {
     // let checkExist = setInterval(function () {
