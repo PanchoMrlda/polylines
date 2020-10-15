@@ -14,6 +14,10 @@ if (preg_match('/\.(?:txt|json|hvc|sql)$/', $_SERVER["REQUEST_URI"])) {
     return false;
 }
 
+/**
+ * @method get(string $string, Closure $param)
+ * @method post(string $string, Closure $param)
+ */
 class Router
 {
     private $request;
