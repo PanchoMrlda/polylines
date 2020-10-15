@@ -157,7 +157,7 @@ class DynamoDbHelper
             $data = array(
                 'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
                 $this->devicesSearchKey => $this->marshaler->unmarshalValue($message[$this->devicesSearchKey]),
-                'payload' => $this->marshaler->unmarshalValue($message['payload'])
+                'payload' => $this->transformData($this->marshaler->unmarshalValue($message['payload']))
             );
             array_unshift($formattedResult, $data);
         }
@@ -202,5 +202,22 @@ class DynamoDbHelper
             '1002n' => '4093901'
         ];
         return $params[$sensorName];
+    }
+
+    function transformData($data)
+    {
+        if (array_key_exists('current', $data)) {
+            $result = [
+                'r' => $data['current']['state']['reported'],
+                'g' => [
+                    't' => $data['current']['state']['reported']['ts'],
+                    'la' => explode(',', $data['current']['state']['reported']['latlng'])[0],
+                    'lo' => explode(',', $data['current']['state']['reported']['latlng'])[1]
+                ]
+            ];
+        } else {
+            $result = $data;
+        }
+        return $result;
     }
 }
