@@ -38,6 +38,9 @@ $router->get('/handwriting', function () {
 $router->get('/devices/config', function () {
     include "views/devicesConfig.php";
 });
+$router->get('/raspberry-pi', function () {
+    include "views/raspberryPi.php";
+});
 $router->get('/qr', function () {
     $serverUrl = $_SERVER['HTTP_HOST'];
     $text = "http://$serverUrl/?from=2019-04-03&deviceId1=DTEST_GIRA02";
