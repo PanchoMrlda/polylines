@@ -107,6 +107,8 @@ class DynamoDbHelper
                     $sensorRealName = array_pop($resultNames);
                     if (!empty($sensorRealName)) {
                         $result[] = floatval($values['r'][$sensorRealName]);
+                    } else {
+                        $result[] = null;
                     }
                 }
             }
