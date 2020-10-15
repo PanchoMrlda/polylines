@@ -5,7 +5,7 @@ require 'helpers/aws/DynamoDbHelper.php';
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
-function getDeviceRelatedData(Array $payloads, DynamoDbHelper $helper, Int $from, Int $to, String $deviceId = "")
+function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $from, int $to, string $deviceId = '')
 {
     $lastReading = null;
     if (empty(count($payloads)) && !empty($deviceId)) {
