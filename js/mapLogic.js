@@ -401,6 +401,7 @@ function findGetParameter(parameterName) {
 }
 
 function generateChart(chartId, columnValues1, columnValues2 = []) {
+    let yGrid;
     let chartLabel;
     let chartDateFormat = (columnValues1[0].length > 1440) ? "%Y-%m-%d %H:%M" : "%H:%M";
     let chartsData = {
@@ -421,14 +422,22 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
     }
     if (chartId === "#tempChart") {
         chartLabel = "ºC";
+        yGrid = {
+            lines: [
+                {value: 35, text: "35º Limit", position: "start"},
+                {value: 15, text: "15º Limit", position: "start"}
+            ]
+        };
     } else if (chartId === "#pressureChart") {
         if (document.querySelector("[name=pressureInBars]").checked) {
             chartLabel = "bar";
         } else {
             chartLabel = "ºC";
         }
+        yGrid = {};
     } else if (chartId === "#voltageChart") {
         chartLabel = "V";
+        yGrid = {};
     }
 
     return c3.generate({
@@ -460,9 +469,7 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
             }
         },
         grid: {
-            y: {
-                show: true
-            }
+            y: yGrid
         },
         regions: assignRegions(chartId),
         onrendered: function () {
@@ -747,51 +754,29 @@ function setProfile(responseParams) {
 }
 
 function updateDevicesVariables(responseParams) {
-    // Variables for bus 1
-    dates1 = responseParams.deviceId1.dates;
-    dates1.unshift("times");
-    locations1 = responseParams.deviceId1.locations;
-    tempInt1 = responseParams.deviceId1.tempInt;
-    tempInt1.unshift("Temp Int " + responseParams.deviceId1.deviceName);
-    tempExt1 = responseParams.deviceId1.tempExt;
-    tempExt1.unshift("Temp Ext " + responseParams.deviceId1.deviceName);
-    highPressure1 = responseParams.deviceId1.highPressure;
-    highPressure1.unshift("High Pressure " + responseParams.deviceId1.deviceName);
-    lowPressure1 = responseParams.deviceId1.lowPressure;
-    lowPressure1.unshift("Low Pressure " + responseParams.deviceId1.deviceName);
-    // compressor1 = responseParams.deviceId1.compressor;
-    // compressor1.unshift("Compressor " + responseParams.deviceId1.deviceName);
-    // blower1 = responseParams.deviceId1.blower;
-    // blower1.unshift("Blower " + responseParams.deviceId1.deviceName);
-    let lastReading1 = responseParams.deviceId1.lastReading;
-    if (dates1.length === 1) {
-        document.querySelector("[name=from1]").value = lastReading1;
-    } else {
-        document.querySelector("[name=from1]").value = "";
-    }
-
-    // Variables bus 2
-    dates2 = responseParams.deviceId2.dates;
-    dates2.unshift("times");
-    locations2 = responseParams.deviceId2.locations;
-    tempInt2 = responseParams.deviceId2.tempInt;
-    tempInt2.unshift("Temp Int " + responseParams.deviceId2.deviceName);
-    tempExt2 = responseParams.deviceId2.tempExt;
-    tempExt2.unshift("Temp Ext " + responseParams.deviceId2.deviceName);
-    highPressure2 = responseParams.deviceId2.highPressure;
-    highPressure2.unshift("High Pressure " + responseParams.deviceId2.deviceName);
-    lowPressure2 = responseParams.deviceId2.lowPressure;
-    lowPressure2.unshift("Low Pressure " + responseParams.deviceId2.deviceName);
-    // compressor2 = responseParams.deviceId2.compressor;
-    // compressor2.unshift("Compressor " + responseParams.deviceId2.deviceName);
-    // blower2 = responseParams.deviceId2.blower;
-    // blower2.unshift("Blower " + responseParams.deviceId2.deviceName);
-    let lastReading2 = responseParams.deviceId2.lastReading;
-    if (dates2.length === 1) {
-        document.querySelector("[name=from2]").value = lastReading2;
-    } else {
-        document.querySelector("[name=from2]").value = "";
-    }
+    let deviceNames = ["deviceId1", "deviceId2"];
+    deviceNames.forEach((device, index) => {
+        let fixedIndex = index + 1;
+        let deviceAccess = "responseParams." + device;
+        let deviceName = eval(deviceAccess + ".deviceName;");
+        let selector = "#from" + fixedIndex;
+        eval("dates" + fixedIndex + " = " + deviceAccess + ".dates;");
+        eval("dates" + fixedIndex + ".unshift('times')");
+        eval("locations" + fixedIndex + " = " + deviceAccess + ".locations;");
+        eval("tempInt" + fixedIndex + " = " + deviceAccess + ".tempInt;");
+        eval("tempInt" + fixedIndex + ".unshift('Temp Int " + deviceName + "');");
+        eval("tempExt" + fixedIndex + " = " + deviceAccess + ".tempExt;");
+        eval("tempExt" + fixedIndex + ".unshift('Temp Ext " + deviceName + "');");
+        eval("highPressure" + fixedIndex + " = " + deviceAccess + ".highPressure;");
+        eval("highPressure" + fixedIndex + ".unshift('High Pressure " + deviceName + "');");
+        eval("lowPressure" + fixedIndex + " = " + deviceAccess + ".lowPressure;");
+        eval("lowPressure" + fixedIndex + ".unshift('Low Pressure " + deviceName + "');");
+        if (eval("dates" + fixedIndex + ".length;") === 1) {
+            document.querySelector(selector).value = eval(deviceAccess + ".lastReading;");
+        } else {
+            document.querySelector(selector).value = "";
+        }
+    });
 }
 
 function updateDistance() {
@@ -820,10 +805,7 @@ window.addEventListener("orientationchange", function () {
 }, false);
 
 window.addEventListener("resize", function () {
-    tempChart.resize();
-    pressureChart.resize();
     setFlexClasses();
-    // voltageChart.resize();
 }, false);
 
 document.querySelector("[name=numHours]").addEventListener("keyup", function (e) {
