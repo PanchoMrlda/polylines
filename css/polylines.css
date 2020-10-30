@@ -119,6 +119,18 @@ thead tr th:hover {
     margin-left: -12px;
 }
 
+#extraData {
+    max-width: 90%;
+    max-height: 480px;
+    overflow-y: scroll;
+}
+
+#extraData table th {
+    position: sticky;
+    top: 0;
+    background: #e0e0e0;
+}
+
 /* Mobile devices */
 @media only screen and (max-device-width: 760px) {
 
