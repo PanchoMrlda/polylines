@@ -1,7 +1,9 @@
 <?php
 $deviceData = json_decode(file_get_contents('secrets.json'), true)['aws']['deviceNames'];
+/** @var array $dynamoDbData */
 $lastReading1 = $dynamoDbData['deviceId1']['lastReading'];
 $lastReading2 = $dynamoDbData['deviceId2']['lastReading'];
+/** @var int $from */
 $date = date('Y-m-d', $from / 1000);
 function printDevices($deviceData)
 {
