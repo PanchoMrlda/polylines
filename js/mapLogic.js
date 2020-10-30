@@ -26,6 +26,7 @@ let compressor1 = [];
 compressor1.unshift('Compressor Device1');
 let blower1 = [];
 blower1.unshift('Blower Device1');
+let extraData1 = [];
 
 // Variables bus 2
 let dates2 = [];
@@ -741,12 +742,20 @@ function applyDynamoDbChanges(responseParams) {
     let fromElem = document.querySelector(".form-date-section .input");
     let deviceId1Elem = document.querySelector("#deviceId1Select");
     let deviceId2Elem = document.querySelector("#deviceId2Select");
+    let device1Type = responseParams.deviceId1.deviceType;
     updateDevicesVariables(responseParams);
     fromElem.value = responseParams.from;
     initMap();
     deviceId1Elem.value = responseParams.deviceId1.deviceName;
     deviceId2Elem.value = responseParams.deviceId2.deviceName;
     updateDistance();
+    let existingTable = document.querySelector("#extraData table");
+    if (existingTable !== null) {
+        existingTable.remove();
+    }
+    if (device1Type === 'NEWTON' || device1Type === 'EINSTEIN') {
+        createExtraDataTable(responseParams.deviceId1.extraData, device1Type);
+    }
 }
 
 function setProfile(responseParams) {
@@ -771,6 +780,7 @@ function updateDevicesVariables(responseParams) {
         eval("highPressure" + fixedIndex + ".unshift('High Pressure " + deviceName + "');");
         eval("lowPressure" + fixedIndex + " = " + deviceAccess + ".lowPressure;");
         eval("lowPressure" + fixedIndex + ".unshift('Low Pressure " + deviceName + "');");
+        eval("extraData" + fixedIndex + " = " + deviceAccess + ".extraData;");
         if (eval("dates" + fixedIndex + ".length;") === 1) {
             document.querySelector(selector).value = eval(deviceAccess + ".lastReading;");
         } else {
@@ -859,4 +869,64 @@ function initMapEvents() {
     //     });
     //   }
     // }, 100); // check every 100ms
+}
+
+function getRepeated(array) {
+    let repeatedValues = [];
+    for (let i = 0; i < array.length; i++) {
+        if (array.filter(x => x.includes(array[i].substring(0, 16))).length > 1) {
+            repeatedValues.push(array[i]);
+        }
+    }
+    return repeatedValues;
+}
+
+function getMessageKeys(array) {
+    let allKeys = [];
+    array.forEach(function (singleMessage) {
+        Object.keys(singleMessage).map(messageKey => allKeys.push(messageKey));
+    });
+    return [...new Set(allKeys)];
+}
+
+function createExtraDataTable(tableData) {
+    let existingTable = document.querySelector("#extraData table");
+    if (existingTable !== null) {
+        existingTable.remove();
+    }
+    let headerNames = getMessageKeys(tableData);
+    // Create table and set its attributes
+    let table = document.createElement('table');
+    table.setAttribute("class", "table table-stripedd table-bordered table-hover table-sm text-nowrap text-center");
+    // Create table header and populate it with its data
+    let tableHeader = document.createElement('thead');
+    let headerRow = document.createElement('tr');
+    let dateHeader = document.createElement('th');
+    dateHeader.appendChild(document.createTextNode("#"));
+    headerRow.appendChild(dateHeader);
+    headerNames.forEach(function (headerName) {
+        let cell = document.createElement('th');
+        cell.setAttribute("class", "sticky");
+        cell.appendChild(document.createTextNode(headerName));
+        headerRow.appendChild(cell);
+        tableHeader.appendChild(headerRow);
+    });
+    // Create table body and populate it with its data
+    let tableBody = document.createElement('tbody');
+    tableData.forEach(function (rowObject, index) {
+        let row = document.createElement('tr');
+        let dateCell = document.createElement('td');
+        dateCell.appendChild(document.createTextNode(dates1[index + 1]));
+        row.appendChild(dateCell);
+        headerNames.forEach(function (headerName) {
+            let cell = document.createElement('td');
+            let cellValue = rowObject[headerName] === undefined ? '' : rowObject[headerName];
+            cell.appendChild(document.createTextNode(cellValue));
+            row.appendChild(cell);
+        });
+        tableBody.appendChild(row);
+    });
+    table.appendChild(tableHeader);
+    table.appendChild(tableBody);
+    document.querySelector("#extraData").appendChild(table);
 }
