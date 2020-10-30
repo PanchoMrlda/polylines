@@ -1,13 +1,49 @@
 <?php
 
+use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Marshaler;
+
 class DynamoDbHelper
 {
+    /**
+     * @var string
+     */
+    public $devicesSearchKey;
+    /**
+     * @var string
+     */
+    public $devicesTable;
+    /**
+     * @var string
+     */
+    public $deviceType;
+    /**
+     * @var Marshaler
+     */
+    private $marshaler;
+    /**
+     * @var DynamoDbClient
+     */
+    private $dynamodb;
+    /**
+     * @var array
+     */
+    private $definedKeys;
+
     function __construct(Aws\DynamoDb\DynamoDbClient $dynamodb, Aws\DynamoDb\Marshaler $marshaler)
     {
         $this->dynamodb = $dynamodb;
         $this->marshaler = $marshaler;
         $this->devicesTable = 'DevicesRichDataTable';
         $this->devicesSearchKey = 'readingTimestamp';
+        $this->deviceType;
+        $this->definedKeys = [
+            '1005n' => '2104201',
+            '1004n' => '5004201',
+            '1003n' => '4093801',
+            '1002n' => '4093901',
+            '0004u' => '4090501'
+        ];
     }
 
     public function getDataFromDynamo(string $deviceId = null, int $from = null, int $to = null)
@@ -195,13 +231,7 @@ class DynamoDbHelper
 
     private function convertSensorNames(string $sensorName)
     {
-        $params = [
-            '1005n' => '2104201',
-            '1004n' => '5004201',
-            '1003n' => '4093801',
-            '1002n' => '4093901'
-        ];
-        return $params[$sensorName];
+        return $this->definedKeys[$sensorName];
     }
 
     function transformData($data)
