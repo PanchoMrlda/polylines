@@ -61,6 +61,7 @@ class DynamoDbHelper
                 }
                 if (count($rawData['Items']) !== 0) {
                     $formattedData = $this->getFormattedResult($rawData);
+                    $this->deviceType = $formattedData[0]['deviceType'];
                     if (in_array('L', array_keys($rawData['Items'][0]['payload']))) {
                         $extractedData = call_user_func_array('array_merge', array_column($formattedData, 'payload'));
                         $payloads = array_merge($payloads, $extractedData);
@@ -132,12 +133,12 @@ class DynamoDbHelper
         return $result;
     }
 
-    public function getSensorValues(array $payloads, string $sensorName)
+    public function getSensorValues(array $payloads, string $sensorName = '')
     {
         $result = [];
         if (count($payloads) != 0) {
             foreach ($payloads as $values) {
-                if (in_array('r', array_keys($values))) {
+                if (in_array('r', array_keys($values)) && !empty($sensorName)) {
                     $possibleNames = [$sensorName, $this->convertSensorNames($sensorName)];
                     $resultNames = array_intersect($possibleNames, array_keys($values['r']));
                     $sensorRealName = array_pop($resultNames);
@@ -146,6 +147,12 @@ class DynamoDbHelper
                     } else {
                         $result[] = null;
                     }
+                } else if (in_array('r', array_keys($values)) && empty($sensorName)) {
+                    $notWantedValues = [];
+                    foreach ($this->definedKeys as $definedKey) {
+                        $notWantedValues[$definedKey] = 0;
+                    }
+                    $result[] = array_diff($values['r'], $notWantedValues);
                 }
             }
         }
@@ -193,7 +200,8 @@ class DynamoDbHelper
             $data = array(
                 'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
                 $this->devicesSearchKey => $this->marshaler->unmarshalValue($message[$this->devicesSearchKey]),
-                'payload' => $this->transformData($this->marshaler->unmarshalValue($message['payload']))
+                'payload' => $this->transformData($this->marshaler->unmarshalValue($message['payload'])),
+                'deviceType' => $this->marshaler->unmarshalValue($message['deviceType'])
             );
             array_unshift($formattedResult, $data);
         }
