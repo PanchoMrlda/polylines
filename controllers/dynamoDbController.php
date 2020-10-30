@@ -5,18 +5,17 @@ require 'helpers/aws/DynamoDbHelper.php';
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 
-function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $from, int $to, string $deviceId = '')
+function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $to, string $deviceId = '')
 {
     $lastReading = null;
     if (empty(count($payloads)) && !empty($deviceId)) {
-        // Search in the old DynamoDb table if there is no data
-        $helper->devicesTable = 'DevicesDataTable';
-        $helper->devicesSearchKey = 'receivedTimeStamp';
-        $payloads = $helper->getDataFromDynamo($deviceId, $from, $to);
-        if (empty(count($payloads))) {
-            $readings = $helper->getDataFromDynamo($deviceId, 0, $to);
-            $lastReading = date('Y-m-d H:i:s', $readings[count($readings) - 1]['g']['t']);
+        $readings = $helper->getDataFromDynamo($deviceId, 0, $to);
+        $lastTimestamp = $readings[count($readings) - 1]['g']['t'];
+        $strLastTimestamp = strval($lastTimestamp);
+        if (strlen($strLastTimestamp) > 10) {
+            $lastTimestamp = intval(substr($strLastTimestamp, 0, 10));
         }
+        $lastReading = date('Y-m-d H:i:s', $lastTimestamp);
     }
     $dates = $helper->getDates($payloads);
     $locations = $helper->getLocations($payloads);
@@ -27,6 +26,12 @@ function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $from
     if (!empty($_GET['pressureInBars'])) {
         $highPressure = $helper->convertPressureValues($highPressure);
         $lowPressure = $helper->convertPressureValues($lowPressure);
+    }
+    $deviceType = $helper->deviceType;
+    if ($deviceType == 'NEWTON' || $deviceType == 'EINSTEIN') {
+        $extraData = $helper->getSensorValues($payloads);
+    } else {
+        $extraData = [];
     }
     // $compressor = $helper->getSensorValues($payloads, '0004u');
     // $blower = $helper->getSensorValues($payloads, '000u');
@@ -40,7 +45,9 @@ function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $from
         'lowPressure' => $lowPressure,
         // 'compressor' => $compressor,
         // 'blower' => $blower
-        'lastReading' => $lastReading
+        'lastReading' => $lastReading,
+        'extraData' => $extraData,
+        'deviceType' => $deviceType
     ];
 }
 
@@ -75,10 +82,10 @@ try {
     }
     // Variables bus 1
     $payloads1 = $dynamoHelper->getDataFromDynamo($deviceId1, $from, $to);
-    $deviceId1Data = getDeviceRelatedData($payloads1, $dynamoHelper, $from, $to, $deviceId1);
+    $deviceId1Data = getDeviceRelatedData($payloads1, $dynamoHelper, $to, $deviceId1);
     // Variables bus 2
     $payloads2 = $dynamoHelper->getDataFromDynamo($deviceId2, $from, $to);
-    $deviceId2Data = getDeviceRelatedData($payloads2, $dynamoHelper, $from, $to, $deviceId2);
+    $deviceId2Data = getDeviceRelatedData($payloads2, $dynamoHelper, $to, $deviceId2);
     $dynamoDbData = [
         'from' => date('Y-m-d', $from / 1000),
         'deviceId1' => $deviceId1Data,
