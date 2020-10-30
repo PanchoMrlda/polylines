@@ -122,6 +122,8 @@ function printDevices($deviceData)
 <div id="tempChart" class="chart"></div>
 <div id="pressureChart" class="chart"></div>
 <div id="voltageChart" class="chart"></div>
+<div id="extraData" class="justify-content-center mx-auto mt-5">
+</div>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_SESSION['secretsData']['google']['mapsKey'] ?>">
 </script>
