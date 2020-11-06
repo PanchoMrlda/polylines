@@ -10,10 +10,14 @@ function getDeviceRelatedData(array $payloads, DynamoDbHelper $helper, int $to, 
     $lastReading = null;
     if (empty(count($payloads)) && !empty($deviceId)) {
         $readings = $helper->getDataFromDynamo($deviceId, 0, $to);
-        $lastTimestamp = $readings[count($readings) - 1]['g']['t'];
-        $strLastTimestamp = strval($lastTimestamp);
-        if (strlen($strLastTimestamp) > 10) {
-            $lastTimestamp = intval(substr($strLastTimestamp, 0, 10));
+        if (count($readings) == 0) {
+            $lastTimestamp = 0;
+        } else {
+            $lastTimestamp = $readings[count($readings) - 1]['g']['t'];
+            $strLastTimestamp = strval($lastTimestamp);
+            if (strlen($strLastTimestamp) > 10) {
+                $lastTimestamp = intval(substr($strLastTimestamp, 0, 10));
+            }
         }
         $lastReading = date('Y-m-d H:i:s', $lastTimestamp);
     }
