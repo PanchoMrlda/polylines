@@ -19,6 +19,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
     <link href="{{ asset('css/front.css') }}" rel="stylesheet"/>
     <script src="{{ asset('js/front.js') }}" defer></script>
+    <script src="{{ asset('js/charts.js') }}" defer></script>
     <script src="{{ asset('js/map.js') }}" defer></script>
 </head>
 <body onload="initMap()">

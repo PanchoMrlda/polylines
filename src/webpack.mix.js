@@ -25,6 +25,8 @@ mix.scripts([
     .scripts([
         'resources/js/c3.min.js',
         'resources/js/d3.v5.min.js',
+    ], 'public_html/js/charts.js')
+    .scripts([
         'resources/js/mapStyles.js',
         'resources/js/mapLogic.js',
     ], 'public_html/js/map.js')
