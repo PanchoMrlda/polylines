@@ -1,4 +1,4 @@
-var silverMap = [{
+let silverMap = [{
     "elementType": "geometry",
     "stylers": [{
         "color": "#f5f5f5"
@@ -122,7 +122,7 @@ var silverMap = [{
     }
 ];
 
-var nightMap = [{
+let nightMap = [{
     "elementType": "geometry",
     "stylers": [{
         "color": "#242f3e"
@@ -247,7 +247,7 @@ var nightMap = [{
     }
 ];
 
-var retroMap = [{
+let retroMap = [{
     "elementType": 'geometry',
     "stylers": [{
         "color": '#ebe3cd'
