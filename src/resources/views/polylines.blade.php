@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
@@ -22,7 +21,6 @@
     <script src="{{ asset('js/front.js') }}" defer></script>
     <script src="{{ asset('js/map.js') }}" defer></script>
 </head>
-
 <body onload="initMap()">
 @include('layouts.nav')
 <section class="options-container">
@@ -109,9 +107,7 @@
 <div id="voltageChart" class="chart"></div>
 <div id="extraData" class="justify-content-center mx-auto mt-5"></div>
 <script async="async" defer="defer"
-        {{--        src="https://maps.googleapis.com/maps/api/js?key=<?php // echo $_SESSION['secretsData']['google']['mapsKey'] ?>">--}}
-        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}">
-</script>
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
 </body>
 @include('layouts.spinner')
 </html>
