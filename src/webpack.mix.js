@@ -21,6 +21,7 @@ mix.styles([
 ], 'public_html/css/handwriting.css');
 mix.scripts([
     'resources/js/utils.js',
+    'resources/js/dark-mode-switch.min.js',
 ], 'public_html/js/front.js')
     .scripts([
         'resources/js/c3.min.js',

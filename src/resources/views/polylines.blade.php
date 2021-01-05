@@ -110,5 +110,6 @@
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
 </body>
+@include('layouts.footer')
 @include('layouts.spinner')
 </html>
