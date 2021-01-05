@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/devices/config', 'HomeController@index')->name('devices/config');
 Route::get('/handwriting', 'HomeController@handwriting')->name('handwriting');
+Route::get('/raspberry-pi', 'HomeController@raspberryPi')->name('raspberry-pi');
 Route::get('/profile', 'HomeController@profile')->name('profile');
 Route::get('/dynamo', 'DynamoDbController@show')->name('dynamo');
 Route::post('/handwriting/image', 'HandwritingController@image')->name('handwriting/image');

@@ -5,7 +5,8 @@
                 <a class="nav-link" href="{{ route('home') }}">{{ __('messages.layout_names.dashboard') }}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('devices/config') }}">{{ __('messages.layout_names.config_file') }}</a>
+                <a class="nav-link"
+                   href="{{ route('devices/config') }}">{{ __('messages.layout_names.config_file') }}</a>
             </li>
         </ul>
     </div>
@@ -18,7 +19,11 @@
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link disabled" href="{{ route('handwriting') }}">{{ __('messages.layout_names.handwriting') }}</a>
+                <a class="nav-link" href="{{ route('handwriting') }}">{{ __('messages.layout_names.handwriting') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{{ route('raspberry-pi') }}">{{ __('messages.layout_names.raspberry_pi') }}</a>
             </li>
         </ul>
     </div>

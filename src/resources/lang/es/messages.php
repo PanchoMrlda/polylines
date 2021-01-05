@@ -14,6 +14,7 @@ return [
         'dashboard' => 'Dashboard',
         'config_file' => 'Fichero de Configuración',
         'handwriting' => 'Caligrafía',
+        'raspberry_pi' => 'RaspberryPi',
     ],
     'polylines_layout' => [
         'previous_reading' => 'Última lectura',

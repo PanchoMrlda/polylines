@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Aws\DynamoDb\Marshaler;
+use Aws\Sdk;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -32,6 +34,14 @@ class HomeController
     public function handwriting()
     {
         return view('handwriting');
+    }
+
+    /**
+     * @return Application|Factory|View
+     */
+    public function raspberryPi()
+    {
+        return view('raspberryPi');
     }
 
     /**

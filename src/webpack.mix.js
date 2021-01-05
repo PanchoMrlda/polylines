@@ -33,4 +33,7 @@ mix.scripts([
     ], 'public_html/js/map.js')
     .scripts([
         'resources/js/handwriting.js',
-    ], 'public_html/js/handwriting.js');
+    ], 'public_html/js/handwriting.js')
+    .scripts([
+        'resources/js/raspberryPi.js',
+    ], 'public_html/js/raspberryPi.js');
