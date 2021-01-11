@@ -4,7 +4,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
-    <title>{{ config('app.name') }}</title>
+    <title>{{ __('messages.layout_names.dashboard') }} | {{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -48,7 +48,6 @@
                     {{ __('messages.polylines_layout.hours') }}
                 </span>
             </section>
-
             <section class="form-date-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">{{ __('messages.polylines_layout.data') }}</span>
                 <span class="justify-content-center input-checkbox d-none">
