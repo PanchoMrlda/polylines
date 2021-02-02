@@ -1,0 +1,64 @@
+version: '3'
+services:
+
+  #PHP Service
+  polylines_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: php:7.3-fpm
+    container_name: polylines_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: polylines_app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    volumes:
+      - ./src/:/var/www/html
+      - ./.env:/var/www/html/.env
+    networks:
+      - polylines_app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '${DOCKER_PORT_HTTP}:80'
+    volumes:
+      - ./src/:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - polylines_app-network
+
+  #MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '${DOCKER_PORT_MYSQL}:3306'
+    environment:
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+    networks:
+      - polylines_app-network
+
+#Docker Networks
+networks:
+  polylines_app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
