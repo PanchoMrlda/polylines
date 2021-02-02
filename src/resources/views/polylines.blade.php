@@ -30,10 +30,12 @@
             <section class="form-last-reading-section input-group-prepend">
                 <label class="justify-content-center span input-group-text"
                        for="from1">{{ __('messages.polylines_layout.previous_reading') }}</label>
-                <input class="input" type="text" value="<?php // echo $dynamoDbData['deviceId1']['lastReading']; ?>"
+                <input class="input" type="text"
+                       value="@if(isset($dynamoDbData['deviceId1']['lastReading'])) $dynamoDbData['deviceId1']['lastReading']; @endif"
                        name="from1" id="from1" disabled="disabled"/>
                 <label for="from2"></label>
-                <input class="input" type="text" value="<?php // echo $dynamoDbData['deviceId2']['lastReading']; ?>"
+                <input class="input" type="text"
+                       value="@if(isset($dynamoDbData['deviceId2']['lastReading'])) $dynamoDbData['deviceId2']['lastReading']; @endif"
                        name="from2" id="from2" disabled="disabled"/>
             </section>
             <section class="form-date-section input-group-prepend">
