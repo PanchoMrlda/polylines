@@ -12,10 +12,9 @@ Well done! Now we have the app running, but we need to set up the database and t
 - To set the database: `php artisan migrate`
 - To compile the assets: `npm run dev`
 
-Ready! Open up your browser of choice to [http://localhost:8081](http://localhost:8081) and you should see the app running as intended.
+Ready! Open up your browser of choice to [http://localhost:8000](http://localhost:8000) and you should see the app running as intended.
 
 #### Containers created and their ports (if used) are as follows:
 
-- **webserver** - `:8081`
-- **mysql** - `:3306`
-- **app** - `:9000`
+- **web** - `:8000`
+- **mysql** - `:3307`

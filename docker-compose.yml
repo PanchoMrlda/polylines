@@ -2,7 +2,7 @@ version: '3'
 services:
 
   #PHP Service
-  polylines_app:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +23,7 @@ services:
   #Nginx Service
   webserver:
     image: nginx:alpine
-    container_name: webserver
+    container_name: polylines_webserver
     restart: unless-stopped
     tty: true
     ports:
@@ -37,7 +37,7 @@ services:
   #MySQL Service
   db:
     image: mysql:5.7.22
-    container_name: db
+    container_name: polylines_db
     restart: unless-stopped
     tty: true
     ports:
