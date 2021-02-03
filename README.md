@@ -1,15 +1,4 @@
 # Polylines
-A simply E-Commerce Software. Features Provided:
-
-- Products
-- Cart
-- Checkout
-- Categories
-- Customers
-- Orders
-- Payment
-- Couriers
-- Employees
 
 ## Usage
 
