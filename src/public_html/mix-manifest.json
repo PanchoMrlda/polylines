@@ -1,0 +1,9 @@
+{
+    "/css/front.css": "/css/front.css",
+    "/css/handwriting.css": "/css/handwriting.css",
+    "/js/front.js": "/js/front.js",
+    "/js/charts.js": "/js/charts.js",
+    "/js/map.js": "/js/map.js",
+    "/js/handwriting.js": "/js/handwriting.js",
+    "/js/raspberryPi.js": "/js/raspberryPi.js"
+}
