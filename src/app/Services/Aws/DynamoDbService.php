@@ -25,8 +25,11 @@ class DynamoDbService
     public function __construct()
     {
         $sdk = new Sdk([
-            'region' => env('AWS_REGION'),
-            'version' => env('AWS_VERSION')
+            'credentials' => [
+                'key' => config('env.AWS_ACCESS_KEY_ID'),
+                'secret' => config('env.AWS_SECRET_ACCESS_KEY')],
+            'region' => config('env.AWS_REGION'),
+            'version' => config('env.AWS_VERSION')
         ]);
         $this->client = $sdk->createDynamoDb();
         $this->marshaler = new Marshaler();

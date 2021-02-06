@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/env.php';
+
 return [
 
     /*
@@ -13,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => empty($appConfig['APP_NAME']) ? 'Laravel' : $appConfig['APP_NAME'],
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => empty($appConfig['APP_ENV']) ? 'production' : $appConfig['APP_ENV'],
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +41,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => empty($appConfig['APP_DEBUG']) ? false : $appConfig['APP_DEBUG'],
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +54,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => empty($appConfig['APP_URL']) ? 'http://localhost' : $appConfig['APP_URL'],
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -119,7 +121,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    'key' => $appConfig['APP_KEY'],
 
     'cipher' => 'AES-256-CBC',
 
