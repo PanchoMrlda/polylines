@@ -78,17 +78,35 @@
                 <input class="select input" list="devicesList1" id="deviceId1Select" name="deviceId1"
                        onchange="submitForm()">
                 <datalist id="devicesList1">
-                    <?php
-                    // printDevices($deviceData);
-                    ?>
+                    @foreach($devicesData as $companyName => $vehicles)
+                        <optgroup label={{ $companyName }}>
+                            @foreach($vehicles as $vehicleId => $devices)
+                                <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
+                                    @foreach($devices as $deviceInfo)
+                                        <option value="{{ $deviceInfo->deviceId }}">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
                 </datalist>
                 <label for="deviceId2Select"></label>
                 <input class="select input" list="devicesList2" id="deviceId2Select" name="deviceId2"
                        onchange="submitForm()">
                 <datalist id="devicesList2">
-                    <?php
-                    // printDevices($deviceData);
-                    ?>
+                    @foreach($devicesData as $companyName => $vehicles)
+                        <optgroup label={{ $companyName }}>
+                            @foreach($vehicles as $vehicleId => $devices)
+                                <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
+                                    @foreach($devices as $deviceInfo)
+                                        <option value="{{ $deviceInfo->deviceId }}">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
                 </datalist>
             </section>
             <section class="form-distance-section input-group-prepend">
