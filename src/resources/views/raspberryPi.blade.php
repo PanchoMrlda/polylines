@@ -38,6 +38,9 @@
                 <label for="maxValueRightHeader"></label>
                 <input class="input" type="text" value="" name="maxValueRightHeader" id="maxValueRightHeader"
                        disabled="disabled" placeholder="Producido"/>
+                <label for="powerHeader"></label>
+                <input class="input" type="text" value="" name="powerHeader" id="powerHeader"
+                       disabled="disabled" placeholder="Potencia"/>
             </section>
             <section class="form-last-reading-section input-group-prepend">
                 <label class="justify-content-center span input-group-text" for="maxValueLeft">Total Energía</label>
@@ -47,6 +50,9 @@
                        disabled="disabled"/>
                 <label for="maxValueRight"></label>
                 <input class="input" type="text" value="" name="maxValueRight" id="maxValueRight" disabled="disabled"/>
+                <label for="powerContracted"></label>
+                <input class="input" type="text" value="" name="powerContracted" id="powerContracted"
+                       disabled="disabled"/>
             </section>
             <section class="form-distance-section input-group-prepend">
                 <label class="justify-content-center span input-group-text" for="minValueLeft">Total Coste</label>
@@ -56,14 +62,21 @@
                        disabled="disabled"/>
                 <label for="minValueRight"></label>
                 <input class="input" type="text" value="" name="minValueRight" id="minValueRight" disabled="disabled"/>
+                <label for="powerCost"></label>
+                <input class="input" type="text" value="" name="powerCost" id="powerCost" disabled="disabled"/>
             </section>
             <section class="form-date-section input-group-prepend">
-                <label class="justify-content-center span input-group-text" for="date">Date</label>
-                <input class="input" type="date" value="" name="date" id="date" onchange="retrieveSensorData()"/>
-                <a href="#" class="span btn btn-outline-secondary"
-                   onclick="window.open('Solar panels.pdf', '_blank', 'fullscreen=yes'); return false;">
-                    Show PDF
-                </a>
+                <label class="justify-content-center span input-group-text" for="startDate">Date</label>
+                <label class="d-none" for="endDate"></label>
+                <input class="input" type="date" value="" name="startDate" id="startDate"/>
+                <input class="input" type="date" value="" name="endDate" id="endDate"/>
+                <button class="span btn btn-outline-secondary" type="button" onclick="retrieveSensorData()">
+                    Calcular
+                </button>
+                {{--                <a href="#" class="span btn btn-outline-secondary"--}}
+                {{--                   onclick="window.open('Solar panels.pdf', '_blank', 'fullscreen=yes'); return false;">--}}
+                {{--                    Show PDF--}}
+                {{--                </a>--}}
             </section>
         </form>
     </section>
