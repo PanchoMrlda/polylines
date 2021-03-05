@@ -86,6 +86,7 @@
 </section>
 <div id="voltageChart" class="chart"></div>
 <div id="batteryChart" class="chart"></div>
+<script src="{{ asset('js/front-defer.js') }}" defer></script>
 </body>
 @include('layouts.footer')
 @include('layouts.spinner')

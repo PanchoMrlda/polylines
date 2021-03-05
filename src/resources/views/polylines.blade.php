@@ -128,6 +128,7 @@
 <div id="extraData" class="justify-content-center mx-auto mt-5"></div>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
+<script src="{{ asset('js/front-defer.js') }}" defer></script>
 </body>
 @include('layouts.footer')
 @include('layouts.spinner')
