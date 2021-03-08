@@ -1,6 +1,7 @@
 const ENERGY_SYMBOL = " kW";
 const CURRENCY_SYMBOL = " €";
 const CONTRACTED_POWER = 6.928;
+const CONTRACTED_POWER_PRICE = 0.134486;
 const MAX_PRICE = 0.208472;
 const MIN_PRICE = 0.110386;
 
@@ -166,7 +167,7 @@ function getPrice(currentDate) {
 
 function calculatePowerCost(dates) {
     let numDays = Math.floor(dates.length / 24) - 1;
-    let cost = Math.round(CONTRACTED_POWER * numDays * CONTRACTED_POWER * 100) / 100;
+    let cost = Math.round(CONTRACTED_POWER * numDays * CONTRACTED_POWER_PRICE * 100) / 100;
     return cost + CURRENCY_SYMBOL;
 }
 
