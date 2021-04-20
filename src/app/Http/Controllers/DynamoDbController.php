@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
-//require base_path('vendor/autoload.php');
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\Aws\DynamoDbService;
@@ -16,7 +14,7 @@ class DynamoDbController
      * @param Request $request
      * @return JsonResponse
      */
-    public function show(Request $request)
+    public function show(Request $request): JsonResponse
     {
         date_default_timezone_set('UTC');
         $tableName = $request->input('tableName');
@@ -58,7 +56,7 @@ class DynamoDbController
         );
     }
 
-    private function getDeviceRelatedData(array $messages, DynamoDbService $helper, $options)
+    private function getDeviceRelatedData(array $messages, DynamoDbService $helper, $options): array
     {
         $tableName = $options['tableName'];
         $deviceId = $options['deviceId'];
@@ -67,13 +65,16 @@ class DynamoDbController
         $lastReading = null;
         $payloads = $helper->retrievePayloads($messages);
         if (empty(count(collect($payloads)->flatten())) && !empty($deviceId)) {
-            $readings = $helper->getDataFromDynamo([
+            $lastReadings = $helper->getDataFromDynamo([
                 'tableName' => $tableName,
                 'deviceId' => $deviceId,
                 'from' => 0,
                 'to' => $to
             ]);
-            $timestamp = $readings[count($readings) - 2]['payload']['g']['t'] ?? null;
+            $lastPayloads = array_map(function ($reading) use ($helper) {
+                return $helper->transformData($reading);
+            }, $helper->retrievePayloads($lastReadings));
+            $timestamp = $lastPayloads[count($lastPayloads) - 2]['g']['t'] ?? null;
             $lastReading = date('Y-m-d H:i:s', $timestamp);
         } else {
             $payloads = array_map(function ($payload) use ($helper) {
