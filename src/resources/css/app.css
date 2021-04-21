@@ -149,6 +149,11 @@ thead tr th:hover {
     background-color: #eee !important;
 }
 
+[data-theme="dark"] .input-group-text {
+    background-color: #696969 !important;
+    color: #eee;
+}
+
 .footer {
     width: 100%;
     position: fixed;
