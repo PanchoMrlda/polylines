@@ -2,6 +2,7 @@
     "/css/front.css": "/css/front.css",
     "/css/handwriting.css": "/css/handwriting.css",
     "/js/front.js": "/js/front.js",
+    "/js/front-defer.js": "/js/front-defer.js",
     "/js/charts.js": "/js/charts.js",
     "/js/map.js": "/js/map.js",
     "/js/handwriting.js": "/js/handwriting.js",

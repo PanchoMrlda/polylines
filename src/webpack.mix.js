@@ -17,12 +17,14 @@ mix.styles([
     'resources/css/c3.css',
 ], 'public_html/css/front.css')
     .styles([
-    'resources/css/handwriting.css',
-], 'public_html/css/handwriting.css');
+        'resources/css/handwriting.css',
+    ], 'public_html/css/handwriting.css');
 mix.scripts([
     'resources/js/utils.js',
-    'resources/js/dark-mode-switch.min.js',
 ], 'public_html/js/front.js')
+    .scripts([
+        'resources/js/dark-mode-switch.min.js',
+    ], 'public_html/js/front-defer.js')
     .scripts([
         'resources/js/c3.min.js',
         'resources/js/d3.v5.min.js',
