@@ -20,3 +20,4 @@ Route::get('/raspberry-pi', 'HomeController@raspberryPi')->name('raspberry-pi');
 Route::get('/profile', 'HomeController@profile')->name('profile');
 Route::get('/dynamo', 'DynamoDbController@show')->name('dynamo');
 Route::post('/handwriting/image', 'HandwritingController@image')->name('handwriting/image');
+Route::get('/solar-panels', 'SolarPanelsController@show')->name('solar-panels');
