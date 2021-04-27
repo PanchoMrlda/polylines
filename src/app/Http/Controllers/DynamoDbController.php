@@ -16,7 +16,7 @@ class DynamoDbController
      */
     public function show(Request $request): JsonResponse
     {
-        date_default_timezone_set('UTC');
+        date_default_timezone_set('Europe/Madrid');
         $tableName = $request->input('tableName');
         $deviceId1 = $request->input('deviceId1');
         $deviceId2 = $request->input('deviceId2');
