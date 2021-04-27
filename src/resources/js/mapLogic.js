@@ -11,18 +11,10 @@ doRequest("GET", "/profile", setProfile);
 
 // Variables for bus 1
 let locations1 = [];
-let highPressure1 = [];
-highPressure1.unshift('High Pressure Device1');
-let lowPressure1 = [];
-lowPressure1.unshift('Low Pressure Device1');
 let extraData1 = [];
 
 // Variables bus 2
 let locations2 = [];
-let highPressure2 = [];
-highPressure2.unshift('High Pressure Device2');
-let lowPressure2 = [];
-lowPressure2.unshift('Low Pressure Device2');
 
 
 /* MAP FUNCTIONS */
@@ -283,7 +275,7 @@ function generateChart(chartId, options) {
         grid: {
             y: yGrid
         },
-        regions: assignRegions(chartId, options.deviceId1.dates, options.deviceId1.tempExt),
+        regions: assignRegions(chartId, options.deviceId1),
         onrendered: function () {
             let chartLabels = document.querySelectorAll(".c3-axis-y-label");
             Array.prototype.map.call(chartLabels, function (label) {
@@ -295,7 +287,7 @@ function generateChart(chartId, options) {
     });
 }
 
-function assignRegions(chartId, dates, tempExt) {
+function assignRegions(chartId, deviceData) {
     let regions;
     let maxWarning;
     let maxDanger;
@@ -337,28 +329,28 @@ function assignRegions(chartId, dates, tempExt) {
     }];
     let highPressureWarningRegions;
     if (chartId === "#pressureChart") {
-        compressorRegions = calculateCompressorRegions(dates);
+        compressorRegions = calculateCompressorRegions(deviceData);
         compressorRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies, dates, tempExt);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies, deviceData);
         highPressureWarningRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts, dates, tempExt);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts, deviceData);
         highPressureWarningRegions.map(region => regions.push(region));
     }
     return regions;
 }
 
-function calculateCompressorRegions(dates) {
+function calculateCompressorRegions(deviceData) {
     let regionsToAdd = [];
-    let lastStartDate = dates[1];
-    let lastEndDate = dates[dates.length - 1];
-    for (let i = 1; i < highPressure1.length; i++) {
-        if (compressorOn(highPressure1[i], lowPressure1[i])) {
-            lastEndDate = dates[i];
-            if (i === (highPressure1.length - 1)) {
+    let lastStartDate = deviceData.dates[1];
+    let lastEndDate = deviceData.dates[deviceData.dates.length - 1];
+    for (let i = 1; i < deviceData.highPressure.length; i++) {
+        if (compressorOn(deviceData.highPressure[i], deviceData.lowPressure[i])) {
+            lastEndDate = deviceData.dates[i];
+            if (i === (deviceData.highPressure.length - 1)) {
                 const region = {
                     axis: "x",
                     start: lastStartDate,
-                    end: dates[i],
+                    end: deviceData.dates[i],
                     class: "regionCompressor"
                 };
                 regionsToAdd.push(region);
@@ -371,31 +363,30 @@ function calculateCompressorRegions(dates) {
                 class: "regionCompressor"
             };
             if (lastStartDate !== lastEndDate &&
-                lastEndDate !== dates[dates.length - 1]) {
+                lastEndDate !== deviceData.dates[deviceData.dates.length - 1]) {
                 regionsToAdd.push(region);
             }
-            lastStartDate = dates[i];
-            lastEndDate = dates[i];
+            lastStartDate = deviceData.dates[i];
+            lastEndDate = deviceData.dates[i];
         }
     }
     return regionsToAdd;
 }
 
-function calculateAlertRegions(regionClass, timeLimit, callback, dates, tempExt) {
+function calculateAlertRegions(regionClass, timeLimit, callback, deviceData) {
     let regionsToAdd = [];
     let lastStartDate = undefined;
     let lastEndDate;
-    for (let index = 1; index < highPressure1.length; index++) {
-        if (callback(index, tempExt)) {
+    for (let index = 1; index < deviceData.highPressure.length; index++) {
+        if (callback(index, deviceData)) {
             if (lastStartDate === undefined) {
-                lastStartDate = dates[index];
+                lastStartDate = deviceData.dates[index];
             } else {
-                lastEndDate = dates[index];
+                lastEndDate = deviceData.dates[index];
             }
-        } else if ((index === highPressure1.length - 1) || !callback(index, tempExt)) {
-            if (index === highPressure1.length - 1) {
-
-                lastEndDate = dates[dates.length - 1];
+        } else if ((index === deviceData.highPressure.length - 1) || !callback(index, deviceData)) {
+            if (index === deviceData.highPressure.length - 1) {
+                lastEndDate = deviceData.dates[deviceData.dates.length - 1];
             }
             const region = {
                 axis: "x",
@@ -413,18 +404,14 @@ function calculateAlertRegions(regionClass, timeLimit, callback, dates, tempExt)
     return regionsToAdd;
 }
 
-function highPressureAnomalies(index, tempExt) {
-    let anomaly;
-    anomaly = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt[index] > 25 && highPressure1[index] < 35;
-    return anomaly;
+function highPressureAnomalies(index, deviceData) {
+    return compressorOn(deviceData.highPressure[index], deviceData.lowPressure[index]) &&
+        deviceData.tempExt[index] > 25 && deviceData.highPressure[index] < 35;
 }
 
-function highPressureAlerts(index, tempExt) {
-    let alert;
-    alert = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt[index] < 35 && highPressure1[index] >= 85;
-    return alert;
+function highPressureAlerts(index, deviceData) {
+    return compressorOn(deviceData.highPressure[index], deviceData.lowPressure[index]) &&
+        deviceData.tempExt[index] < 35 && deviceData.highPressure[index] >= 85;
 }
 
 function compressorOn(highPressure, lowPressure) {
@@ -582,10 +569,6 @@ function updateDevicesVariables(responseParams) {
         let deviceName = eval(deviceAccess + ".deviceName;");
         let selector = "#from" + fixedIndex;
         eval("locations" + fixedIndex + " = " + deviceAccess + ".locations;");
-        eval("highPressure" + fixedIndex + " = " + deviceAccess + ".highPressure;");
-        eval("highPressure" + fixedIndex + ".unshift('High Pressure " + deviceName + "');");
-        eval("lowPressure" + fixedIndex + " = " + deviceAccess + ".lowPressure;");
-        eval("lowPressure" + fixedIndex + ".unshift('Low Pressure " + deviceName + "');");
         eval("extraData" + fixedIndex + " = " + deviceAccess + ".extraData;");
         if (responseParams.deviceId1.dates.length === 0) {
             document.querySelector("#from1").value = responseParams.deviceId1.lastReading;
