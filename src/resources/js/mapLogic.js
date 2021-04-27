@@ -11,34 +11,18 @@ doRequest("GET", "/profile", setProfile);
 
 // Variables for bus 1
 let locations1 = [];
-let tempInt1 = [];
-tempInt1.unshift('Temp Int Device1');
-let tempExt1 = [];
-tempExt1.unshift('Temp Ext Device1');
 let highPressure1 = [];
 highPressure1.unshift('High Pressure Device1');
 let lowPressure1 = [];
 lowPressure1.unshift('Low Pressure Device1');
-let compressor1 = [];
-compressor1.unshift('Compressor Device1');
-let blower1 = [];
-blower1.unshift('Blower Device1');
 let extraData1 = [];
 
 // Variables bus 2
 let locations2 = [];
-let tempInt2 = [];
-tempInt2.unshift('Temp Int Device2');
-let tempExt2 = [];
-tempExt2.unshift('Temp Ext Device2');
 let highPressure2 = [];
 highPressure2.unshift('High Pressure Device2');
 let lowPressure2 = [];
 lowPressure2.unshift('Low Pressure Device2');
-let compressor2 = [];
-compressor2.unshift('Compressor Device2');
-let blower2 = [];
-blower2.unshift('Blower Device2');
 
 
 /* MAP FUNCTIONS */
@@ -299,7 +283,7 @@ function generateChart(chartId, options) {
         grid: {
             y: yGrid
         },
-        regions: assignRegions(chartId, options.deviceId1.dates),
+        regions: assignRegions(chartId, options.deviceId1.dates, options.deviceId1.tempExt),
         onrendered: function () {
             let chartLabels = document.querySelectorAll(".c3-axis-y-label");
             Array.prototype.map.call(chartLabels, function (label) {
@@ -311,7 +295,7 @@ function generateChart(chartId, options) {
     });
 }
 
-function assignRegions(chartId, dates) {
+function assignRegions(chartId, dates, tempExt) {
     let regions;
     let maxWarning;
     let maxDanger;
@@ -355,9 +339,9 @@ function assignRegions(chartId, dates) {
     if (chartId === "#pressureChart") {
         compressorRegions = calculateCompressorRegions(dates);
         compressorRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies, dates);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies, dates, tempExt);
         highPressureWarningRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts, dates);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts, dates, tempExt);
         highPressureWarningRegions.map(region => regions.push(region));
     }
     return regions;
@@ -397,18 +381,18 @@ function calculateCompressorRegions(dates) {
     return regionsToAdd;
 }
 
-function calculateAlertRegions(regionClass, timeLimit, callback, dates) {
+function calculateAlertRegions(regionClass, timeLimit, callback, dates, tempExt) {
     let regionsToAdd = [];
     let lastStartDate = undefined;
     let lastEndDate;
     for (let index = 1; index < highPressure1.length; index++) {
-        if (callback(index)) {
+        if (callback(index, tempExt)) {
             if (lastStartDate === undefined) {
                 lastStartDate = dates[index];
             } else {
                 lastEndDate = dates[index];
             }
-        } else if ((index === highPressure1.length - 1) || !callback(index)) {
+        } else if ((index === highPressure1.length - 1) || !callback(index, tempExt)) {
             if (index === highPressure1.length - 1) {
 
                 lastEndDate = dates[dates.length - 1];
@@ -429,17 +413,17 @@ function calculateAlertRegions(regionClass, timeLimit, callback, dates) {
     return regionsToAdd;
 }
 
-function highPressureAnomalies(index) {
+function highPressureAnomalies(index, tempExt) {
     let anomaly;
     anomaly = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt1[index] > 25 && highPressure1[index] < 35;
+        tempExt[index] > 25 && highPressure1[index] < 35;
     return anomaly;
 }
 
-function highPressureAlerts(index) {
+function highPressureAlerts(index, tempExt) {
     let alert;
     alert = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt1[index] < 35 && highPressure1[index] >= 85;
+        tempExt[index] < 35 && highPressure1[index] >= 85;
     return alert;
 }
 
@@ -524,7 +508,6 @@ function setChartWidth() {
 //     setTimeout(() => {
 //         generateChart("#tempChart", [options.deviceId1.dates, tempInt1, tempExt1]);
 //         generateChart("#pressureChart", [options.deviceId1.dates, lowPressure1, highPressure1]);
-//         // generateChart("#voltageChart", [options.deviceId1.dates, compressor1, blower1]);
 //     }, 50);
 // }
 
@@ -599,10 +582,6 @@ function updateDevicesVariables(responseParams) {
         let deviceName = eval(deviceAccess + ".deviceName;");
         let selector = "#from" + fixedIndex;
         eval("locations" + fixedIndex + " = " + deviceAccess + ".locations;");
-        eval("tempInt" + fixedIndex + " = " + deviceAccess + ".tempInt;");
-        eval("tempInt" + fixedIndex + ".unshift('Temp Int " + deviceName + "');");
-        eval("tempExt" + fixedIndex + " = " + deviceAccess + ".tempExt;");
-        eval("tempExt" + fixedIndex + ".unshift('Temp Ext " + deviceName + "');");
         eval("highPressure" + fixedIndex + " = " + deviceAccess + ".highPressure;");
         eval("highPressure" + fixedIndex + ".unshift('High Pressure " + deviceName + "');");
         eval("lowPressure" + fixedIndex + " = " + deviceAccess + ".lowPressure;");
