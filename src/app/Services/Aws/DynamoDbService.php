@@ -39,7 +39,7 @@ class DynamoDbService
         ];
     }
 
-    public function getDataFromDynamo($options = [])
+    public function getDataFromDynamo($options = []): array
     {
         $params = $this->getDynamoDbParams($options);
         $formattedResult = [[]];
@@ -65,11 +65,11 @@ class DynamoDbService
         return $formattedResult;
     }
 
-    public function getLocations(array $payloads)
+    public function getLocations(array $payloads): array
     {
         $result = [];
         if (count(collect($payloads)->flatten()) != 0) {
-            foreach ($payloads as $index => $values) {
+            foreach ($payloads as $values) {
                 if (in_array('g', array_keys($values))) {
                     $result[] = [
                         'lat' => floatval($values['g']['la']),
@@ -92,11 +92,10 @@ class DynamoDbService
         } else {
             $result[] = ["lat" => 40.446800, "lng" => -3.55802];
         }
-        $result = $this->cleanCoordinates($result);
-        return $result;
+        return $this->cleanCoordinates($result);
     }
 
-    public function getDates(array $payloads)
+    public function getDates(array $payloads): array
     {
         $result = [];
         if (count(collect($payloads)->flatten()) != 0) {
@@ -114,7 +113,7 @@ class DynamoDbService
         return $result;
     }
 
-    public function getSensorValues(array $payloads, string $sensorName = '')
+    public function getSensorValues(array $payloads, string $sensorName = ''): array
     {
         $result = [];
         if (count($payloads) != 0) {
@@ -140,7 +139,7 @@ class DynamoDbService
         return $result;
     }
 
-    public function convertPressureValues(array $pressureValues)
+    public function convertPressureValues(array $pressureValues): array
     {
         return array_map(function (float $value) {
             $p1 = 0.000153;
@@ -153,14 +152,14 @@ class DynamoDbService
         }, $pressureValues);
     }
 
-    public function retrievePayloads(array $messages)
+    public function retrievePayloads(array $messages): array
     {
         return array_map(function ($message) {
             return $message['payload'];
         }, array_filter($messages));
     }
 
-    public function transformData(array $data)
+    public function transformData(array $data): array
     {
         if (array_key_exists('current', $data)) {
             $result = [
@@ -177,7 +176,7 @@ class DynamoDbService
         return $result;
     }
 
-    private function cleanCoordinates(array $coordinates)
+    private function cleanCoordinates(array $coordinates): array
     {
         $lastIndex = 0;
         foreach ($coordinates as $index => $coordinate) {
