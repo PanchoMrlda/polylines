@@ -24,11 +24,13 @@ class DynamoDbController
         $to = $request->input('to');
         $pressureInBars = $request->input('pressureInBars');
         if (!empty($from)) {
-            $from = strtotime($from) * 1000;
+            // 0 to begin from 0:00, 1 to begin from 1:00, 2 to begin from 2:00...
+            $from = strtotime($from) * 1000 + (3600000 * 0);
             if (!empty($to)) {
                 $to = strtotime($to) * 1000;
             } else {
-                $to = (strtotime($request->input('from')) + (60 * 1439)) * 1000;
+                // 23 to finish at 23:59, 22 to finish at 22:59, 22 to finish at 21:59...
+                $to = (strtotime($request->input('from')) + (60 * (60 * 23 + 59))) * 1000;
             }
         } else {
             $from = (time() - 60 * 60) * 1000;
@@ -60,16 +62,17 @@ class DynamoDbController
     {
         $tableName = $options['tableName'];
         $deviceId = $options['deviceId'];
-        $to = $options['to'];
+        $from = $options['from'];
         $pressureInBars = $options['pressureInBars'];
         $lastReading = null;
         $payloads = $helper->retrievePayloads($messages);
         if (empty(count(collect($payloads)->flatten())) && !empty($deviceId)) {
             $lastReadings = $helper->getDataFromDynamo([
+                'emptyReadings' => true,
                 'tableName' => $tableName,
                 'deviceId' => $deviceId,
                 'from' => 0,
-                'to' => $to
+                'to' => $from
             ]);
             $lastPayloads = array_map(function ($reading) use ($helper) {
                 return $helper->transformData($reading);
