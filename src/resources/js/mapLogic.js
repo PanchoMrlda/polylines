@@ -28,6 +28,7 @@ function initMap(options = {
         highPressure: [],
         lowPressure: [],
         extraData: [],
+        deviceName: ""
     },
     deviceId2: {
         dates: [],
@@ -37,18 +38,17 @@ function initMap(options = {
         highPressure: [],
         lowPressure: [],
         extraData: [],
+        deviceName: ""
     }
 }) {
-    options.deviceId1.dates.unshift('times');
-    options.deviceId1.tempInt.unshift('Temp Int Device1');
-    options.deviceId1.tempExt.unshift('Temp Ext Device1');
-    options.deviceId1.highPressure.unshift('High Pressure Device1');
-    options.deviceId1.lowPressure.unshift('Low Pressure Device1');
-    options.deviceId2.dates.unshift('times');
-    options.deviceId2.tempInt.unshift('Temp Int Device2');
-    options.deviceId2.tempExt.unshift('Temp Ext Device2');
-    options.deviceId2.highPressure.unshift('High Pressure Device2');
-    options.deviceId2.lowPressure.unshift('Low Pressure Device2');
+    Object.keys(options).filter(k => k.includes("deviceId")).map(k => {
+            options[k]["dates"].unshift("times");
+            options[k]["tempInt"].unshift("Temp Int " + options[k]["deviceName"]);
+            options[k]["tempExt"].unshift("Temp Ext " + options[k]["deviceName"]);
+            options[k]["highPressure"].unshift("High Pressure " + options[k]["deviceName"]);
+            options[k]["lowPressure"].unshift("Low Pressure " + options[k]["deviceName"]);
+        }
+    );
     if (document.querySelector("#deviceId1Select").value !== "" && !refreshed) {
         submitForm();
         refreshed = true;
