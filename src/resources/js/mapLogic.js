@@ -11,7 +11,6 @@ doRequest("GET", "/profile", setProfile);
 
 // Variables for bus 1
 let locations1 = [];
-let extraData1 = [];
 
 // Variables bus 2
 let locations2 = [];
@@ -550,25 +549,18 @@ function setProfile(responseParams) {
 }
 
 function updateDevicesVariables(responseParams) {
-    let deviceNames = ["deviceId1", "deviceId2"];
-    deviceNames.forEach((device, index) => {
-        let fixedIndex = index + 1;
-        let deviceAccess = "responseParams." + device;
-        let deviceName = eval(deviceAccess + ".deviceName;");
-        let selector = "#from" + fixedIndex;
-        eval("locations" + fixedIndex + " = " + deviceAccess + ".locations;");
-        eval("extraData" + fixedIndex + " = " + deviceAccess + ".extraData;");
-        if (responseParams.deviceId1.dates.length === 0) {
-            document.querySelector("#from1").value = responseParams.deviceId1.lastReading;
-        } else {
-            document.querySelector("#from1").value = "";
-        }
-        if (responseParams.deviceId2.dates.length === 0) {
-            document.querySelector("#from2").value = responseParams.deviceId2.lastReading;
-        } else {
-            document.querySelector("#from2").value = "";
-        }
-    });
+    locations1 = responseParams.deviceId1.locations;
+    locations2 = responseParams.deviceId2.locations;
+    if (responseParams.deviceId1.dates.length === 0) {
+        document.querySelector("#from1").value = responseParams.deviceId1.lastReading;
+    } else {
+        document.querySelector("#from1").value = "";
+    }
+    if (responseParams.deviceId2.dates.length === 0) {
+        document.querySelector("#from2").value = responseParams.deviceId2.lastReading;
+    } else {
+        document.querySelector("#from2").value = "";
+    }
 }
 
 function updateDistance() {
