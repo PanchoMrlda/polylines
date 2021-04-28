@@ -197,34 +197,18 @@ function generateChart(chartId, options) {
     let chartsData = {
         x: "times",
         xFormat: "%Y-%m-%d %H:%M:%S",
-        onclick: showBusPosition
+        onclick: showBusPosition,
+        columns: [
+            options.deviceId1.dates,
+            options.deviceId1.dates
+        ]
     };
     let screenWidth = setChartWidth();
-    if (options.deviceId1.dates.length === 1 && options.deviceId2.dates.length === 1) {
-        chartsData.columns = [];
-    } else if (options.deviceId1.dates.length !== 1 && options.deviceId2.dates.length === 1) {
-        chartsData.columns = [
-            options.deviceId1.dates,
+    if (chartId === "#tempChart") {
+        chartsData.columns.splice(1, 0, ...[
             options.deviceId1.tempInt,
             options.deviceId1.tempExt
-        ];
-    } else if (options.deviceId1.dates.length === 1 && options.deviceId2.dates.length !== 1) {
-        chartsData.columns = [
-            options.deviceId2.dates,
-            options.deviceId2.tempInt,
-            options.deviceId2.tempExt
-        ];
-    } else if (options.deviceId1.dates.length !== 1 && options.deviceId2.dates.length !== 1) {
-        chartsData.columns = [
-            options.deviceId1.dates,
-            options.deviceId1.tempInt,
-            options.deviceId1.tempExt,
-            options.deviceId2.dates,
-            options.deviceId2.tempInt,
-            options.deviceId2.tempExt
-        ];
-    }
-    if (chartId === "#tempChart") {
+        ]);
         chartLabel = "ºC";
         yGrid = {
             lines: [
@@ -233,6 +217,10 @@ function generateChart(chartId, options) {
             ]
         };
     } else if (chartId === "#pressureChart") {
+        chartsData.columns.splice(1, 0, ...[
+            options.deviceId1.lowPressure,
+            options.deviceId1.highPressure
+        ]);
         if (document.querySelector("[name=pressureInBars]").checked) {
             chartLabel = "bar";
         } else {
