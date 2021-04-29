@@ -226,9 +226,6 @@ function generateChart(chartId, options) {
             chartLabel = "ºC";
         }
         yGrid = {};
-    } else if (chartId === "#voltageChart") {
-        chartLabel = "V";
-        yGrid = {};
     }
 
     return c3.generate({
@@ -286,11 +283,6 @@ function assignRegions(chartId, deviceData) {
         maxDanger = 85;
         minWarning = -20;
         minDanger = -20;
-    } else if (chartId === "#voltageChart") {
-        maxWarning = 27;
-        maxDanger = 28;
-        minWarning = -100;
-        minDanger = -100;
     } else {
         maxWarning = 100;
         maxDanger = 100;
