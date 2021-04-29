@@ -49,13 +49,19 @@ class DynamoDbController
         $dynamoQueryParams['deviceId'] = $deviceId2;
         $deviceId2Payloads = $dynamoDbService->getDataFromDynamo($dynamoQueryParams);
         $deviceId2Data = $this->getDeviceRelatedData($deviceId2Payloads, $dynamoDbService, $dynamoQueryParams);
-        return response()->json(
-            [
-                'from' => date('Y-m-d', $from / 1000),
-                'deviceId1' => $deviceId1Data,
-                'deviceId2' => $deviceId2Data
-            ]
-        );
+        return response()
+            ->json(
+                [
+                    'from' => date('Y-m-d', $from / 1000),
+                    'deviceId1' => $deviceId1Data,
+                    'deviceId2' => $deviceId2Data
+                ],
+                200,
+                [
+                    'Access-Control-Allow-Origin' => '*',
+                    'Content-Type' => 'application/json'
+                ]
+            );
     }
 
     private function getDeviceRelatedData(array $messages, DynamoDbService $helper, $options): array
