@@ -16,7 +16,7 @@ class DynamoDbController
      */
     public function show(Request $request): JsonResponse
     {
-        date_default_timezone_set('UTC');
+        date_default_timezone_set('Europe/Madrid');
         $tableName = $request->input('tableName');
         $deviceId1 = $request->input('deviceId1');
         $deviceId2 = $request->input('deviceId2');
@@ -24,11 +24,13 @@ class DynamoDbController
         $to = $request->input('to');
         $pressureInBars = $request->input('pressureInBars');
         if (!empty($from)) {
-            $from = strtotime($from) * 1000;
+            // 0 to begin from 0:00, 1 to begin from 1:00, 2 to begin from 2:00...
+            $from = strtotime($from) * 1000 + (3600000 * 0);
             if (!empty($to)) {
                 $to = strtotime($to) * 1000;
             } else {
-                $to = (strtotime($request->input('from')) + (60 * 1439)) * 1000;
+                // 23 to finish at 23:59, 22 to finish at 22:59, 22 to finish at 21:59...
+                $to = (strtotime($request->input('from')) + (60 * (60 * 23 + 59))) * 1000;
             }
         } else {
             $from = (time() - 60 * 60) * 1000;
@@ -47,29 +49,36 @@ class DynamoDbController
         $dynamoQueryParams['deviceId'] = $deviceId2;
         $deviceId2Payloads = $dynamoDbService->getDataFromDynamo($dynamoQueryParams);
         $deviceId2Data = $this->getDeviceRelatedData($deviceId2Payloads, $dynamoDbService, $dynamoQueryParams);
-        return response()->json(
-            [
-                'from' => date('Y-m-d', $from / 1000),
-                'deviceId1' => $deviceId1Data,
-                'deviceId2' => $deviceId2Data
-            ]
-        );
+        return response()
+            ->json(
+                [
+                    'from' => date('Y-m-d', $from / 1000),
+                    'deviceId1' => $deviceId1Data,
+                    'deviceId2' => $deviceId2Data
+                ],
+                200,
+                [
+                    'Access-Control-Allow-Origin' => '*',
+                    'Content-Type' => 'application/json'
+                ]
+            );
     }
 
     private function getDeviceRelatedData(array $messages, DynamoDbService $helper, $options): array
     {
         $tableName = $options['tableName'];
         $deviceId = $options['deviceId'];
-        $to = $options['to'];
+        $from = $options['from'];
         $pressureInBars = $options['pressureInBars'];
         $lastReading = null;
         $payloads = $helper->retrievePayloads($messages);
         if (empty(count(collect($payloads)->flatten())) && !empty($deviceId)) {
             $lastReadings = $helper->getDataFromDynamo([
+                'emptyReadings' => true,
                 'tableName' => $tableName,
                 'deviceId' => $deviceId,
                 'from' => 0,
-                'to' => $to
+                'to' => $from
             ]);
             $lastPayloads = array_map(function ($reading) use ($helper) {
                 return $helper->transformData($reading);

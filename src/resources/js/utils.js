@@ -2,16 +2,16 @@
  *  Utils Functions
  */
 function doRequest(requestMethod, requestUrl, callback, params = {}, contentType = "application/x-www-form-urlencoded") {
-    var url = new URL(location.origin + requestUrl);
-    var fetchParams = {
+    let url = new URL(location.origin + requestUrl);
+    let fetchParams = {
         method: requestMethod
     }
-    var urlStringParams = "";
-    if (requestMethod == "GET") {
+    let urlStringParams = "";
+    if (requestMethod === "GET") {
         urlStringParams = "?" + formatRequestParams(params);
         url.search = new URLSearchParams(params)
-    } else if (requestMethod == "POST") {
-        if (contentType == "application/json") {
+    } else if (requestMethod === "POST") {
+        if (contentType === "application/json") {
             fetchParams.body = JSON.stringify(params);
         } else {
             fetchParams.body = formatRequestParams(params);
@@ -29,7 +29,7 @@ function doRequest(requestMethod, requestUrl, callback, params = {}, contentType
             if (callback !== undefined) {
                 callback(data);
             }
-            if (requestMethod == "GET") {
+            if (requestMethod === "GET") {
                 window.history.replaceState({}, document.title, urlStringParams);
             }
         });
@@ -46,7 +46,7 @@ function setVisible(selector, visible) {
 }
 
 function onReady(callback, selector) {
-    var intervalId = window.setInterval(function () {
+    let intervalId = window.setInterval(function () {
         if (document.querySelector(selector) !== undefined) {
             window.clearInterval(intervalId);
             callback.call(this);
