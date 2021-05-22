@@ -17,6 +17,7 @@ services:
     volumes:
       - ./src/:/var/www/html
       - ./.env:/var/www/html/.env
+      - ./php.ini-development:/usr/local/etc/php/php.ini
     networks:
       - polylines_app-network
 
