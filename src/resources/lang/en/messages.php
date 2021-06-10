@@ -26,5 +26,6 @@ return [
         'pressure_in_bars' => 'Pressure in bars',
         'device_name' => 'Device Name',
         'travelled_distance' => 'Travelled distance',
+        'readings' => 'Readings',
     ]
 ];

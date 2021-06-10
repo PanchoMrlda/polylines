@@ -26,5 +26,6 @@ return [
         'pressure_in_bars' => 'Presión en bares',
         'device_name' => 'Nombre del dispositivo',
         'travelled_distance' => 'Distancia recorrida',
+        'readings' => 'Lecturas',
     ],
 ];

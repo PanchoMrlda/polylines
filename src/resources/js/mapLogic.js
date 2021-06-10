@@ -538,6 +538,9 @@ function applyDynamoDbChanges(responseParams) {
     if (device1Type === 'NEWTON' || device1Type === 'EINSTEIN') {
         createExtraDataTable(responseParams.deviceId1.extraData, device1Type, responseParams.deviceId1.dates);
     }
+    let readingsCount = document.querySelector("#readingsCount");
+    let readingsTitle = readingsCount.value.substr(-8);
+    readingsCount.value = responseParams.deviceId1.dates.length + " " + readingsTitle;
 }
 
 function setProfile(responseParams) {

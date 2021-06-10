@@ -51,7 +51,8 @@
                             </label>
                         </div>
                         <div class="col-3 mx-0 p-0">
-                            <input class="input checkbox-medium mx-0 p-1" type="number" name="startHours" id="startHours" max="23"
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="startHours"
+                                   id="startHours" max="23"
                                    min="0"
                                    onchange="submitForm()"/>
                         </div>
@@ -61,7 +62,8 @@
                             </label>
                         </div>
                         <div class="col-3 mx-0 p-0">
-                            <input class="input checkbox-medium mx-0 p-1" type="number" name="endHours" id="endHours" max="23" min="0"
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="endHours" id="endHours"
+                                   max="23" min="0"
                                    onchange="submitForm()"/>
                         </div>
                     </div>
@@ -82,12 +84,9 @@
                     <option value="DevicesRichDataTable"></option>
                     <option value="TestRichDataTable"></option>
                 </datalist>
-                <span class="justify-content-center input-checkbox">
-                    <label for="lastHour"></label>
-                    <input class="input checkbox" type="checkbox" name="lastHour" id="lastHour"
-                           onchange="submitForm()"/>
-                    {{ __('messages.polylines_layout.last_hour') }}
-                </span>
+                <label for="readingsCount"></label>
+                <input class="input" type="text" value="{{ __('messages.polylines_layout.readings') }}"
+                       name="readingsCount" id="readingsCount" disabled="disabled"/>
             </section>
             <section class="form-device-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">{{ __('messages.polylines_layout.device_name') }}</span>
