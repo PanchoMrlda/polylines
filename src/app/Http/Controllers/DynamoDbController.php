@@ -98,6 +98,7 @@ class DynamoDbController
         $tempExt = $helper->getSensorValues($payloads, '1004n');
         $highPressure = $helper->getSensorValues($payloads, '1003n');
         $lowPressure = $helper->getSensorValues($payloads, '1002n');
+        $lowPressure = $helper->lowPressureCorrection($highPressure, $lowPressure);
         if (!empty($pressureInBars)) {
             $highPressure = $helper->convertPressureValues($highPressure);
             $lowPressure = $helper->convertPressureValues($lowPressure);
