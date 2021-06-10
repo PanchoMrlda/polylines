@@ -289,8 +289,8 @@ function assignRegions(chartId, deviceData) {
     if (chartId === "#pressureChart") {
         maxWarning = 85;
         maxDanger = 85;
-        minWarning = -20;
-        minDanger = -20;
+        minWarning = -15;
+        minDanger = -15;
     } else {
         maxWarning = 100;
         maxDanger = 100;
