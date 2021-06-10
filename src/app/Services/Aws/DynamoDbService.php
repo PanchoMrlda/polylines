@@ -152,6 +152,23 @@ class DynamoDbService
         }, $pressureValues);
     }
 
+    public function lowPressureCorrection(array $highPressureValues, array $lowPressureValues): array
+    {
+        $convertedLowPressureValues = [];
+        foreach ($lowPressureValues as $index => $lowPressureValue) {
+            if ($this->compressorOn($highPressureValues[$index], $lowPressureValue)) {
+                array_push($convertedLowPressureValues, $lowPressureValue - 10);
+            } else {
+                array_push($convertedLowPressureValues, $lowPressureValue);
+            }
+        }
+        return $convertedLowPressureValues;
+    }
+
+    public function compressorOn($highPressure, $lowPressure): bool
+    {
+        return $highPressure - $lowPressure >= 8;
+    }
     public function retrievePayloads(array $messages): array
     {
         return array_map(function ($message) {
