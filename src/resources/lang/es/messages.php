@@ -19,7 +19,8 @@ return [
     'polylines_layout' => [
         'previous_reading' => 'Última lectura',
         'date' => 'Fecha',
-        'hours' => 'Horas',
+        'from' => 'Desde',
+        'to' => 'hasta',
         'last_hour' => 'Última Hora',
         'data' => 'Datos',
         'pressure_in_bars' => 'Presión en bares',

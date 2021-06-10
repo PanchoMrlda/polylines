@@ -95,6 +95,13 @@ thead tr th:hover {
     vertical-align: middle;
 }
 
+.checkbox-medium {
+    width: 45px;
+    min-width: 30px;
+    margin: 0 6px;
+    vertical-align: middle;
+}
+
 .checkbox-wide {
     width: 60px;
     min-width: 30px;

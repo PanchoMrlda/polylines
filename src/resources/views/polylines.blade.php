@@ -43,12 +43,29 @@
                        for="from">{{ __('messages.polylines_layout.date') }}</label>
                 <input class="input" type="date" value="<?php // echo $date; ?>" name="from" id="from"
                        onchange="submitForm()"/>
-                <span class="justify-content-center input-checkbox">
-                    <label for="numHours"></label>
-                    <input class="input checkbox-wide" type="number" name="numHours" id="numHours" max="24" min="1"
-                           onchange="submitForm()"/>
-                    {{ __('messages.polylines_layout.hours') }}
-                </span>
+                <div class="container input">
+                    <div class="row">
+                        <div class="col-3 mx-0 p-0">
+                            <label class="justify-content-center input-group-text" for="startHours">
+                                {{ __('messages.polylines_layout.from') }}
+                            </label>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="startHours" id="startHours" max="23"
+                                   min="0"
+                                   onchange="submitForm()"/>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <label class="justify-content-center input-group-text" for="endHours">
+                                {{ __('messages.polylines_layout.to') }}
+                            </label>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="endHours" id="endHours" max="23" min="0"
+                                   onchange="submitForm()"/>
+                        </div>
+                    </div>
+                </div>
             </section>
             <section class="form-date-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">{{ __('messages.polylines_layout.data') }}</span>

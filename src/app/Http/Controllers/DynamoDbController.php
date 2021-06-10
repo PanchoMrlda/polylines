@@ -23,14 +23,16 @@ class DynamoDbController
         $from = $request->input('from');
         $to = $request->input('to');
         $pressureInBars = $request->input('pressureInBars');
+        $startHours = empty($request->input('startHours')) ? 0 : intval($request->input('startHours'));
+        $endHours = empty($request->input('endHours')) ? 23 : intval($request->input('endHours'));
         if (!empty($from)) {
             // 0 to begin from 0:00, 1 to begin from 1:00, 2 to begin from 2:00...
-            $from = strtotime($from) * 1000 + (3600000 * 0);
+            $from = strtotime($from) * 1000 + (3600000 * $startHours);
             if (!empty($to)) {
                 $to = strtotime($to) * 1000;
             } else {
                 // 23 to finish at 23:59, 22 to finish at 22:59, 22 to finish at 21:59...
-                $to = (strtotime($request->input('from')) + (60 * (60 * 23 + 59))) * 1000;
+                $to = (strtotime($request->input('from')) + (60 * (60 * $endHours + 59))) * 1000;
             }
         } else {
             $from = (time() - 60 * 60) * 1000;

@@ -225,7 +225,15 @@ function generateChart(chartId, options) {
         } else {
             chartLabel = "ºC";
         }
-        yGrid = {};
+        yGrid = {
+            lines: [
+                {value: 95, text: "Max HP >35º", position: "start"},
+                {value: 85, text: "Max HP <35º", position: "start"},
+                {value: 9, text: "Min HP", position: "start"},
+                {value: 30, text: "Max LP", position: "start"},
+                {value: -10, text: "Min LP", position: "start"}
+            ]
+        };
     }
 
     return c3.generate({
@@ -478,35 +486,31 @@ function setChartWidth() {
 // }
 
 function submitForm() {
-    let fromElem = document.querySelector(".form-date-section [name=from]");
     let deviceId1Elem = document.querySelector("#deviceId1Select");
     let deviceId2Elem = document.querySelector("#deviceId2Select");
-    let lastHourElem = document.querySelector("[name=lastHour]");
-    let pressureInBars = document.querySelector("[name=pressureInBars]");
-    let tableNameElem = document.querySelector("[name=tableNames]");
-    let numHoursElem = document.querySelector("[name=numHours]");
-    let requestParams = {
-        from: fromElem.value,
-        deviceId1: deviceId1Elem.value,
-        deviceId2: deviceId2Elem.value,
-        numHours: numHoursElem.value,
-        tableName: tableNameElem.value
-    };
-    if (lastHourElem.checked) {
-        let d = new Date();
-        let h = addZero(d.getHours() - 1);
-        let m = addZero(d.getMinutes());
-        let s = addZero(d.getSeconds());
-        requestParams.from += " " + h + ":" + m + ":" + s;
+    if (deviceId1Elem.value !== "" || deviceId2Elem.value !== "") {
+        let fromElem = document.querySelector(".form-date-section [name=from]");
+        let pressureInBars = document.querySelector("[name=pressureInBars]");
+        let tableNameElem = document.querySelector("[name=tableNames]");
+        let startHoursElem = document.querySelector("[name=startHours]");
+        let endHoursElem = document.querySelector("[name=endHours]");
+        let requestParams = {
+            from: fromElem.value,
+            deviceId1: deviceId1Elem.value,
+            deviceId2: deviceId2Elem.value,
+            startHours: startHoursElem.value,
+            endHours: endHoursElem.value,
+            tableName: tableNameElem.value
+        };
+        if (pressureInBars.checked) {
+            requestParams.pressureInBars = true
+        }
+        let url = "/dynamo";
+        deviceId1Elem.blur();
+        deviceId2Elem.blur();
+        setVisible(".spinner-border", true);
+        doRequest("GET", url, applyDynamoDbChanges, requestParams);
     }
-    if (pressureInBars.checked) {
-        requestParams.pressureInBars = true
-    }
-    let url = "/dynamo";
-    deviceId1Elem.blur();
-    deviceId2Elem.blur();
-    setVisible(".spinner-border", true);
-    doRequest("GET", url, applyDynamoDbChanges, requestParams);
 }
 
 function addZero(i) {
@@ -573,6 +577,16 @@ function setMapStyles(bodyColor, elementsColor) {
     });
 }
 
+function applyLimitToHours(element) {
+    if (element.value > 23 && e.keyCode !== 46 && e.keyCode !== 8) {
+        e.preventDefault();
+        element.value = 23;
+    } else if (element.value < 0 && e.keyCode !== 46 && e.keyCode !== 8) {
+        e.preventDefault();
+        element.value = 0;
+    }
+}
+
 /* EVENTS */
 
 window.addEventListener("orientationchange", function () {
@@ -584,12 +598,14 @@ window.addEventListener("resize", function () {
     setFlexClasses();
 }, false);
 
-document.querySelector("[name=numHours]").addEventListener("keyup", function (e) {
-    let element = document.querySelector("[name=numHours]");
-    if (element.value > 24 && e.keyCode !== 46 && e.keyCode !== 8) {
-        e.preventDefault();
-        element.value = 24;
-    }
+document.querySelector("[name=startHours]").addEventListener("keyup", function (e) {
+    let element = document.querySelector("[name=startHours]");
+    applyLimitToHours(element);
+});
+
+document.querySelector("[name=endHours]").addEventListener("keyup", function (e) {
+    let element = document.querySelector("[name=endHours]");
+    applyLimitToHours(element);
 });
 
 function initMapEvents() {
