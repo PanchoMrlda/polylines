@@ -544,7 +544,7 @@ function applyDynamoDbChanges(responseParams) {
     }
     let readingsCount = document.querySelector("#readingsCount");
     let readingsTitle = readingsCount.value.substr(-8);
-    readingsCount.value = responseParams.deviceId1.dates.length + " " + readingsTitle;
+    readingsCount.value = responseParams.deviceId1.dates.length - 1 + " " + readingsTitle;
 }
 
 function setProfile(responseParams) {
