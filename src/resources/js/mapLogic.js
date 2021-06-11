@@ -406,7 +406,7 @@ function highPressureAlerts(index, deviceData) {
 }
 
 function compressorOn(highPressure, lowPressure) {
-    return Math.abs(parseFloat(highPressure) - parseFloat(lowPressure)) >= 8;
+    return parseFloat(highPressure) - parseFloat(lowPressure) >= 8;
 }
 
 function showBusPosition(element) {
