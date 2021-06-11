@@ -46,17 +46,17 @@ class DynamoDbService
         try {
             if (!empty($options['deviceId'])) {
                 $result = $this->client->query($params);
-                if (!empty($result['LastEvaluatedKey'])) {
+                $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $result);
+                while (!empty($result['LastEvaluatedKey'])) {
                     if ($options['emptyReadings'] ?? false) {
                         $options['from'] = $result['LastEvaluatedKey']['readingTimestamp']['N'];
                     } else {
                         $options['to'] = $result['LastEvaluatedKey']['readingTimestamp']['N'];
                     }
                     $params = $this->getDynamoDbParams($options);
-                    $additionalResult = $this->client->query($params);
-                    $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $additionalResult);
+                    $result = $this->client->query($params);
+                    $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $result);
                 }
-                $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $result);
             }
         } catch (DynamoDbException $e) {
             echo "Unable to query:\n";
