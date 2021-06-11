@@ -327,11 +327,15 @@ function assignRegions(chartId, deviceData) {
 }
 
 function calculateCompressorRegions(deviceData) {
+    let currentDate, previousDate;
     let regionsToAdd = [];
     let lastStartDate = deviceData.dates[1];
     let lastEndDate = deviceData.dates[deviceData.dates.length - 1];
     for (let i = 1; i < deviceData.highPressure.length; i++) {
-        if (compressorOn(deviceData.highPressure[i], deviceData.lowPressure[i])) {
+        currentDate = new Date(deviceData.dates[i]);
+        previousDate = new Date(deviceData.dates[i - 1]);
+        if (compressorOn(deviceData.highPressure[i], deviceData.lowPressure[i]) &&
+            currentDate.getTime() - previousDate.getTime() <= 300000) {
             lastEndDate = deviceData.dates[i];
             if (i === (deviceData.highPressure.length - 1)) {
                 const region = {
