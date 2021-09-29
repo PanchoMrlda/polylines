@@ -41,7 +41,7 @@
             <section class="form-date-section input-group-prepend">
                 <label class="justify-content-center span input-group-text"
                        for="from">{{ __('messages.polylines_layout.date') }}</label>
-                <input class="input" type="date" value="<?php // echo $date; ?>" name="from" id="from"
+                <input class="input" type="date" value="" name="from" id="from"
                        onchange="submitForm()"/>
                 <div class="container input">
                     <div class="row">
@@ -140,7 +140,8 @@
 </section>
 <div id="tempChart" class="chart"></div>
 <div id="pressureChart" class="chart"></div>
-<div id="extraData" class="justify-content-center mx-auto mt-5"></div>
+<div id="extraData" class="justify-content-center mx-auto mt-5 d-none d-md-block"></div>
+<div class="mt-3 d-none d-md-block">&nbsp;</div>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
 <script src="{{ asset('js/front-defer.js') }}" defer></script>

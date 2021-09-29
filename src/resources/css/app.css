@@ -127,15 +127,7 @@ thead tr th:hover {
 }
 
 #extraData {
-    max-width: 90%;
-    max-height: 480px;
-    overflow-y: scroll;
-}
-
-#extraData table th {
-    position: sticky;
-    top: 0;
-    background: #e0e0e0;
+    overflow-x: scroll;
 }
 
 [data-theme="dark"] {
@@ -156,7 +148,9 @@ thead tr th:hover {
     background-color: #eee !important;
 }
 
-[data-theme="dark"] .input-group-text {
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] tspan,
+[data-theme="dark"] td {
     background-color: #696969 !important;
     color: #eee;
 }
@@ -208,7 +202,7 @@ thead tr th:hover {
     .input,
     .input-checkbox {
         width: 45%;
-        min-width: 156px;
+        min-width: 39px;
         margin: 0 auto;
         flex-basis: 45%;
     }

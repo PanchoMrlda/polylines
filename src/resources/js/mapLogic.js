@@ -540,7 +540,7 @@ function applyDynamoDbChanges(responseParams) {
         existingTable.remove();
     }
     if (device1Type === 'NEWTON' || device1Type === 'EINSTEIN') {
-        createExtraDataTable(responseParams.deviceId1.extraData, device1Type, responseParams.deviceId1.dates);
+        createExtraDataTable(responseParams.deviceId1.extraData, responseParams.deviceId1.dates);
     }
     let readingsCount = document.querySelector("#readingsCount");
     let readingsTitle = readingsCount.value.substr(-8);
@@ -679,6 +679,7 @@ function getMessageKeys(array) {
 }
 
 function createExtraDataTable(tableData, dates) {
+    let onlyOneDay = dates[1].slice(0, 10) === dates[dates.length - 1].slice(0, 10);
     let existingTable = document.querySelector("#extraData table");
     if (existingTable !== null) {
         existingTable.remove();
@@ -686,7 +687,7 @@ function createExtraDataTable(tableData, dates) {
     let headerNames = getMessageKeys(tableData);
     // Create table and set its attributes
     let table = document.createElement('table');
-    table.setAttribute("class", "table table-stripedd table-bordered table-hover table-sm text-nowrap text-center");
+    table.setAttribute("class", "table bg-light table-bordered table-hover table-sm text-nowrap text-center mb-0");
     // Create table header and populate it with its data
     let tableHeader = document.createElement('thead');
     let headerRow = document.createElement('tr');
@@ -695,7 +696,6 @@ function createExtraDataTable(tableData, dates) {
     headerRow.appendChild(dateHeader);
     headerNames.forEach(function (headerName) {
         let cell = document.createElement('th');
-        cell.setAttribute("class", "sticky");
         cell.appendChild(document.createTextNode(headerName));
         headerRow.appendChild(cell);
         tableHeader.appendChild(headerRow);
@@ -705,10 +705,17 @@ function createExtraDataTable(tableData, dates) {
     tableData.forEach(function (rowObject, index) {
         let row = document.createElement('tr');
         let dateCell = document.createElement('td');
-        dateCell.appendChild(document.createTextNode(dates[index + 1]));
+        if (onlyOneDay) {
+            dateCell.appendChild(document.createTextNode(dates[index + 1].slice(11)));
+        } else {
+            dateCell.appendChild(document.createTextNode(dates[index + 1]));
+        }
         row.appendChild(dateCell);
         headerNames.forEach(function (headerName) {
             let cell = document.createElement('td');
+            if (headerName === '5004201' || headerName === '4090501') {
+                cell.classList.add('table-active');
+            }
             let cellValue = rowObject[headerName] === undefined ? '' : rowObject[headerName];
             cell.appendChild(document.createTextNode(cellValue));
             row.appendChild(cell);
