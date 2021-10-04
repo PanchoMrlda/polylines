@@ -144,12 +144,17 @@ thead tr th:hover {
     background-color: #000 !important;
 }
 
+[data-theme="dark"] .table-active {
+    background-color: #424345 !important;
+}
+
 [data-theme="dark"] .bg-black {
     background-color: #eee !important;
 }
 
 [data-theme="dark"] .input-group-text,
 [data-theme="dark"] tspan,
+[data-theme="dark"] th,
 [data-theme="dark"] td {
     background-color: #696969 !important;
     color: #eee;
