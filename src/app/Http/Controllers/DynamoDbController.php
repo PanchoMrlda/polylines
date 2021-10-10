@@ -38,92 +38,74 @@ class DynamoDbController
             $from = (time() - 60 * 60) * 1000;
             $to = (time() - 60 * 0) * 1000;
         }
-        $dynamoQueryParams = [
+        $dynamoQueryParams1 = [
             'tableName' => $tableName,
             'deviceId' => $deviceId1,
             'from' => $from,
             'to' => $to,
             'pressureInBars' => $pressureInBars
         ];
+        $dynamoQueryParams2 = [
+            'tableName' => $tableName,
+            'deviceId' => $deviceId2,
+            'from' => $from,
+            'to' => $to,
+            'pressureInBars' => $pressureInBars
+        ];
         $dynamoDbService = new DynamoDbService();
-        $deviceId1Payloads = $dynamoDbService->getDataFromDynamo($dynamoQueryParams);
-        $deviceId1Data = $this->getDeviceRelatedData($deviceId1Payloads, $dynamoDbService, $dynamoQueryParams);
-        $dynamoQueryParams['deviceId'] = $deviceId2;
-        $deviceId2Payloads = $dynamoDbService->getDataFromDynamo($dynamoQueryParams);
-        $deviceId2Data = $this->getDeviceRelatedData($deviceId2Payloads, $dynamoDbService, $dynamoQueryParams);
         return response()
             ->json(
                 [
                     'from' => date('Y-m-d', $from / 1000),
-                    'deviceId1' => $deviceId1Data,
-                    'deviceId2' => $deviceId2Data
-                ],
-                200,
-                [
-                    'Access-Control-Allow-Origin' => '*',
-                    'Content-Type' => 'application/json'
+                    'deviceId1' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams1), $dynamoQueryParams1),
+                    'deviceId2' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams2), $dynamoQueryParams2)
                 ]
             );
     }
 
-    private function getDeviceRelatedData(array $messages, DynamoDbService $helper, $options): array
+    private function getDeviceRelatedData($dynamoDbResult, $options): array
     {
-        $tableName = $options['tableName'];
-        $deviceId = $options['deviceId'];
-        $from = $options['from'];
-        $pressureInBars = $options['pressureInBars'];
-        $lastReading = null;
-        $payloads = $helper->retrievePayloads($messages);
-        if (empty(count(collect($payloads)->flatten())) && !empty($deviceId)) {
-            $lastReadings = $helper->getDataFromDynamo([
-                'emptyReadings' => true,
-                'tableName' => $tableName,
-                'deviceId' => $deviceId,
-                'from' => 0,
-                'to' => $from
-            ]);
-            $lastPayloads = array_map(function ($reading) use ($helper) {
-                return $helper->transformData($reading);
-            }, $helper->retrievePayloads($lastReadings));
-            $timestamp = $lastPayloads[count($lastPayloads) - 2]['g']['t'] ?? null;
-            $lastReading = date('Y-m-d H:i:s', $timestamp);
-        } else {
-            $payloads = array_map(function ($payload) use ($helper) {
-                return $helper->transformData($payload);
-            }, $payloads);
-        }
-        $dates = $helper->getDates($payloads);
-        $locations = $helper->getLocations($payloads);
-        $tempInt = $helper->getSensorValues($payloads, '1005n');
-        $tempExt = $helper->getSensorValues($payloads, '1004n');
-        $highPressure = $helper->getSensorValues($payloads, '1003n');
-        $lowPressure = $helper->getSensorValues($payloads, '1002n');
-        $lowPressure = $helper->lowPressureCorrection($highPressure, $lowPressure);
-        if (!empty($pressureInBars)) {
-            $highPressure = $helper->convertPressureValues($highPressure);
-            $lowPressure = $helper->convertPressureValues($lowPressure);
-        }
-        $deviceType = $messages[0]['deviceType'] ?? null;
-        if ($deviceType == 'NEWTON' || $deviceType == 'EINSTEIN') {
-            $extraData = $helper->getSensorValues($payloads);
-        } else {
-            $extraData = [];
-        }
-        // $compressor = $helper->getSensorValues($payloads, '0004u');
-        // $blower = $helper->getSensorValues($payloads, '000u');
-        return [
-            'deviceName' => $deviceId,
-            'dates' => $dates,
-            'locations' => $locations,
-            'tempInt' => $tempInt,
-            'tempExt' => $tempExt,
-            'highPressure' => $highPressure,
-            'lowPressure' => $lowPressure,
+        $dynamoDbService = new DynamoDbService();
+        $formattedResult = [
+            'deviceName' => '',
+            'dates' => [],
+            'locations' => [],
+            'tempInt' => [],
+            'tempExt' => [],
+            'highPressure' => [],
+            'lowPressure' => [],
             // 'compressor' => $compressor,
             // 'blower' => $blower
-            'lastReading' => $lastReading,
-            'extraData' => $extraData,
-            'deviceType' => $deviceType
+            'lastReading' => '',
+            'extraData' => [],
+            'deviceType' => ''
         ];
+        if (empty($dynamoDbResult[0]) && $options['deviceId']) {
+            $dynamoDbResult = $dynamoDbService->getRawDataFromDynamo([
+                'tableName' => $options['tableName'],
+                'deviceId' => $options['deviceId'],
+                'from' => 0,
+                'to' => $options['from']
+            ])[0];
+            $payload = $dynamoDbService->transformData($dynamoDbResult[0]['payload']);
+            $formattedResult['lastReading'] = $dynamoDbService->getDates([$payload])[0];
+            $formattedResult['deviceName'] = $dynamoDbResult[0]['deviceId'];
+            $formattedResult['deviceType'] = $dynamoDbResult[0]['deviceType'];
+        } else {
+            $lastEvaluatedKey = $dynamoDbResult[1];
+            $formattedResult = $dynamoDbService->saveDesiredDynamoDbValues($formattedResult, $dynamoDbResult[0]);
+            while (!empty($lastEvaluatedKey)) {
+                if ($options['emptyReadings'] ?? false) {
+                    $options['from'] = $lastEvaluatedKey['readingTimestamp']['N'];
+                } else {
+                    $options['to'] = $lastEvaluatedKey['readingTimestamp']['N'];
+                }
+                $dynamoDbResult = $dynamoDbService->getRawDataFromDynamo($options);
+                $formattedResult = $dynamoDbService->saveDesiredDynamoDbValues($formattedResult, $dynamoDbResult[0]);
+                $lastEvaluatedKey = $dynamoDbResult[1];
+            }
+        }
+        $dynamoDbResult = null;
+        return $formattedResult;
     }
 }
