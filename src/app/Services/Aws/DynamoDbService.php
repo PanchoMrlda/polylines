@@ -169,6 +169,7 @@ class DynamoDbService
     {
         return $highPressure - $lowPressure >= 8;
     }
+
     public function retrievePayloads(array $messages): array
     {
         return array_map(function ($message) {
@@ -191,6 +192,40 @@ class DynamoDbService
             $result = $data;
         }
         return $result;
+    }
+
+    public function getRawDataFromDynamo($options = []): array
+    {
+        $data = [];
+        if (!empty($options['deviceId'])) {
+            $params = $this->getDynamoDbParams($options);
+            $result = $this->client->query($params);
+            foreach ($result['Items'] as $item) {
+                $data[] = $this->marshaler->unmarshalItem($item);
+            }
+        }
+        return [$data, $result['LastEvaluatedKey'] ?? null];
+    }
+
+    public function saveDesiredDynamoDbValues($formattedResult, $messages)
+    {
+        foreach ($messages as $message) {
+            $payload = $this->transformData($message['payload']);
+            $formattedResult['deviceName'] = $message['deviceId'];
+            $formattedResult['deviceType'] = $message['deviceType'];
+            if (array_key_exists('r', $payload)) {
+                array_unshift($formattedResult['dates'], $this->getDates([$payload])[0]);
+                array_unshift($formattedResult['locations'], $this->getLocations([$payload])[0]);
+                array_unshift($formattedResult['tempInt'], $this->getSensorValues([$payload], '1005n')[0]);
+                array_unshift($formattedResult['tempExt'], $this->getSensorValues([$payload], '1004n')[0]);
+                array_unshift($formattedResult['highPressure'], $this->getSensorValues([$payload], '1003n')[0]);
+                array_unshift($formattedResult['lowPressure'], $this->getSensorValues([$payload], '1002n')[0]);
+                if ($formattedResult['deviceType'] == 'NEWTON' || $formattedResult['deviceType'] == 'EINSTEIN') {
+                    array_unshift($formattedResult['extraData'], $this->getSensorValues([$payload])[0]);
+                }
+            }
+        }
+        return $formattedResult;
     }
 
     private function cleanCoordinates(array $coordinates): array
