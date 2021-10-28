@@ -1,31 +1,29 @@
-FROM php:7.2-fpm
+FROM php:7.2-fpm-alpine3.12
 
 # Copy composer.lock and composer.json
-COPY src/composer.json src/composer.loc? /var/www/html/
+COPY src/composer.json src/composer.loc? /polylines/
 
 # Copy package.json and package-lock.json
-COPY src/package.json package-lock.jso? /var/www/html/
+COPY src/package.json package-lock.jso? /polylines/
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /polylines
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
+RUN apk add --update --no-cache \
+    build-base \
     libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    locales \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    musl-locales \
     zip \
     libzip-dev \
     jpegoptim optipng pngquant gifsicle \
     vim \
     unzip \
     git \
-    curl
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    curl \
+    bash
 
 # Install extensions
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
@@ -33,25 +31,24 @@ RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --wi
 RUN docker-php-ext-install gd
 
 # Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN apk add composer
 
 # Install npm
-RUN curl -sL https://deb.nodesource.com/setup_12.x  | bash -
-RUN apt-get -y install nodejs
+RUN apk add --update nodejs npm
 RUN npm install
 
 # Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+RUN addgroup -g 1000 polylines_user && \
+    adduser -D -u 1000 -G polylines_user polylines_user
 
 # Copy existing application directory contents
-COPY . /var/www/html
+COPY . /polylines
 
 # Copy existing application directory permissions
-COPY --chown=www:www . /var/www/html
+COPY --chown=polylines_user:polylines_user . /polylines
 
-# Change current user to www
-USER www
+# Change current user to polylines_user
+USER polylines_user
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
