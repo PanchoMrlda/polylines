@@ -2,27 +2,27 @@ version: '3'
 services:
 
   #PHP Service
-  app:
+  polylines_app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: php:7.2-fpm
     container_name: polylines_app
     restart: unless-stopped
     tty: true
     environment:
       SERVICE_NAME: polylines_app
       SERVICE_TAGS: dev
-    working_dir: /var/www/html
+    env_file:
+      - .env
+    working_dir: /polylines
     volumes:
-      - ./src/:/var/www/html
-      - ./.env:/var/www/html/.env
+      - ./src/:/polylines
       - ./php.ini-development:/usr/local/etc/php/php.ini
     networks:
       - polylines_app-network
 
   #Nginx Service
-  webserver:
+  polylines_webserver:
     image: nginx:alpine
     container_name: polylines_webserver
     restart: unless-stopped
@@ -30,13 +30,13 @@ services:
     ports:
       - '${DOCKER_PORT_HTTP}:80'
     volumes:
-      - ./src/:/var/www/html
+      - ./src/:/polylines
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - polylines_app-network
 
   #MySQL Service
-  db:
+  polylines_db:
     image: mysql:5.7.22
     container_name: polylines_db
     restart: unless-stopped
