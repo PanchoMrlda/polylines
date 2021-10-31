@@ -87,10 +87,10 @@ class DynamoDbController
                 'from' => 0,
                 'to' => $options['from']
             ])[0];
-            $payload = $dynamoDbService->transformData($dynamoDbResult[0]['payload']);
-            $formattedResult['lastReading'] = $dynamoDbService->getDates([$payload])[0];
-            $formattedResult['deviceName'] = $dynamoDbResult[0]['deviceId'];
-            $formattedResult['deviceType'] = $dynamoDbResult[0]['deviceType'];
+            $payload = $dynamoDbService->transformData($dynamoDbResult[0]['payload'] ?? []);
+            $formattedResult['lastReading'] = $dynamoDbService->getDates([$payload])[0] ?? date('Y-m-d H:i:s', 0);
+            $formattedResult['deviceName'] = $dynamoDbResult[0]['deviceId'] ?? $options['deviceId'];
+            $formattedResult['deviceType'] = $dynamoDbResult[0]['deviceType'] ?? null;
         } else {
             $lastEvaluatedKey = $dynamoDbResult[1];
             $formattedResult = $dynamoDbService->saveDesiredDynamoDbValues($formattedResult, $dynamoDbResult[0]);
