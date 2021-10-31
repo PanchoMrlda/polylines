@@ -35,7 +35,6 @@ RUN apk add composer
 
 # Install npm
 RUN apk add --update nodejs npm
-RUN npm install
 
 # Add user for laravel application
 RUN addgroup -g 1000 polylines_user && \
