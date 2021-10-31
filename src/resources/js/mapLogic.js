@@ -472,22 +472,20 @@ function getTotalDistance(locations) {
 }
 
 function setChartWidth() {
-    // Multiply width by 0.99 because desktop screens are smaller than real screen
-    let screenWidth = window.innerWidth * 0.99;
-    if (screenWidth < 768 && window.matchMedia("(orientation: portrait)").matches) {
-        screenWidth = window.innerHeight;
-    } else if (screenWidth < 768 && window.matchMedia("(orientation: landscape)").matches) {
-        screenWidth = 768;
+    let screen = window.innerWidth - 20;
+    if (screen < 768 && window.matchMedia("(orientation: portrait)").matches) {
+        screen =window.innerHeight;
+    } else if (screen < 768 && window.matchMedia("(orientation: landscape)").matches) {
+        screen = 768;
     }
-    return screenWidth;
+    return screen;
 }
 
-// function updateChartsWidth() {
-//     setTimeout(() => {
-//         generateChart("#tempChart", [options.deviceId1.dates, tempInt1, tempExt1]);
-//         generateChart("#pressureChart", [options.deviceId1.dates, lowPressure1, highPressure1]);
-//     }, 50);
-// }
+function updateChartsWidth() {
+    let screen = setChartWidth();
+    tempChart.resize({width: screen});
+    pressureChart.resize({width: screen});
+}
 
 function submitForm() {
     let deviceId1Elem = document.querySelector("#deviceId1Select");
@@ -597,7 +595,12 @@ function applyLimitToHours(element) {
 /* EVENTS */
 
 window.addEventListener("orientationchange", function () {
-    // updateChartsWidth();
+    updateChartsWidth();
+    setFlexClasses();
+}, false);
+
+window.addEventListener("resize", function () {
+    updateChartsWidth();
     setFlexClasses();
 }, false);
 
