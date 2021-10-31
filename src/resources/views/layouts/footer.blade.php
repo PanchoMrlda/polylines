@@ -1,14 +1,5 @@
 <footer class="footer navbar navbar-expand-md navbar-light bg-light">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-        <ul class="navbar-nav mr-auto">
-        </ul>
-    </div>
-    <div class="mx-auto order-0">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+    <div class="navbar w-100 pt-0 pt-md-2 pr-0">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <div class="custom-control custom-switch">
