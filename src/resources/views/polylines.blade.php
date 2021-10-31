@@ -138,10 +138,10 @@
         <div id="map" class="chart"></div>
     </section>
 </section>
-<div id="tempChart" class="chart"></div>
-<div id="pressureChart" class="chart"></div>
+<div id="tempChart" class="chart mt-4"></div>
+<div id="pressureChart" class="chart mt-3"></div>
 <div id="extraData" class="justify-content-center mx-auto mt-5 d-none d-md-block"></div>
-<div class="mt-3 d-none d-md-block">&nbsp;</div>
+<div class="mt-3">&nbsp;</div>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
 <script src="{{ asset('js/front-defer.js') }}" defer></script>
