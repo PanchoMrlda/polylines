@@ -163,6 +163,7 @@ thead tr th:hover {
 .footer {
     height: 42px;
     width: 100%;
+    max-width: 100%;
     position: fixed;
     bottom: 0;
 }
