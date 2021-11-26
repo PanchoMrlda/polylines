@@ -22,8 +22,11 @@ mix.styles([
     ], 'public_html/css/handwriting.css');
 mix.scripts([
     'resources/js/jquery.min.js',
+    'resources/js/popper.js',
+    'resources/js/jquery-ui.min.js',
     'resources/js/bootstrap.min.js',
     'resources/js/utils.js',
+    'resources/js/locale.js',
 ], 'public_html/js/front.js')
     .scripts([
         'resources/js/dark-mode-switch.min.js',
