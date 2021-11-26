@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 require __DIR__ . '/../../../vendor/autoload.php';
 
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Services\Aws\DynamoDbService;
@@ -53,14 +54,20 @@ class DynamoDbController
             'pressureInBars' => $pressureInBars
         ];
         $dynamoDbService = new DynamoDbService();
-        return response()
-            ->json(
-                [
-                    'from' => date('Y-m-d', $from / 1000),
-                    'deviceId1' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams1), $dynamoQueryParams1),
-                    'deviceId2' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams2), $dynamoQueryParams2)
-                ]
-            );
+        try {
+            $result = [
+                'from' => date('Y-m-d', $from / 1000),
+                'deviceId1' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams1), $dynamoQueryParams1),
+                'deviceId2' => $this->getDeviceRelatedData($dynamoDbService->getRawDataFromDynamo($dynamoQueryParams2), $dynamoQueryParams2)
+            ];
+            $status = 200;
+        } catch (Exception $e) {
+            $result = [
+                'message' => $e->getMessage()
+            ];
+            $status = 422;
+        }
+        return response()->json($result, $status);
     }
 
     private function getDeviceRelatedData($dynamoDbResult, $options): array

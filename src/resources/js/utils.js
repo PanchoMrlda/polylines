@@ -1,38 +1,47 @@
 /*
  *  Utils Functions
  */
-function doRequest(requestMethod, requestUrl, callback, params = {}, contentType = "application/x-www-form-urlencoded") {
-    let url = new URL(location.origin + requestUrl);
+function doRequest(requestMethod, requestUrl, callback, params = {}, contentType = "application/json") {
+    let url = location.origin + requestUrl;
     let fetchParams = {
         method: requestMethod
     }
-    let urlStringParams = "";
     if (requestMethod === "GET") {
-        urlStringParams = "?" + formatRequestParams(params);
-        url.search = new URLSearchParams(params)
+        url = url + "?" + formatRequestParams(params);
     } else if (requestMethod === "POST") {
-        if (contentType === "application/json") {
-            fetchParams.body = JSON.stringify(params);
-        } else {
-            fetchParams.body = formatRequestParams(params);
-        }
+        fetchParams.body = JSON.stringify(params);
         fetchParams.headers = {
-            "Content-Type": contentType,
+            'Content-Type': contentType,
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         };
     }
-    fetch(url, fetchParams)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            setVisible(".spinner-border", false);
-            if (callback !== undefined) {
-                callback(data);
-            }
-            if (requestMethod === "GET") {
-                window.history.replaceState({}, document.title, urlStringParams);
-            }
-        });
+    manageRequest(url, fetchParams, callback).then().catch(() => {
+        let message;
+        let errorElement = document.querySelector('.alert.alert-danger.alert-dismissible span');
+        let errorElementContainer = document.querySelector('.alert.alert-danger.alert-dismissible');
+        if (navigator.language.includes('es')) {
+            message = MESSAGES_ES.errors.generic;
+        } else if (navigator.language.includes('en')) {
+            message = MESSAGES_EN.errors.generic;
+        }
+        errorElement.innerHTML = message;
+        errorElementContainer.classList.remove('d-none');
+        setVisible(".spinner-border", false);
+    }).finally(() => {
+        setVisible(".spinner-border", false);
+    });
+}
+
+async function manageRequest(url, params, callback) {
+    let response = await fetch(url, params);
+    let data = await response.json();
+    if (response.ok) {
+        if (callback !== undefined && data !== undefined) {
+            callback(data);
+        }
+    } else {
+        throw Error(data.message);
+    }
 }
 
 function formatRequestParams(params) {
@@ -74,6 +83,10 @@ function setNavBarActiveItem() {
             element.classList.remove("active");
         }
     });
+}
+
+function closeAlert(element) {
+    element.parentElement.classList.add('d-none');
 }
 
 /*
