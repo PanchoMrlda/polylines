@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <title>{{ __('messages.layout_names.dashboard') }} | {{ config('app.name') }}</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('/favicon.ico') }}">
     <link href="{{ asset('css/front.css') }}" rel="stylesheet"/>
     <script src="{{ asset('js/front.js') }}" defer></script>
     <script src="{{ asset('js/charts.js') }}" defer></script>
