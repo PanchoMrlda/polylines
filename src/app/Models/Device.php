@@ -12,9 +12,9 @@ class Device extends Model
      * @var array
      */
     protected $fillable = [
-        'deviceId',
-        'deviceType',
-        'vehicleId',
-        'companyId'
+        'device_id',
+        'device_type',
+        'vehicle_id',
+        'company_id'
     ];
 }

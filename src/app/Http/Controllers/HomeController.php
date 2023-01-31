@@ -25,17 +25,17 @@ class HomeController
     public function index()
     {
         $devicesData = [[]];
-        $validDevices = DB::table('devices')->whereRaw('companyId <> ""');
-        $companies = $validDevices->select('companyId')->groupBy('companyId')->get();
-        $vehicles = $validDevices->select('vehicleId')->groupBy('vehicleId')->get();
+        $validDevices = DB::table('devices')->whereRaw('company_id <> ""');
+        $companies = $validDevices->select('company_id')->groupBy('company_id')->get();
+        $vehicles = $validDevices->select('vehicle_id')->groupBy('vehicle_id')->get();
         foreach ($companies as $company) {
             foreach ($vehicles as $vehicle) {
                 $devices = DB::table('devices')->where([
-                    ['companyId', '=', $company->companyId],
-                    ['vehicleId', '=', $vehicle->vehicleId]
+                    ['company_id', '=', $company->company_id],
+                    ['vehicle_id', '=', $vehicle->vehicle_id]
                 ])->get();
                 if ($devices->count() > 0) {
-                    $devicesData[$company->companyId][$vehicle->vehicleId] = $devices->toArray();
+                    $devicesData[$company->company_id][$vehicle->vehicle_id] = $devices->toArray();
                 }
             }
         }

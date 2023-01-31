@@ -88,7 +88,7 @@
                             @foreach($vehicles as $vehicleId => $devices)
                                 <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
                                     @foreach($devices as $deviceInfo)
-                                        <option value="{{ $deviceInfo->deviceId }}">
+                                        <option value="{{ $deviceInfo->device_id }}">
                                             &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
                                     @endforeach
                                 </optgroup>
@@ -105,7 +105,7 @@
                             @foreach($vehicles as $vehicleId => $devices)
                                 <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
                                     @foreach($devices as $deviceInfo)
-                                        <option value="{{ $deviceInfo->deviceId }}">
+                                        <option value="{{ $deviceInfo->device_id }}">
                                             &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
                                     @endforeach
                                 </optgroup>
