@@ -127,13 +127,8 @@
         <div id="map" class="chart"></div>
     </section>
 </section>
-<section class="row">
-    <div class="alert alert-danger alert-dismissible d-none text-center col-10 col-offset-10 col-md-4 col-md-offset-4 mx-auto" role="alert">
-        <span class="">{{ $dynamoDbData['message'] ?? null }}</span>
-        <button type="button" class="close" onclick="closeAlert(this)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+<section class="mt-5">
+    @include('layouts.error')
 </section>
 <div id="tempChart" class="chart mt-4"></div>
 <div id="pressureChart" class="chart mt-3"></div>

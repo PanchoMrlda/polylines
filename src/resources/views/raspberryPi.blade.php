@@ -13,6 +13,9 @@
 </head>
 <body>
 @include('layouts.nav')
+<section class="mt-5">
+    @include('layouts.error')
+</section>
 <section class="options-container">
     <section class="p-2 flex-fill form-container">
         <form class="map-form" action="/">
