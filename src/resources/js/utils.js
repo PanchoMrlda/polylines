@@ -16,16 +16,7 @@ function doRequest(requestMethod, requestUrl, callback, params = {}, contentType
         };
     }
     manageRequest(url, fetchParams, callback).then().catch(() => {
-        let message;
-        let errorElement = document.querySelector('.alert.alert-danger.alert-dismissible span');
-        let errorElementContainer = document.querySelector('.alert.alert-danger.alert-dismissible');
-        if (navigator.language.includes('es')) {
-            message = MESSAGES_ES.errors.generic;
-        } else if (navigator.language.includes('en')) {
-            message = MESSAGES_EN.errors.generic;
-        }
-        errorElement.innerHTML = message;
-        errorElementContainer.classList.remove('d-none');
+        showErrorMessage('errors.generic');
         setVisible(".spinner-border", false);
     }).finally(() => {
         setVisible(".spinner-border", false);
@@ -87,6 +78,38 @@ function setNavBarActiveItem() {
 
 function closeAlert(element) {
     element.parentElement.classList.add('d-none');
+}
+
+function getPropByString(obj, propString) {
+    if (!propString)
+        return obj;
+
+    let index = 0;
+    let prop, props = propString.split('.');
+    for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
+        prop = props[i];
+        let candidate = obj[prop];
+        if (candidate !== undefined) {
+            obj = candidate;
+        } else {
+            break;
+        }
+        index++;
+    }
+    return obj[props[index]];
+}
+
+function showErrorMessage(messageKey) {
+    let message;
+    let errorElement = document.querySelector('.alert.alert-danger.alert-dismissible span');
+    let errorElementContainer = document.querySelector('.alert.alert-danger.alert-dismissible');
+    if (navigator.language.includes('es')) {
+        message = getPropByString(MESSAGES_EN, messageKey);
+    } else if (navigator.language.includes('en')) {
+        message = getPropByString(MESSAGES_ES, messageKey);
+    }
+    errorElement.innerHTML = message;
+    errorElementContainer.classList.remove('d-none');
 }
 
 /*
