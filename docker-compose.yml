@@ -2,7 +2,7 @@ version: '3'
 services:
 
   #PHP Service
-  polylines_app:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -22,7 +22,7 @@ services:
       - polylines_app-network
 
   #Nginx Service
-  polylines_webserver:
+  webserver:
     image: nginx:alpine
     container_name: polylines_webserver
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
       - polylines_app-network
 
   #MySQL Service
-  polylines_db:
+  db:
     image: mysql:5.7.22
     container_name: polylines_db
     restart: unless-stopped
