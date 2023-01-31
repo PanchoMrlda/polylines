@@ -76,17 +76,10 @@ class DynamoDbService
                         'lng' => floatval($values['g']['lo'])
                     ];
                 } else {
-                    if (empty(array_key_exists('la', $values['i']))) {
-                        $result[] = [
-                            'lat' => 0.0,
-                            'lng' => 0.0
-                        ];
-                    } else {
-                        $result[] = [
-                            'lat' => floatval($values['i']['la']),
-                            'lng' => floatval($values['i']['lo'])
-                        ];
-                    }
+                    $result[] = [
+                        'lat' => floatval($values['i']['la']),
+                        'lng' => floatval($values['i']['lo'])
+                    ];
                 }
             }
         } else {
@@ -173,7 +166,7 @@ class DynamoDbService
     public function retrievePayloads(array $messages): array
     {
         return array_map(function ($message) {
-            return $message['payload'];
+            return $this->transformData($message['payload']);
         }, array_filter($messages));
     }
 
@@ -209,22 +202,21 @@ class DynamoDbService
 
     public function saveDesiredDynamoDbValues($formattedResult, $messages)
     {
-        foreach ($messages as $message) {
-            $payload = $this->transformData($message['payload']);
-            $formattedResult['deviceName'] = $message['deviceId'];
-            $formattedResult['deviceType'] = $message['deviceType'];
-            if (array_key_exists('r', $payload)) {
-                array_unshift($formattedResult['dates'], $this->getDates([$payload])[0]);
-                array_unshift($formattedResult['locations'], $this->getLocations([$payload])[0]);
-                array_unshift($formattedResult['tempInt'], $this->getSensorValues([$payload], '1005n')[0]);
-                array_unshift($formattedResult['tempExt'], $this->getSensorValues([$payload], '1004n')[0]);
-                array_unshift($formattedResult['highPressure'], $this->getSensorValues([$payload], '1003n')[0]);
-                array_unshift($formattedResult['lowPressure'], $this->getSensorValues([$payload], '1002n')[0]);
-                if ($formattedResult['deviceType'] == 'NEWTON' || $formattedResult['deviceType'] == 'EINSTEIN') {
-                    array_unshift($formattedResult['extraData'], $this->getSensorValues([$payload])[0]);
-                }
+        if (!empty($messages)) {
+            $payloads = $this->retrievePayloads($messages);
+            $formattedResult['deviceName'] = $messages[0]['deviceId'];
+            $formattedResult['deviceType'] = $messages[0]['deviceType'];
+            $formattedResult['dates'] = $this->getDates($payloads);
+            $formattedResult['locations'] = $this->getLocations($payloads);
+            $formattedResult['tempInt'] = $this->getSensorValues($payloads, '1005n');
+            $formattedResult['tempExt'] = $this->getSensorValues($payloads, '1004n');
+            $formattedResult['highPressure'] = $this->getSensorValues($payloads, '1003n');
+            $formattedResult['lowPressure'] = $this->getSensorValues($payloads, '1002n');
+            if ($formattedResult['deviceType'] == 'NEWTON' || $formattedResult['deviceType'] == 'EINSTEIN') {
+                $formattedResult['extraData'] = $this->getSensorValues($payloads);
             }
         }
+
         return $formattedResult;
     }
 
