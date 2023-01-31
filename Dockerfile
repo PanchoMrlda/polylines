@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine3.12
+FROM php:8.0-fpm-alpine3.15
 
 # Copy composer.lock and composer.json
 COPY src/composer.json src/composer.loc? /polylines/
@@ -8,6 +8,11 @@ COPY src/package.json package-lock.jso? /polylines/
 
 # Set working directory
 WORKDIR /polylines
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+    install-php-extensions mbstring pdo_mysql zip exif pcntl gd
 
 # Install dependencies
 RUN apk add --update --no-cache \
@@ -24,11 +29,6 @@ RUN apk add --update --no-cache \
     git \
     curl \
     bash
-
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
-RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
-RUN docker-php-ext-install gd
 
 # Install composer
 RUN apk add composer
