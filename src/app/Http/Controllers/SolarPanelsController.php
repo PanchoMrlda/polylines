@@ -16,7 +16,9 @@ class SolarPanelsController
         $startDate = $request->input('startDate') . ' 00:00';
         $endDate = $request->input('endDate') . ' 23:59';
         // Read data from .csv file
-        $rows = array_map('str_getcsv', file(public_path('edp-data.csv')));
+        $rows = array_map(function ($item) {
+            return str_getcsv($item, ';');
+        }, file(public_path('edp-data.csv')));
         $header = array_shift($rows);
         $csvData = [];
         foreach ($rows as $row) {
