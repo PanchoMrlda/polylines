@@ -1,38 +1,38 @@
 /*
  *  Utils Functions
  */
-function doRequest(requestMethod, requestUrl, callback, params = {}, contentType = "application/x-www-form-urlencoded") {
-    var url = new URL(location.origin + requestUrl);
-    var fetchParams = {
+function doRequest(requestMethod, requestUrl, callback, params = {}, contentType = "application/json") {
+    let url = location.origin + requestUrl;
+    let fetchParams = {
         method: requestMethod
     }
-    var urlStringParams = "";
-    if (requestMethod == "GET") {
-        urlStringParams = "?" + formatRequestParams(params);
-        url.search = new URLSearchParams(params)
-    } else if (requestMethod == "POST") {
-        if (contentType == "application/json") {
-            fetchParams.body = JSON.stringify(params);
-        } else {
-            fetchParams.body = formatRequestParams(params);
-        }
+    if (requestMethod === "GET") {
+        url = url + "?" + formatRequestParams(params);
+    } else if (requestMethod === "POST") {
+        fetchParams.body = JSON.stringify(params);
         fetchParams.headers = {
-            "Content-Type": contentType,
+            'Content-Type': contentType,
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         };
     }
-    fetch(url, fetchParams)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            setVisible(".spinner-border", false);
-            if (callback !== undefined) {
-                callback(data);
-            }
-            if (requestMethod == "GET") {
-                window.history.replaceState({}, document.title, urlStringParams);
-            }
-        });
+    manageRequest(url, fetchParams, callback).then().catch(() => {
+        showErrorMessage('errors.generic');
+        setVisible(".spinner-border", false);
+    }).finally(() => {
+        setVisible(".spinner-border", false);
+    });
+}
+
+async function manageRequest(url, params, callback) {
+    let response = await fetch(url, params);
+    let data = await response.json();
+    if (response.ok) {
+        if (callback !== undefined && data !== undefined) {
+            callback(data);
+        }
+    } else {
+        throw Error(data.message);
+    }
 }
 
 function formatRequestParams(params) {
@@ -46,7 +46,7 @@ function setVisible(selector, visible) {
 }
 
 function onReady(callback, selector) {
-    var intervalId = window.setInterval(function () {
+    let intervalId = window.setInterval(function () {
         if (document.querySelector(selector) !== undefined) {
             window.clearInterval(intervalId);
             callback.call(this);
@@ -74,6 +74,42 @@ function setNavBarActiveItem() {
             element.classList.remove("active");
         }
     });
+}
+
+function closeAlert(element) {
+    element.parentElement.classList.add('d-none');
+}
+
+function getPropByString(obj, propString) {
+    if (!propString)
+        return obj;
+
+    let index = 0;
+    let prop, props = propString.split('.');
+    for (let i = 0, iLen = props.length - 1; i < iLen; i++) {
+        prop = props[i];
+        let candidate = obj[prop];
+        if (candidate !== undefined) {
+            obj = candidate;
+        } else {
+            break;
+        }
+        index++;
+    }
+    return obj[props[index]];
+}
+
+function showErrorMessage(messageKey) {
+    let message;
+    let errorElement = document.querySelector('.alert.alert-danger.alert-dismissible span');
+    let errorElementContainer = document.querySelector('.alert.alert-danger.alert-dismissible');
+    if (navigator.language.includes('es')) {
+        message = getPropByString(MESSAGES_EN, messageKey);
+    } else if (navigator.language.includes('en')) {
+        message = getPropByString(MESSAGES_ES, messageKey);
+    }
+    errorElement.innerHTML = message;
+    errorElementContainer.classList.remove('d-none');
 }
 
 /*

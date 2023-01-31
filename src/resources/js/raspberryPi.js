@@ -33,7 +33,7 @@ function generateChart(chartId, columnValues1, columnValues2 = [], title = "", l
         x: "times",
         xFormat: chartDateFormat,
         columns: columnValues1,
-        type: "bar"
+        type: "line"
     };
     let screenWidth = setChartWidth();
     if (columnValues1[0].length === 1 && columnValues2[0].length === 1) {
@@ -77,7 +77,8 @@ function generateChart(chartId, columnValues1, columnValues2 = [], title = "", l
                     text: label,
                     position: "outer-middle",
                     width: 100
-                }
+                },
+                min: 0.1
             }
         },
         grid: {
@@ -98,6 +99,10 @@ function generateChart(chartId, columnValues1, columnValues2 = [], title = "", l
 }
 
 function displaySensorsData(responseParams) {
+    let batteryPower = 5;
+    let battery = [];
+    let consumedWithBattery = [];
+    let injectedWithBattery = [];
     let dates = responseParams.map(e => {
         return e.date;
     });
@@ -107,55 +112,47 @@ function displaySensorsData(responseParams) {
     let produced = responseParams.map(e => {
         return Math.round(parseFloat(e.produced.replace(',', '.')) * 100) / 100;
     });
-    let totalEnergy = consumed.map((e, i) => {
+    let injected = responseParams.map(e => {
+        return Math.round(parseFloat(e.injected.replace(',', '.')) * 100) / 100;
+    });
+    let totalGenerated = consumed.map((e, i) => {
         let total = e + produced[i];
+        let actualPower = battery[i - 1] === undefined ? batteryPower - e + injected[i] : battery[i - 1] - e + injected[i];
+        if (actualPower < 0) {
+            battery.push(0);
+            consumedWithBattery.push(-1 * actualPower);
+            injectedWithBattery.push(0);
+        } else if (actualPower > batteryPower) {
+            battery.push(batteryPower);
+            consumedWithBattery.push(0);
+            injectedWithBattery.push(Math.round((actualPower - batteryPower) * 100) / 100);
+        } else {
+            battery.push(Math.round((actualPower) * 100) / 100);
+            consumedWithBattery.push(0);
+            injectedWithBattery.push(0);
+        }
         return Math.round(total * 100) / 100;
     });
-    let consumedCost = consumed.map((e, i) => {
-        let price = getPrice(dates[i]);
-        let cost = e * price;
-        return Math.round(cost * 100) / 100;
-    });
-    let producedCost = produced.map((e, i) => {
-        let price = getPrice(dates[i]);
-        let cost = e * price;
-        return Math.round(cost * 100) / 100;
-    });
-    let finalCost = consumedCost.map((e, i) => {
-        let cost = e - producedCost[i];
-        let finalCost = cost >= 0 ? cost : 0;
-        return Math.round(finalCost * 100) / 100;
-    });
-    let totalEnergyCombined = Math.round(totalEnergy.reduce((a, b) => a + b, 0) * 100) / 100;
     let totalConsumption = Math.round(consumed.reduce((a, b) => a + b, 0) * 100) / 100;
     let totalProduced = Math.round(produced.reduce((a, b) => a + b, 0) * 100) / 100;
-    let totalFinalCost = Math.round(finalCost.reduce((a, b) => a + b, 0) * 100) / 100;
-    let totalConsumedCost = Math.round(consumedCost.reduce((a, b) => a + b, 0) * 100) / 100;
-    let totalProducedCost = Math.round(producedCost.reduce((a, b) => a + b, 0) * 100) / 100;
-    document.querySelector("#maxValueLeft").value = totalEnergyCombined + ENERGY_SYMBOL;
-    document.querySelector("#maxValueCenter").value = totalConsumption + ENERGY_SYMBOL;
-    document.querySelector("#maxValueRight").value = totalProduced + ENERGY_SYMBOL;
-    document.querySelector("#minValueLeft").value = totalFinalCost + CURRENCY_SYMBOL;
-    document.querySelector("#minValueCenter").value = totalConsumedCost + CURRENCY_SYMBOL;
-    document.querySelector("#minValueRight").value = totalProducedCost + CURRENCY_SYMBOL;
-    document.querySelector("#powerContracted").value = CONTRACTED_POWER + ENERGY_SYMBOL;
-    document.querySelector("#powerCost").value = calculatePowerCost(dates);
-    finalCost = consumedCost.map((e, i) => {
-        let cost = e - producedCost[i];
-        let finalCost = cost >= 0 ? cost : 0;
-        return Math.round(finalCost * 100) / 100;
-    });
+    let totalInjected = Math.round(injected.reduce((a, b) => a + b, 0) * 100) / 100;
+    document.querySelector("#generated").value = (totalConsumption + totalProduced) + ENERGY_SYMBOL;
+    document.querySelector("#consumed").value = totalConsumption + ENERGY_SYMBOL;
+    document.querySelector("#produced").value = totalProduced + ENERGY_SYMBOL;
+    document.querySelector("#injected").value = totalInjected + ENERGY_SYMBOL;
     dates.unshift("times");
-    consumed.unshift("Consumo");
-    produced.unshift("Producido");
-    totalEnergy.unshift("Total");
-    consumedCost.unshift("Coste Consumo");
-    producedCost.unshift("Coste Producido");
-    finalCost.unshift("Coste Final");
-    let energyChartData = [dates, consumed, produced, totalEnergy];
-    let costChartData = [dates, consumedCost, producedCost, finalCost];
+    consumed.unshift("Consumido Red");
+    produced.unshift("Consumido Solar");
+    injected.unshift("Volcado Red");
+    totalGenerated.unshift("Total");
+    battery.unshift("Acumulador");
+    consumedWithBattery.unshift("Consumido Acumulador");
+    injectedWithBattery.unshift("Volcado Acumulador");
+    let energyChartData = [dates, consumed, produced, injected, battery, consumedWithBattery, injectedWithBattery];
     generateChart("#voltageChart", energyChartData, [[], [], []], "Energía", "kW");
-    generateChart("#batteryChart", costChartData, [[], [], []], "Coste", "€");
+
+    // let costChartData = [dates, consumedCost, producedCost, finalCost];
+    // generateChart("#batteryChart", costChartData, [[], [], []], "Coste", "€");
 }
 
 function getPrice(currentDate) {

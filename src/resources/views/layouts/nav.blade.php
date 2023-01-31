@@ -6,7 +6,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link"
-                   href="{{ route('devices/config') }}">{{ __('messages.layout_names.config_file') }}</a>
+                   href="{{ route('devices') }}">{{ __('messages.layout_names.config_file') }}</a>
             </li>
         </ul>
     </div>

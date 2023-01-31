@@ -31,8 +31,8 @@ body {
 }
 
 nav {
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     color: #e0e0e0 !important;
 }
 
@@ -95,6 +95,13 @@ thead tr th:hover {
     vertical-align: middle;
 }
 
+.checkbox-medium {
+    width: 45px;
+    min-width: 30px;
+    margin: 0 6px;
+    vertical-align: middle;
+}
+
 .checkbox-wide {
     width: 60px;
     min-width: 30px;
@@ -120,15 +127,7 @@ thead tr th:hover {
 }
 
 #extraData {
-    max-width: 90%;
-    max-height: 480px;
-    overflow-y: scroll;
-}
-
-#extraData table th {
-    position: sticky;
-    top: 0;
-    background: #e0e0e0;
+    overflow-x: scroll;
 }
 
 [data-theme="dark"] {
@@ -145,17 +144,26 @@ thead tr th:hover {
     background-color: #000 !important;
 }
 
+[data-theme="dark"] .table-active {
+    background-color: #424345 !important;
+}
+
 [data-theme="dark"] .bg-black {
     background-color: #eee !important;
 }
 
-[data-theme="dark"] .input-group-text {
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] tspan,
+[data-theme="dark"] th,
+[data-theme="dark"] td {
     background-color: #696969 !important;
     color: #eee;
 }
 
 .footer {
+    height: 42px;
     width: 100%;
+    max-width: 100%;
     position: fixed;
     bottom: 0;
 }
@@ -201,7 +209,7 @@ thead tr th:hover {
     .input,
     .input-checkbox {
         width: 45%;
-        min-width: 156px;
+        min-width: 39px;
         margin: 0 auto;
         flex-basis: 45%;
     }

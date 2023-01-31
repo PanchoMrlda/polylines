@@ -5,18 +5,7 @@
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <title>{{ __('messages.layout_names.dashboard') }} | {{ config('app.name') }}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('/favicon.ico') }}">
     <link href="{{ asset('css/front.css') }}" rel="stylesheet"/>
     <script src="{{ asset('js/front.js') }}" defer></script>
     <script src="{{ asset('js/charts.js') }}" defer></script>
@@ -41,14 +30,33 @@
             <section class="form-date-section input-group-prepend">
                 <label class="justify-content-center span input-group-text"
                        for="from">{{ __('messages.polylines_layout.date') }}</label>
-                <input class="input" type="date" value="<?php // echo $date; ?>" name="from" id="from"
+                <input class="input" type="date" value="" name="from" id="from"
                        onchange="submitForm()"/>
-                <span class="justify-content-center input-checkbox">
-                    <label for="numHours"></label>
-                    <input class="input checkbox-wide" type="number" name="numHours" id="numHours" max="24" min="1"
-                           onchange="submitForm()"/>
-                    {{ __('messages.polylines_layout.hours') }}
-                </span>
+                <div class="container input">
+                    <div class="row">
+                        <div class="col-3 mx-0 p-0">
+                            <label class="justify-content-center input-group-text" for="startHours">
+                                {{ __('messages.polylines_layout.from') }}
+                            </label>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="startHours"
+                                   id="startHours" max="23"
+                                   min="0"
+                                   onchange="submitForm()"/>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <label class="justify-content-center input-group-text" for="endHours">
+                                {{ __('messages.polylines_layout.to') }}
+                            </label>
+                        </div>
+                        <div class="col-3 mx-0 p-0">
+                            <input class="input checkbox-medium mx-0 p-1" type="number" name="endHours" id="endHours"
+                                   max="23" min="0"
+                                   onchange="submitForm()"/>
+                        </div>
+                    </div>
+                </div>
             </section>
             <section class="form-date-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">{{ __('messages.polylines_layout.data') }}</span>
@@ -65,12 +73,9 @@
                     <option value="DevicesRichDataTable"></option>
                     <option value="TestRichDataTable"></option>
                 </datalist>
-                <span class="justify-content-center input-checkbox">
-                    <label for="lastHour"></label>
-                    <input class="input checkbox" type="checkbox" name="lastHour" id="lastHour"
-                           onchange="submitForm()"/>
-                    {{ __('messages.polylines_layout.last_hour') }}
-                </span>
+                <label for="readingsCount"></label>
+                <input class="input" type="text" value="{{ __('messages.polylines_layout.readings') }}"
+                       name="readingsCount" id="readingsCount" disabled="disabled"/>
             </section>
             <section class="form-device-section input-group-prepend">
                 <span class="justify-content-center span input-group-text">{{ __('messages.polylines_layout.device_name') }}</span>
@@ -83,7 +88,7 @@
                             @foreach($vehicles as $vehicleId => $devices)
                                 <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
                                     @foreach($devices as $deviceInfo)
-                                        <option value="{{ $deviceInfo->deviceId }}">
+                                        <option value="{{ $deviceInfo->device_id }}">
                                             &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
                                     @endforeach
                                 </optgroup>
@@ -100,7 +105,7 @@
                             @foreach($vehicles as $vehicleId => $devices)
                                 <optgroup label="&nbsp;&nbsp;{{ $vehicleId }}">
                                     @foreach($devices as $deviceInfo)
-                                        <option value="{{ $deviceInfo->deviceId }}">
+                                        <option value="{{ $deviceInfo->device_id }}">
                                             &nbsp;&nbsp;&nbsp;&nbsp;{{ $companyName }}-{{ $vehicleId }}</option>
                                     @endforeach
                                 </optgroup>
@@ -122,10 +127,13 @@
         <div id="map" class="chart"></div>
     </section>
 </section>
-<div id="tempChart" class="chart"></div>
-<div id="pressureChart" class="chart"></div>
-<div id="voltageChart" class="chart"></div>
-<div id="extraData" class="justify-content-center mx-auto mt-5"></div>
+<section class="mt-5">
+    @include('layouts.error')
+</section>
+<div id="tempChart" class="chart mt-4"></div>
+<div id="pressureChart" class="chart mt-3"></div>
+<div id="extraData" class="justify-content-center mx-auto mt-5 d-none d-md-block"></div>
+<div class="mt-3">&nbsp;</div>
 <script async="async" defer="defer"
         src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}"></script>
 <script src="{{ asset('js/front-defer.js') }}" defer></script>

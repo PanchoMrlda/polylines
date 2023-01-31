@@ -3,7 +3,6 @@ let map;
 let markers = [];
 let tempChart;
 let pressureChart;
-let voltageChart;
 let refreshed = false;
 
 // Profile
@@ -11,50 +10,48 @@ let profile = {};
 doRequest("GET", "/profile", setProfile);
 
 // Variables for bus 1
-let dates1 = [];
-dates1.unshift('times');
 let locations1 = [];
-let tempInt1 = [];
-tempInt1.unshift('Temp Int Device1');
-let tempExt1 = [];
-tempExt1.unshift('Temp Ext Device1');
-let highPressure1 = [];
-highPressure1.unshift('High Pressure Device1');
-let lowPressure1 = [];
-lowPressure1.unshift('Low Pressure Device1');
-let compressor1 = [];
-compressor1.unshift('Compressor Device1');
-let blower1 = [];
-blower1.unshift('Blower Device1');
-let extraData1 = [];
 
 // Variables bus 2
-let dates2 = [];
-dates2.unshift('times');
 let locations2 = [];
-let tempInt2 = [];
-tempInt2.unshift('Temp Int Device2');
-let tempExt2 = [];
-tempExt2.unshift('Temp Ext Device2');
-let highPressure2 = [];
-highPressure2.unshift('High Pressure Device2');
-let lowPressure2 = [];
-lowPressure2.unshift('Low Pressure Device2');
-let compressor2 = [];
-compressor2.unshift('Compressor Device2');
-let blower2 = [];
-blower2.unshift('Blower Device2');
 
 
 /* MAP FUNCTIONS */
 
-function initMap() {
+function initMap(options = {
+    deviceId1: {
+        dates: [],
+        locations: [],
+        tempInt: [],
+        tempExt: [],
+        highPressure: [],
+        lowPressure: [],
+        extraData: [],
+        deviceName: ""
+    },
+    deviceId2: {
+        dates: [],
+        locations: [],
+        tempInt: [],
+        tempExt: [],
+        highPressure: [],
+        lowPressure: [],
+        extraData: [],
+        deviceName: ""
+    }
+}) {
+    Object.keys(options).filter(k => k.includes("deviceId")).map(k => {
+            options[k]["dates"].unshift("times");
+            options[k]["tempInt"].unshift("Temp Int " + options[k]["deviceName"]);
+            options[k]["tempExt"].unshift("Temp Ext " + options[k]["deviceName"]);
+            options[k]["highPressure"].unshift("High Pressure " + options[k]["deviceName"]);
+            options[k]["lowPressure"].unshift("Low Pressure " + options[k]["deviceName"]);
+        }
+    );
     if (document.querySelector("#deviceId1Select").value !== "" && !refreshed) {
         submitForm();
         refreshed = true;
     }
-    let flightPlanCoordinates = locations1;
-
     /* Set map styles here */
     let silverMapType = new google.maps.StyledMapType(silverMap, {
         name: "Silver"
@@ -65,204 +62,21 @@ function initMap() {
     let retroMapType = new google.maps.StyledMapType(retroMap, {
         name: "Retro"
     });
-
     map = new google.maps.Map(document.getElementById("map"), {
         zoom: 8,
-        center: flightPlanCoordinates[flightPlanCoordinates.length - 1],
+        center: locations1[locations1.length - 1],
         mapTypeControlOptions: {
             mapTypeIds: ["roadmap", "satellite", "hybrid", "terrain",
                 "silver_map", "night_map", "retro_map"
             ]
         }
     });
-
-    // // Hide map options if screen is too small
-    // let width = window.innerWidth;
-    // if ((width < 768 && window.matchMedia("(orientation: portrait)").matches) ||
-    //   (width < 768 && window.matchMedia("(orientation: landscape)").matches)) {
     map.mapTypeControlOptions.style = google.maps.MapTypeControlStyle.DROPDOWN_MENU;
-    // }
-
     //Associate the styled maps with the MapTypeId and set it to display.
     map.mapTypes.set("silver_map", silverMapType);
     map.mapTypes.set("night_map", nightMapType);
     map.mapTypes.set("retro_map", retroMapType);
-    // map.setMapTypeId("retro_map");
     map.setMapTypeId(profile.mapTypeId);
-
-    /* SORT BY DISTANCE */
-
-    /*function distance(p1, p2) {
-      x_square = Math.pow((p1.lat - p2.lat), 2);
-      y_square = Math.pow((p1.lng - p2.lng), 2);
-
-      return Math.sqrt(x_square + y_square, 2);
-    }
-
-    function minDistance(initPoint, list) {
-      let maxDist = Number.MAX_VALUE;
-      let maxIndex = -1;
-      for (let index = 0; index < list.length; index++) {
-        let e = list[index];
-        let d_new = distance(initPoint, e);
-
-        if (d_new < maxDist) {
-          maxDist = d_new;
-          maxIndex = index;
-        }
-      }
-      return {
-        distancePoint: list[maxIndex],
-        distanceIndex: maxIndex
-      };
-    }*/
-
-    /*function sortByDistance(mylist) {
-      let list = [];
-      mylist.forEach(e => list.push(e));
-
-      let finalResult = [list[0]];
-      list.splice(0, 1);
-
-      while (list.length > 0) {
-        let fP = finalResult[finalResult.length - 1];
-        let minDResult = minDistance(fP, list);
-        finalResult.push(minDResult.distancePoint);
-        list.splice(minDResult.distanceIndex, 1);
-      }
-
-      return finalResult;
-    }*/
-
-
-    // let theSortedPoints = sortByDistance(flightPlanCoordinates);
-    // let theSortedPoints = flightPlanCoordinates;
-
-    /* Heatmap
-    let heatmap = new google.maps.visualization.HeatmapLayer({
-      data: theSortedPoints.map(e => new google.maps.LatLng(e.lat, e.lng)),
-      map: map
-    });
-
-    if (typeof locations2 !== "undefined") {
-      let heatmap2 = new google.maps.visualization.HeatmapLayer({
-        data: locations2.map(e => new google.maps.LatLng(e.lat, e.lng)),
-        map: map
-      });
-    }
-
-    let gradient = [
-      "rgba(0, 255, 255, 0)",
-      "rgba(0, 255, 255, 1)",
-      "rgba(0, 191, 255, 1)",
-      "rgba(0, 127, 255, 1)",
-      "rgba(0, 63, 255, 1)",
-      "rgba(0, 0, 255, 1)",
-      "rgba(0, 0, 223, 1)",
-      "rgba(0, 0, 191, 1)",
-      "rgba(0, 0, 159, 1)",
-      "rgba(0, 0, 127, 1)",
-      "rgba(63, 0, 91, 1)",
-      "rgba(127, 0, 63, 1)",
-      "rgba(191, 0, 31, 1)",
-      "rgba(255, 0, 0, 1)"
-    ];
-    heatmap.setMap(map);
-    heatmap.set("radius", 20);
-    heatmap.set("opacity", 0.6);
-    if (typeof heatmap2 !== "undefined") {
-      heatmap2.set("gradient", gradient);
-    } else {
-      heatmap.set("gradient", gradient);
-    }
-    */
-
-    /* Paint lines
-
-    let flightPath = new google.maps.Polyline({
-      path: theSortedPoints,
-      geodesic: true,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight:2
-    });
-
-    flightPath.setMap(map);
-
-    // Paint points and MArkers
-    deleteRepeated(theSortedPoints).forEach((location, index) => new google.maps.Marker({
-      position: location,
-      label: String(index),
-      map: map
-    }));
-    */
-
-
-    /*Paint path with polygons */
-
-    /*Directions two points
-    let directionsService = new google.maps.DirectionsService;
-    let directionsDisplay = new google.maps.DirectionsRenderer;
-
-    directionsDisplay.setMap(map);
-
-    directionsService.route({
-      origin: {
-        lat: 0.404617e2,
-        lng: -0.34918e1
-      },
-      destination: {
-        lat: 0.40457e2,
-        lng: -0.34831e1
-      },
-      travelMode: "DRIVING"
-    }, function (response, status) {
-      if (status === "OK") {
-        directionsDisplay.setDirections(response);
-      } else {
-        window.alert("Directions request failed due to " + status);
-      }
-    });
-    */
-
-    /* Multiple directions
-
-    let directionsService = new google.maps.DirectionsService;
-    let directionsDisplay = new google.maps.DirectionsRenderer;
-    let subList = theSortedPoints.slice(1, 20); //flightPlanCoordinates.length
-    let firstPoint = subList[0];
-    let lastPoint = subList[subList.length - 1];
-    let intermediates = subList.map( e => { return { location: e, stopover:false}  });
-
-    directionsDisplay.setMap(map);
-    console.log(intermediates);
-    directionsService.route({
-      origin: firstPoint,
-      destination: lastPoint,
-      waypoints: intermediates,
-      optimizeWaypoints: true,
-      travelMode: "DRIVING"
-    }, function(response, status) {
-      if (status === "OK") {
-        directionsDisplay.setDirections(response);
-        // let route = response.routes[0];
-        //             let summaryPanel = document.getElementById("directions-panel");
-        //             summaryPanel.innerHTML = "";
-        // For each route, display summary information.
-        //             for (let i = 0; i < route.legs.length; i++) {
-        //               let routeSegment = i + 1;
-        //               summaryPanel.innerHTML += "<b>Route Segment: " + routeSegment +
-        //                   "</b><br>";
-        //               summaryPanel.innerHTML += route.legs[i].start_address + " to ";
-        //               summaryPanel.innerHTML += route.legs[i].end_address + "<br>";
-        //               summaryPanel.innerHTML += route.legs[i].distance.text + "<br><br>";
-        // }
-      } else {
-        window.alert("Directions request failed due to " + status);
-      }
-    });
-    */
-
     // Auto Center map
     let bounds = new google.maps.LatLngBounds();
     let totalLocations = [];
@@ -270,12 +84,10 @@ function initMap() {
     if (locations2.length > 1) {
         Array.prototype.push.apply(totalLocations, locations2);
     }
-
     for (let i = 0; i < totalLocations.length; i++) {
         bounds.extend(totalLocations[i]);
     }
     map.fitBounds(bounds);
-
     // Define the symbol, using one of the predefined paths ("CIRCLE")
     // supplied by the Google Maps JavaScript API.
     let lineSymbol1 = {
@@ -286,7 +98,6 @@ function initMap() {
         strokeColor: "DeepSkyBlue",
         fillColor: "DeepSkyBlue"
     };
-
     // Create the polyline and add the symbol to it via the "icons" property.
     let line1 = new google.maps.Polyline({
         path: locations1,
@@ -298,7 +109,6 @@ function initMap() {
         }],
         map: map
     });
-
     // Define the symbol, using one of the predefined paths ("CIRCLE")
     // supplied by the Google Maps JavaScript API.
     let lineSymbol2 = {
@@ -309,7 +119,6 @@ function initMap() {
         strokeColor: "LimeGreen",
         fillColor: "LimeGreen"
     };
-
     // Create the polyline and add the symbol to it via the "icons" property.
     let line2 = new google.maps.Polyline({
         path: locations2,
@@ -326,29 +135,8 @@ function initMap() {
     // animateCircle(line2);
     setDevices("deviceId1");
     setDevices("deviceId2");
-    let tempData1 = [dates1, tempInt1, tempExt1];
-    let tempData2 = [dates2, tempInt2, tempExt2];
-    // let lowPressure1Converted = lowPressure1.slice(1).map((element, index) => {
-    //   if (compressorOn(highPressure1[index], lowPressure1[index])) {
-    //     element -= 10;
-    //   }
-    //   return element;
-    // });
-    // let lowPressure2Converted = lowPressure2.slice(1).map((element, index) => {
-    //   if (compressorOn(highPressure2[index], lowPressure2[index])) {
-    //     element -= 10;
-    //   }
-    //   return element;
-    // });
-    // lowPressure1Converted.unshift(lowPressure1[0]);
-    // lowPressure2Converted.unshift(lowPressure2[0]);
-    tempChart = generateChart("#tempChart", tempData1, tempData2);
-    let pressureData1 = [dates1, lowPressure1, highPressure1];
-    let pressureData2 = [dates2, lowPressure2, highPressure2];
-    pressureChart = generateChart("#pressureChart", pressureData1, pressureData2);
-    // let voltageData1 = [dates1, compressor1, blower1];
-    // let voltageData2 = [dates2, compressor2, blower2];
-    // voltageChart = generateChart("#voltageChart", voltageData1, voltageData2);
+    tempChart = generateChart("#tempChart", options);
+    pressureChart = generateChart("#pressureChart", options);
     updateDistance();
     initMapEvents();
 }
@@ -401,27 +189,25 @@ function findGetParameter(parameterName) {
     return result;
 }
 
-function generateChart(chartId, columnValues1, columnValues2 = []) {
+function generateChart(chartId, options) {
     let yGrid;
     let chartLabel;
-    let chartDateFormat = (columnValues1[0].length > 1440) ? "%Y-%m-%d %H:%M" : "%H:%M";
+    let chartDateFormat = (options.deviceId1.dates.length > 1440) ? "%Y-%m-%d %H:%M" : "%H:%M";
     let chartsData = {
         x: "times",
         xFormat: "%Y-%m-%d %H:%M:%S",
-        columns: columnValues1,
-        onclick: showBusPosition
+        onclick: showBusPosition,
+        columns: [
+            options.deviceId1.dates,
+            options.deviceId1.dates
+        ]
     };
     let screenWidth = setChartWidth();
-    if (columnValues1[0].length === 1 && columnValues2[0].length === 1) {
-        chartsData.columns = [];
-    } else if (columnValues1[0].length !== 1 && columnValues2[0].length === 1) {
-        chartsData.columns = columnValues1;
-    } else if (columnValues1[0].length === 1 && columnValues2[0].length !== 1) {
-        chartsData.columns = columnValues2;
-    } else if (columnValues1[0].length !== 1 && columnValues2[0].length !== 1) {
-        chartsData.columns = columnValues1.concat(columnValues2);
-    }
     if (chartId === "#tempChart") {
+        chartsData.columns.splice(1, 0, ...[
+            options.deviceId1.tempInt,
+            options.deviceId1.tempExt
+        ]);
         chartLabel = "ºC";
         yGrid = {
             lines: [
@@ -430,15 +216,24 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
             ]
         };
     } else if (chartId === "#pressureChart") {
+        chartsData.columns.splice(1, 0, ...[
+            options.deviceId1.lowPressure,
+            options.deviceId1.highPressure
+        ]);
         if (document.querySelector("[name=pressureInBars]").checked) {
             chartLabel = "bar";
         } else {
             chartLabel = "ºC";
         }
-        yGrid = {};
-    } else if (chartId === "#voltageChart") {
-        chartLabel = "V";
-        yGrid = {};
+        yGrid = {
+            lines: [
+                {value: 95, text: "Max HP >35º", position: "start"},
+                {value: 85, text: "Max HP <35º", position: "start"},
+                {value: 9, text: "Min HP", position: "start"},
+                {value: 30, text: "Max LP", position: "start"},
+                {value: -10, text: "Min LP", position: "start"}
+            ]
+        };
     }
 
     return c3.generate({
@@ -472,7 +267,7 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
         grid: {
             y: yGrid
         },
-        regions: assignRegions(chartId),
+        regions: assignRegions(chartId, options.deviceId1),
         onrendered: function () {
             let chartLabels = document.querySelectorAll(".c3-axis-y-label");
             Array.prototype.map.call(chartLabels, function (label) {
@@ -484,7 +279,7 @@ function generateChart(chartId, columnValues1, columnValues2 = []) {
     });
 }
 
-function assignRegions(chartId) {
+function assignRegions(chartId, deviceData) {
     let regions;
     let maxWarning;
     let maxDanger;
@@ -494,13 +289,8 @@ function assignRegions(chartId) {
     if (chartId === "#pressureChart") {
         maxWarning = 85;
         maxDanger = 85;
-        minWarning = -20;
-        minDanger = -20;
-    } else if (chartId === "#voltageChart") {
-        maxWarning = 27;
-        maxDanger = 28;
-        minWarning = -100;
-        minDanger = -100;
+        minWarning = -15;
+        minDanger = -15;
     } else {
         maxWarning = 100;
         maxDanger = 100;
@@ -526,28 +316,32 @@ function assignRegions(chartId) {
     }];
     let highPressureWarningRegions;
     if (chartId === "#pressureChart") {
-        compressorRegions = calculateCompressorRegions();
+        compressorRegions = calculateCompressorRegions(deviceData);
         compressorRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureWarning", 15, highPressureAnomalies, deviceData);
         highPressureWarningRegions.map(region => regions.push(region));
-        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts);
+        highPressureWarningRegions = calculateAlertRegions("regionHighPressureDanger", 10, highPressureAlerts, deviceData);
         highPressureWarningRegions.map(region => regions.push(region));
     }
     return regions;
 }
 
-function calculateCompressorRegions() {
+function calculateCompressorRegions(deviceData) {
+    let currentDate, previousDate;
     let regionsToAdd = [];
-    let lastStartDate = dates1[1];
-    let lastEndDate = dates1[dates1.length - 1];
-    for (let i = 1; i < highPressure1.length; i++) {
-        if (compressorOn(highPressure1[i], lowPressure1[i])) {
-            lastEndDate = dates1[i];
-            if (i === (highPressure1.length - 1)) {
+    let lastStartDate = deviceData.dates[1];
+    let lastEndDate = deviceData.dates[deviceData.dates.length - 1];
+    for (let i = 1; i < deviceData.highPressure.length; i++) {
+        currentDate = new Date(deviceData.dates[i]);
+        previousDate = new Date(deviceData.dates[i - 1]);
+        if (compressorOn(deviceData.highPressure[i], deviceData.lowPressure[i]) &&
+            currentDate.getTime() - previousDate.getTime() <= 300000) {
+            lastEndDate = deviceData.dates[i];
+            if (i === (deviceData.highPressure.length - 1)) {
                 const region = {
                     axis: "x",
                     start: lastStartDate,
-                    end: dates1[i],
+                    end: deviceData.dates[i],
                     class: "regionCompressor"
                 };
                 regionsToAdd.push(region);
@@ -560,31 +354,30 @@ function calculateCompressorRegions() {
                 class: "regionCompressor"
             };
             if (lastStartDate !== lastEndDate &&
-                lastEndDate !== dates1[dates1.length - 1]) {
+                lastEndDate !== deviceData.dates[deviceData.dates.length - 1]) {
                 regionsToAdd.push(region);
             }
-            lastStartDate = dates1[i];
-            lastEndDate = dates1[i];
+            lastStartDate = deviceData.dates[i];
+            lastEndDate = deviceData.dates[i];
         }
     }
     return regionsToAdd;
 }
 
-function calculateAlertRegions(regionClass, timeLimit, callback) {
+function calculateAlertRegions(regionClass, timeLimit, callback, deviceData) {
     let regionsToAdd = [];
     let lastStartDate = undefined;
     let lastEndDate;
-    for (let index = 1; index < highPressure1.length; index++) {
-        if (callback(index)) {
+    for (let index = 1; index < deviceData.highPressure.length; index++) {
+        if (callback(index, deviceData)) {
             if (lastStartDate === undefined) {
-                lastStartDate = dates1[index];
+                lastStartDate = deviceData.dates[index];
             } else {
-                lastEndDate = dates1[index];
+                lastEndDate = deviceData.dates[index];
             }
-        } else if ((index === highPressure1.length - 1) || !callback(index)) {
-            if (index === highPressure1.length - 1) {
-
-                lastEndDate = dates1[dates1.length - 1];
+        } else if ((index === deviceData.highPressure.length - 1) || !callback(index, deviceData)) {
+            if (index === deviceData.highPressure.length - 1) {
+                lastEndDate = deviceData.dates[deviceData.dates.length - 1];
             }
             const region = {
                 axis: "x",
@@ -602,22 +395,18 @@ function calculateAlertRegions(regionClass, timeLimit, callback) {
     return regionsToAdd;
 }
 
-function highPressureAnomalies(index) {
-    let anomaly;
-    anomaly = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt1[index] > 25 && highPressure1[index] < 35;
-    return anomaly;
+function highPressureAnomalies(index, deviceData) {
+    return compressorOn(deviceData.highPressure[index], deviceData.lowPressure[index]) &&
+        deviceData.tempExt[index] > 25 && deviceData.highPressure[index] < 35;
 }
 
-function highPressureAlerts(index) {
-    let alert;
-    alert = compressorOn(highPressure1[index], lowPressure1[index]) &&
-        tempExt1[index] < 35 && highPressure1[index] >= 85;
-    return alert;
+function highPressureAlerts(index, deviceData) {
+    return compressorOn(deviceData.highPressure[index], deviceData.lowPressure[index]) &&
+        deviceData.tempExt[index] < 35 && deviceData.highPressure[index] >= 85;
 }
 
 function compressorOn(highPressure, lowPressure) {
-    return Math.abs(parseFloat(highPressure) - parseFloat(lowPressure)) >= 8;
+    return parseFloat(highPressure) - parseFloat(lowPressure) >= 8;
 }
 
 function showBusPosition(element) {
@@ -683,54 +472,47 @@ function getTotalDistance(locations) {
 }
 
 function setChartWidth() {
-    // Multiply width by 0.99 because desktop screens are smaller than real screen
-    let screenWidth = window.innerWidth * 0.99;
-    if (screenWidth < 768 && window.matchMedia("(orientation: portrait)").matches) {
-        screenWidth = window.innerHeight;
-    } else if (screenWidth < 768 && window.matchMedia("(orientation: landscape)").matches) {
-        screenWidth = 768;
+    let screen = window.innerWidth - 20;
+    if (screen < 768 && window.matchMedia("(orientation: portrait)").matches) {
+        screen =window.innerHeight;
+    } else if (screen < 768 && window.matchMedia("(orientation: landscape)").matches) {
+        screen = 768;
     }
-    return screenWidth;
+    return screen;
 }
 
 function updateChartsWidth() {
-    setTimeout(() => {
-        generateChart("#tempChart", [dates1, tempInt1, tempExt1]);
-        generateChart("#pressureChart", [dates1, lowPressure1, highPressure1]);
-        // generateChart("#voltageChart", [dates1, compressor1, blower1]);
-    }, 50);
+    let screen = setChartWidth();
+    tempChart.resize({width: screen});
+    pressureChart.resize({width: screen});
 }
 
 function submitForm() {
-    let fromElem = document.querySelector(".form-date-section [name=from]");
     let deviceId1Elem = document.querySelector("#deviceId1Select");
     let deviceId2Elem = document.querySelector("#deviceId2Select");
-    let lastHourElem = document.querySelector("[name=lastHour]");
-    let pressureInBars = document.querySelector("[name=pressureInBars]");
-    let tableNameElem = document.querySelector("[name=tableNames]");
-    let numHoursElem = document.querySelector("[name=numHours]");
-    let requestParams = {
-        from: fromElem.value,
-        deviceId1: deviceId1Elem.value,
-        deviceId2: deviceId2Elem.value,
-        numHours: numHoursElem.value,
-        tableName: tableNameElem.value
-    };
-    if (lastHourElem.checked) {
-        let d = new Date();
-        let h = addZero(d.getHours() - 1);
-        let m = addZero(d.getMinutes());
-        let s = addZero(d.getSeconds());
-        requestParams.from += " " + h + ":" + m + ":" + s;
+    if (deviceId1Elem.value !== "" || deviceId2Elem.value !== "") {
+        let fromElem = document.querySelector(".form-date-section [name=from]");
+        let pressureInBars = document.querySelector("[name=pressureInBars]");
+        let tableNameElem = document.querySelector("[name=tableNames]");
+        let startHoursElem = document.querySelector("[name=startHours]");
+        let endHoursElem = document.querySelector("[name=endHours]");
+        let requestParams = {
+            from: fromElem.value,
+            deviceId1: deviceId1Elem.value,
+            deviceId2: deviceId2Elem.value,
+            startHours: startHoursElem.value,
+            endHours: endHoursElem.value,
+            tableName: tableNameElem.value
+        };
+        if (pressureInBars.checked) {
+            requestParams.pressureInBars = true
+        }
+        let url = "/dynamo";
+        deviceId1Elem.blur();
+        deviceId2Elem.blur();
+        setVisible(".spinner-border", true);
+        doRequest("GET", url, applyDynamoDbChanges, requestParams);
     }
-    if (pressureInBars.checked) {
-        requestParams.pressureInBars = true
-    }
-    let url = "/dynamo";
-    deviceId1Elem.blur();
-    deviceId2Elem.blur();
-    setVisible(".spinner-border", true);
-    doRequest("GET", url, applyDynamoDbChanges, requestParams);
 }
 
 function addZero(i) {
@@ -747,7 +529,7 @@ function applyDynamoDbChanges(responseParams) {
     let device1Type = responseParams.deviceId1.deviceType;
     updateDevicesVariables(responseParams);
     fromElem.value = responseParams.from;
-    initMap();
+    initMap(responseParams);
     deviceId1Elem.value = responseParams.deviceId1.deviceName;
     deviceId2Elem.value = responseParams.deviceId2.deviceName;
     updateDistance();
@@ -756,8 +538,11 @@ function applyDynamoDbChanges(responseParams) {
         existingTable.remove();
     }
     if (device1Type === 'NEWTON' || device1Type === 'EINSTEIN') {
-        createExtraDataTable(responseParams.deviceId1.extraData, device1Type);
+        createExtraDataTable(responseParams.deviceId1.extraData, responseParams.deviceId1.dates);
     }
+    let readingsCount = document.querySelector("#readingsCount");
+    let readingsTitle = readingsCount.value.substr(-8);
+    readingsCount.value = responseParams.deviceId1.dates.length - 1 + " " + readingsTitle;
 }
 
 function setProfile(responseParams) {
@@ -765,30 +550,18 @@ function setProfile(responseParams) {
 }
 
 function updateDevicesVariables(responseParams) {
-    let deviceNames = ["deviceId1", "deviceId2"];
-    deviceNames.forEach((device, index) => {
-        let fixedIndex = index + 1;
-        let deviceAccess = "responseParams." + device;
-        let deviceName = eval(deviceAccess + ".deviceName;");
-        let selector = "#from" + fixedIndex;
-        eval("dates" + fixedIndex + " = " + deviceAccess + ".dates;");
-        eval("dates" + fixedIndex + ".unshift('times')");
-        eval("locations" + fixedIndex + " = " + deviceAccess + ".locations;");
-        eval("tempInt" + fixedIndex + " = " + deviceAccess + ".tempInt;");
-        eval("tempInt" + fixedIndex + ".unshift('Temp Int " + deviceName + "');");
-        eval("tempExt" + fixedIndex + " = " + deviceAccess + ".tempExt;");
-        eval("tempExt" + fixedIndex + ".unshift('Temp Ext " + deviceName + "');");
-        eval("highPressure" + fixedIndex + " = " + deviceAccess + ".highPressure;");
-        eval("highPressure" + fixedIndex + ".unshift('High Pressure " + deviceName + "');");
-        eval("lowPressure" + fixedIndex + " = " + deviceAccess + ".lowPressure;");
-        eval("lowPressure" + fixedIndex + ".unshift('Low Pressure " + deviceName + "');");
-        eval("extraData" + fixedIndex + " = " + deviceAccess + ".extraData;");
-        if (eval("dates" + fixedIndex + ".length;") === 1) {
-            document.querySelector(selector).value = eval(deviceAccess + ".lastReading;");
-        } else {
-            document.querySelector(selector).value = "";
-        }
-    });
+    locations1 = responseParams.deviceId1.locations;
+    locations2 = responseParams.deviceId2.locations;
+    if (responseParams.deviceId1.dates.length === 0) {
+        document.querySelector("#from1").value = responseParams.deviceId1.lastReading;
+    } else {
+        document.querySelector("#from1").value = "";
+    }
+    if (responseParams.deviceId2.dates.length === 0) {
+        document.querySelector("#from2").value = responseParams.deviceId2.lastReading;
+    } else {
+        document.querySelector("#from2").value = "";
+    }
 }
 
 function updateDistance() {
@@ -809,6 +582,16 @@ function setMapStyles(bodyColor, elementsColor) {
     });
 }
 
+function applyLimitToHours(element) {
+    if (element.value > 23 && e.keyCode !== 46 && e.keyCode !== 8) {
+        e.preventDefault();
+        element.value = 23;
+    } else if (element.value < 0 && e.keyCode !== 46 && e.keyCode !== 8) {
+        e.preventDefault();
+        element.value = 0;
+    }
+}
+
 /* EVENTS */
 
 window.addEventListener("orientationchange", function () {
@@ -817,15 +600,22 @@ window.addEventListener("orientationchange", function () {
 }, false);
 
 window.addEventListener("resize", function () {
+    updateChartsWidth();
     setFlexClasses();
 }, false);
 
-document.querySelector("[name=numHours]").addEventListener("keyup", function (e) {
-    let element = document.querySelector("[name=numHours]");
-    if (element.value > 24 && e.keyCode !== 46 && e.keyCode !== 8) {
-        e.preventDefault();
-        element.value = 24;
-    }
+window.addEventListener("resize", function () {
+    setFlexClasses();
+}, false);
+
+document.querySelector("[name=startHours]").addEventListener("keyup", function (e) {
+    let element = document.querySelector("[name=startHours]");
+    applyLimitToHours(element);
+});
+
+document.querySelector("[name=endHours]").addEventListener("keyup", function (e) {
+    let element = document.querySelector("[name=endHours]");
+    applyLimitToHours(element);
 });
 
 function initMapEvents() {
@@ -891,7 +681,8 @@ function getMessageKeys(array) {
     return [...new Set(allKeys)];
 }
 
-function createExtraDataTable(tableData) {
+function createExtraDataTable(tableData, dates) {
+    let onlyOneDay = dates[1].slice(0, 10) === dates[dates.length - 1].slice(0, 10);
     let existingTable = document.querySelector("#extraData table");
     if (existingTable !== null) {
         existingTable.remove();
@@ -899,7 +690,7 @@ function createExtraDataTable(tableData) {
     let headerNames = getMessageKeys(tableData);
     // Create table and set its attributes
     let table = document.createElement('table');
-    table.setAttribute("class", "table table-stripedd table-bordered table-hover table-sm text-nowrap text-center");
+    table.setAttribute("class", "table bg-light table-bordered table-hover table-sm text-nowrap text-center mb-0");
     // Create table header and populate it with its data
     let tableHeader = document.createElement('thead');
     let headerRow = document.createElement('tr');
@@ -908,7 +699,6 @@ function createExtraDataTable(tableData) {
     headerRow.appendChild(dateHeader);
     headerNames.forEach(function (headerName) {
         let cell = document.createElement('th');
-        cell.setAttribute("class", "sticky");
         cell.appendChild(document.createTextNode(headerName));
         headerRow.appendChild(cell);
         tableHeader.appendChild(headerRow);
@@ -918,10 +708,17 @@ function createExtraDataTable(tableData) {
     tableData.forEach(function (rowObject, index) {
         let row = document.createElement('tr');
         let dateCell = document.createElement('td');
-        dateCell.appendChild(document.createTextNode(dates1[index + 1]));
+        if (onlyOneDay) {
+            dateCell.appendChild(document.createTextNode(dates[index + 1].slice(11)));
+        } else {
+            dateCell.appendChild(document.createTextNode(dates[index + 1]));
+        }
         row.appendChild(dateCell);
         headerNames.forEach(function (headerName) {
             let cell = document.createElement('td');
+            if (headerName === '5004201' || headerName === '4090501') {
+                cell.classList.add('table-active');
+            }
             let cellValue = rowObject[headerName] === undefined ? '' : rowObject[headerName];
             cell.appendChild(document.createTextNode(cellValue));
             row.appendChild(cell);

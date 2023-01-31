@@ -11,8 +11,10 @@
         "php": "^7.2.5|^8.0",
         "aws/aws-sdk-php": "^3.173",
         "fideloper/proxy": "^4.4",
+        "goszowski/laravel-vendor-minify": "^1.0",
         "laravel/framework": "^6.20",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+      "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^1.16.4",

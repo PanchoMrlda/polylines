@@ -19,11 +19,13 @@ return [
     'polylines_layout' => [
         'previous_reading' => 'Previous reading',
         'date' => 'Date',
-        'hours' => 'Hours',
+        'from' => 'From',
+        'to' => 'To',
         'last_hour' => 'Last Hour',
         'data' => 'Data',
         'pressure_in_bars' => 'Pressure in bars',
         'device_name' => 'Device Name',
         'travelled_distance' => 'Travelled distance',
+        'readings' => 'Readings',
     ]
 ];

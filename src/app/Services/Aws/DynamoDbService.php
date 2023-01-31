@@ -39,35 +39,23 @@ class DynamoDbService
         ];
     }
 
-    public function getDataFromDynamo($options = [])
+    public function getDataFromDynamo($options = []): array
     {
-        $tableName = $options['tableName'] ?? 'DevicesRichDataTable';
-        $scanIndexForward = $options['scanIndexForward'] ?? false;
-        $eav = $this->marshaler->marshalJson('
-            {
-                ":deviceToFind": "' . $options['deviceId'] . '",
-                ":fromTimeStamp": ' . $options['from'] . ',
-                ":toTimeStamp": ' . $options['to'] . '
-            }
-        ');
-        $params = [
-            'TableName' => $tableName,
-            'KeyConditionExpression' => "deviceId = :deviceToFind AND readingTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp",
-            'ExpressionAttributeValues' => $eav,
-            'ScanIndexForward' => $scanIndexForward
-        ];
+        $params = $this->getDynamoDbParams($options);
         $formattedResult = [[]];
         try {
             if (!empty($options['deviceId'])) {
                 $result = $this->client->query($params);
-                foreach ($result['Items'] as $message) {
-                    $data = array(
-                        'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
-                        'deviceType' => $this->marshaler->unmarshalValue($message['deviceType']),
-                        'payload' => $this->marshaler->unmarshalValue($message['payload'])
-                    );
-                    array_unshift($formattedResult, $data);
-//                array_unshift($formattedResult, $this->marshaler->unmarshalValue($message));
+                $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $result);
+                while (!empty($result['LastEvaluatedKey'])) {
+                    if ($options['emptyReadings'] ?? false) {
+                        $options['from'] = $result['LastEvaluatedKey']['readingTimestamp']['N'];
+                    } else {
+                        $options['to'] = $result['LastEvaluatedKey']['readingTimestamp']['N'];
+                    }
+                    $params = $this->getDynamoDbParams($options);
+                    $result = $this->client->query($params);
+                    $formattedResult = $this->retrieveDynamoDbMessages($formattedResult, $result);
                 }
             }
         } catch (DynamoDbException $e) {
@@ -77,38 +65,30 @@ class DynamoDbService
         return $formattedResult;
     }
 
-    public function getLocations(array $payloads)
+    public function getLocations(array $payloads): array
     {
         $result = [];
         if (count(collect($payloads)->flatten()) != 0) {
-            foreach ($payloads as $index => $values) {
+            foreach ($payloads as $values) {
                 if (in_array('g', array_keys($values))) {
                     $result[] = [
                         'lat' => floatval($values['g']['la']),
                         'lng' => floatval($values['g']['lo'])
                     ];
                 } else {
-                    if (empty(array_key_exists('la', $values['i']))) {
-                        $result[] = [
-                            'lat' => 0.0,
-                            'lng' => 0.0
-                        ];
-                    } else {
-                        $result[] = [
-                            'lat' => floatval($values['i']['la']),
-                            'lng' => floatval($values['i']['lo'])
-                        ];
-                    }
+                    $result[] = [
+                        'lat' => floatval($values['i']['la']),
+                        'lng' => floatval($values['i']['lo'])
+                    ];
                 }
             }
         } else {
             $result[] = ["lat" => 40.446800, "lng" => -3.55802];
         }
-        $result = $this->cleanCoordinates($result);
-        return $result;
+        return $this->cleanCoordinates($result);
     }
 
-    public function getDates(array $payloads)
+    public function getDates(array $payloads): array
     {
         $result = [];
         if (count(collect($payloads)->flatten()) != 0) {
@@ -126,7 +106,7 @@ class DynamoDbService
         return $result;
     }
 
-    public function getSensorValues(array $payloads, string $sensorName = '')
+    public function getSensorValues(array $payloads, string $sensorName = ''): array
     {
         $result = [];
         if (count($payloads) != 0) {
@@ -152,7 +132,7 @@ class DynamoDbService
         return $result;
     }
 
-    public function convertPressureValues(array $pressureValues)
+    public function convertPressureValues(array $pressureValues): array
     {
         return array_map(function (float $value) {
             $p1 = 0.000153;
@@ -165,14 +145,32 @@ class DynamoDbService
         }, $pressureValues);
     }
 
-    public function retrievePayloads(array $messages)
+    public function lowPressureCorrection(array $highPressureValues, array $lowPressureValues): array
+    {
+        $convertedLowPressureValues = [];
+        foreach ($lowPressureValues as $index => $lowPressureValue) {
+            if ($this->compressorOn($highPressureValues[$index], $lowPressureValue)) {
+                array_push($convertedLowPressureValues, $lowPressureValue - 10);
+            } else {
+                array_push($convertedLowPressureValues, $lowPressureValue);
+            }
+        }
+        return $convertedLowPressureValues;
+    }
+
+    public function compressorOn($highPressure, $lowPressure): bool
+    {
+        return $highPressure - $lowPressure >= 8;
+    }
+
+    public function retrievePayloads(array $messages): array
     {
         return array_map(function ($message) {
-            return $message['payload'];
+            return $this->transformData($message['payload']);
         }, array_filter($messages));
     }
 
-    public function transformData(array $data)
+    public function transformData(array $data): array
     {
         if (array_key_exists('current', $data)) {
             $result = [
@@ -189,7 +187,40 @@ class DynamoDbService
         return $result;
     }
 
-    private function cleanCoordinates(array $coordinates)
+    public function getRawDataFromDynamo($options = []): array
+    {
+        $data = [];
+        if (!empty($options['deviceId'])) {
+            $params = $this->getDynamoDbParams($options);
+            $result = $this->client->query($params);
+            foreach ($result['Items'] as $item) {
+                $data[] = $this->marshaler->unmarshalItem($item);
+            }
+        }
+        return [$data, $result['LastEvaluatedKey'] ?? null];
+    }
+
+    public function saveDesiredDynamoDbValues($formattedResult, $messages)
+    {
+        if (!empty($messages)) {
+            $payloads = $this->retrievePayloads($messages);
+            $formattedResult['deviceName'] = $messages[0]['deviceId'];
+            $formattedResult['deviceType'] = $messages[0]['deviceType'];
+            $formattedResult['dates'] = $this->getDates($payloads);
+            $formattedResult['locations'] = $this->getLocations($payloads);
+            $formattedResult['tempInt'] = $this->getSensorValues($payloads, '1005n');
+            $formattedResult['tempExt'] = $this->getSensorValues($payloads, '1004n');
+            $formattedResult['highPressure'] = $this->getSensorValues($payloads, '1003n');
+            $formattedResult['lowPressure'] = $this->getSensorValues($payloads, '1002n');
+            if ($formattedResult['deviceType'] == 'NEWTON' || $formattedResult['deviceType'] == 'EINSTEIN') {
+                $formattedResult['extraData'] = $this->getSensorValues($payloads);
+            }
+        }
+
+        return $formattedResult;
+    }
+
+    private function cleanCoordinates(array $coordinates): array
     {
         $lastIndex = 0;
         foreach ($coordinates as $index => $coordinate) {
@@ -221,5 +252,38 @@ class DynamoDbService
     private function convertSensorNames(string $sensorName)
     {
         return $this->definedKeys[$sensorName];
+    }
+
+    private function getDynamoDbParams($options = []): array
+    {
+        $tableName = $options['tableName'] ?? 'DevicesRichDataTable';
+        $scanIndexForward = $options['scanIndexForward'] ?? false;
+        $eav = $this->marshaler->marshalJson('
+            {
+                ":deviceToFind": "' . $options['deviceId'] . '",
+                ":fromTimeStamp": ' . $options['from'] . ',
+                ":toTimeStamp": ' . $options['to'] . '
+            }
+        ');
+        return [
+            'TableName' => $tableName,
+            'KeyConditionExpression' => "deviceId = :deviceToFind AND readingTimestamp BETWEEN :fromTimeStamp AND :toTimeStamp",
+            'ExpressionAttributeValues' => $eav,
+            'ScanIndexForward' => $scanIndexForward
+        ];
+    }
+
+    private function retrieveDynamoDbMessages(array $formattedResult, $messages): array
+    {
+        foreach ($messages['Items'] as $message) {
+            $data = array(
+                'deviceId' => $this->marshaler->unmarshalValue($message['deviceId']),
+                'readingTimestamp' => $this->marshaler->unmarshalValue($message['readingTimestamp']),
+                'deviceType' => $this->marshaler->unmarshalValue($message['deviceType']),
+                'payload' => $this->marshaler->unmarshalValue($message['payload'])
+            );
+            array_unshift($formattedResult, $data);
+        }
+        return $formattedResult;
     }
 }
