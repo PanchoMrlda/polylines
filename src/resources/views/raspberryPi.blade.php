@@ -21,42 +21,45 @@
         <form class="map-form" action="/">
             <section class="form-last-reading-section input-group-prepend">
                 <label class="justify-content-center span input-group-text invisible"
-                       for="maxValueLeftHeader">Headers</label>
-                <input class="input" type="text" value="" name="maxValueLeftHeader" id="maxValueLeftHeader"
-                       disabled="disabled" placeholder="Total"/>
-                <label for="maxValueCenterHeader"></label>
-                <input class="input" type="text" value="" name="maxValueCenterHeader" id="maxValueCenterHeader"
-                       disabled="disabled" placeholder="Consumido"/>
-                <label for="maxValueRightHeader"></label>
-                <input class="input" type="text" value="" name="maxValueRightHeader" id="maxValueRightHeader"
+                       for="generatedHeader">Headers</label>
+                <input class="input" type="text" value="" name="generatedHeader" id="generatedHeader"
                        disabled="disabled" placeholder="Producido"/>
-                <label for="powerHeader"></label>
-                <input class="input" type="text" value="" name="powerHeader" id="powerHeader"
-                       disabled="disabled" placeholder="Potencia"/>
+                <label for="consumedHeader"></label>
+                <input class="input" type="text" value="" name="consumedHeader" id="consumedHeader"
+                       disabled="disabled" placeholder="Consumido Red"/>
+                <label for="producedHeader"></label>
+                <input class="input" type="text" value="" name="producedHeader" id="producedHeader"
+                       disabled="disabled" placeholder="Consumido Solar"/>
+                <label for="injectedHeader"></label>
+                <input class="input" type="text" value="" name="injectedHeader" id="injectedHeader"
+                       disabled="disabled" placeholder="Volcado Red"/>
+{{--                <label for="powerHeader"></label>--}}
+{{--                <input class="input" type="text" value="" name="powerHeader" id="powerHeader"--}}
+{{--                       disabled="disabled" placeholder="Potencia"/>--}}
             </section>
             <section class="form-last-reading-section input-group-prepend">
-                <label class="justify-content-center span input-group-text" for="maxValueLeft">Total Energía</label>
-                <input class="input" type="text" value="" name="maxValueLeft" id="maxValueLeft" disabled="disabled"/>
-                <label for="maxValueCenter"></label>
-                <input class="input" type="text" value="" name="maxValueCenter" id="maxValueCenter"
+                <label class="justify-content-center span input-group-text" for="generated">Total Energía</label>
+                <input class="input" type="text" value="" name="generated" id="generated" disabled="disabled"/>
+                <label for="consumed"></label>
+                <input class="input" type="text" value="" name="consumed" id="consumed"
                        disabled="disabled"/>
-                <label for="maxValueRight"></label>
-                <input class="input" type="text" value="" name="maxValueRight" id="maxValueRight" disabled="disabled"/>
-                <label for="powerContracted"></label>
-                <input class="input" type="text" value="" name="powerContracted" id="powerContracted"
+                <label for="produced"></label>
+                <input class="input" type="text" value="" name="produced" id="produced" disabled="disabled"/>
+                <label for="injected"></label>
+                <input class="input" type="text" value="" name="injected" id="injected"
                        disabled="disabled"/>
             </section>
-            <section class="form-distance-section input-group-prepend">
-                <label class="justify-content-center span input-group-text" for="minValueLeft">Total Coste</label>
-                <input class="input" type="text" value="" name="minValueLeft" id="minValueLeft" disabled="disabled"/>
-                <label for="minValueCenter"></label>
-                <input class="input" type="text" value="" name="minValueCenter" id="minValueCenter"
-                       disabled="disabled"/>
-                <label for="minValueRight"></label>
-                <input class="input" type="text" value="" name="minValueRight" id="minValueRight" disabled="disabled"/>
-                <label for="powerCost"></label>
-                <input class="input" type="text" value="" name="powerCost" id="powerCost" disabled="disabled"/>
-            </section>
+{{--            <section class="form-distance-section input-group-prepend">--}}
+{{--                <label class="justify-content-center span input-group-text" for="minValueLeft">Total Coste</label>--}}
+{{--                <input class="input" type="text" value="" name="minValueLeft" id="minValueLeft" disabled="disabled"/>--}}
+{{--                <label for="minValueCenter"></label>--}}
+{{--                <input class="input" type="text" value="" name="minValueCenter" id="minValueCenter"--}}
+{{--                       disabled="disabled"/>--}}
+{{--                <label for="minValueRight"></label>--}}
+{{--                <input class="input" type="text" value="" name="minValueRight" id="minValueRight" disabled="disabled"/>--}}
+{{--                <label for="powerCost"></label>--}}
+{{--                <input class="input" type="text" value="" name="powerCost" id="powerCost" disabled="disabled"/>--}}
+{{--            </section>--}}
             <section class="form-date-section input-group-prepend">
                 <label class="justify-content-center span input-group-text" for="startDate">Date</label>
                 <label class="d-none" for="endDate"></label>
